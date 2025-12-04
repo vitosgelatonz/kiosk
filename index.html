@@ -14,9 +14,6 @@
       --success: #2e7d32;
       --text-main: #333333;
       --text-soft: #777777;
-
-      /* NEW grey background colour */
-      --grey-card: #c8c3b8;
     }
     * { box-sizing: border-box; }
     body {
@@ -104,7 +101,7 @@
       padding-right: 4px;
     }
     .flavour-card {
-      background: var(--card-bg);
+      background: #ffffff;
       border: 2px solid var(--accent);
       border-radius: 16px;
       padding: 8px;
@@ -113,12 +110,6 @@
       flex-direction: column;
       justify-content: space-between;
     }
-
-    /* NEW CLASS FOR GREY FLAVOURS */
-    .flavour-card.grey {
-      background: var(--grey-card) !important;
-    }
-
     .flavour-top {
       display: flex;
       align-items: center;
@@ -336,17 +327,15 @@
     { name: "Reese's Peanut Butter",image: "images/reeses-peanut-butter.png" },
     { name: "Strawberry Dream",     image: "images/strawberry-dream.png" },
     { name: "Vanilla Oreo",         image: "images/vanilla-oreo.png" },
-
-    /* GREY COLLECTION */
-    { name: "Amarena",              image: "images/amarena.png", grey: true },
-    { name: "Banana Caramel",       image: "images/banana-caramel.png", grey: true },
-    { name: "Cookie Crumble",       image: "images/cookie-crumble.png", grey: true },
-    { name: "Chocolate Velvet",     image: "images/chocolate-velvet.png", grey: true },
-    { name: "Lemon Cake Delight",   image: "images/lemon-cake-delight.png", grey: true },
-    { name: "Moka",                 image: "images/moka.png", grey: true },
-    { name: "Pineapple Paradise",   image: "images/pineapple-paradise.png", grey: true },
-    { name: "Simply Coconut",       image: "images/simply-coconut.png", grey: true },
-    { name: "Salted White",         image: "images/salted-white.png", grey: true }
+    { name: "Amarena",              image: "images/amarena.png" },
+    { name: "Banana Caramel",       image: "images/banana-caramel.png" },
+    { name: "Cookie Crumble",       image: "images/cookie-crumble.png" },
+    { name: "Chocolate Velvet",     image: "images/chocolate-velvet.png" },
+    { name: "Lemon Cake Delight",   image: "images/lemon-cake-delight.png" },
+    { name: "Moka",                 image: "images/moka.png" },
+    { name: "Pineapple Paradise",   image: "images/pineapple-paradise.png" },
+    { name: "Simply Coconut",       image: "images/simply-coconut.png" },
+    { name: "Salted White",         image: "images/salted-white.png" }
   ];
 
   const state = {
@@ -365,8 +354,12 @@
     return str.replace(/\s+/g, "_").replace(/[^a-zA-Z0-9_]/g, "");
   }
 
+  // ============================
+  // NZ LOCAL TIMESTAMP FUNCTION
+  // ============================
   function getLocalTimestamp() {
     const d = new Date();
+
     const day = String(d.getDate()).padStart(2, "0");
     const month = String(d.getMonth() + 1).padStart(2, "0");
     const year = d.getFullYear();
@@ -374,7 +367,8 @@
     let hours = d.getHours();
     const minutes = String(d.getMinutes()).padStart(2, "0");
     const ampm = hours >= 12 ? "PM" : "AM";
-    hours = hours % 12 || 12;
+    hours = hours % 12;
+    hours = hours ? hours : 12;
 
     return `${day}/${month}/${year} ${hours}:${minutes} ${ampm}`;
   }
@@ -413,15 +407,10 @@
 
   function renderFlavours() {
     const grid = document.getElementById("flavour-grid");
-
     flavourData.forEach(f => {
       const safeId = cssSafe(f.name);
-
       const card = document.createElement("div");
       card.className = "flavour-card";
-
-      if (f.grey) card.classList.add("grey");
-
       card.innerHTML = `
         <div class="flavour-top">
           <img src="${f.image}" alt="${f.name}" class="flavour-image" />
@@ -472,9 +461,13 @@
 
     document.querySelectorAll('input[name="payment"]').forEach(radio =>
       radio.addEventListener("change", () => {
-        state.payment = document.querySelector('input[name="payment"]:checked').value;
+        state.payment = document.querySelector(
+          'input[name="payment"]:checked'
+        ).value;
+
         document.getElementById("mixed-fields").style.display =
           state.payment === "mixed" ? "block" : "none";
+
         updateSummary();
       })
     );
@@ -482,19 +475,24 @@
     document.getElementById("card-input").addEventListener("input", () => {
       const total = calcTotal();
       let val = parseFloat(document.getElementById("card-input").value || "0");
+
       if (val > total) {
         val = total;
         document.getElementById("card-input").value = total.toFixed(2);
       }
+
       state.cardAmount = val;
       const cash = total - val;
+
       document.getElementById("cash-output").textContent = `$${cash.toFixed(2)}`;
     });
 
     document.getElementById("cancel-btn").addEventListener("click", resetAll);
 
+    // DONE button with tap sound + double-click prevention
     document.getElementById("done-btn").addEventListener("click", async () => {
       const btn = document.getElementById("done-btn");
+
       if (btn.disabled) return;
 
       document.getElementById("tap-sound").play();
@@ -583,6 +581,7 @@
 
     document.getElementById("saving-indicator").style.display = "inline";
 
+    // USE NZ LOCAL TIME HERE:
     const payload = {
       timestamp: getLocalTimestamp(),
       customers: state.customers,
@@ -642,3 +641,4 @@
 
 </body>
 </html>
+
