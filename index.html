@@ -92,6 +92,8 @@
       font-weight: 700;
       font-size: 1.05rem;
     }
+
+    /* FLAVOUR GRID */
     .flavour-grid {
       display: grid;
       grid-template-columns: repeat(auto-fill, minmax(155px, 1fr));
@@ -100,6 +102,7 @@
       overflow-y: auto;
       padding-right: 4px;
     }
+
     .flavour-card {
       background: #ffffff;
       border: 2px solid var(--accent);
@@ -110,6 +113,12 @@
       flex-direction: column;
       justify-content: space-between;
     }
+
+    /* ⭐ LIGHT GREY CARDS FOR SPECIAL FLAVOURS */
+    .flavour-card.grey {
+      background: #f2f2f2 !important;
+    }
+
     .flavour-top {
       display: flex;
       align-items: center;
@@ -131,6 +140,7 @@
       justify-content: flex-end;
       gap: 6px;
     }
+
     .summary {
       margin-top: 6px;
       font-size: 0.85rem;
@@ -138,6 +148,8 @@
       color: var(--text-soft);
       min-height: 40px;
     }
+
+    /* PAYMENT SECTION */
     .payment-options {
       display: flex;
       gap: 10px;
@@ -168,6 +180,7 @@
       border: 1px solid #ccc;
       font-size: 1rem;
     }
+
     #saving-indicator {
       display: none;
       font-size: 1rem;
@@ -176,6 +189,8 @@
       animation: pulse 0.6s infinite alternate;
     }
     @keyframes pulse { from { opacity: .4; } to { opacity: 1; } }
+
+    /* BOTTOM BAR */
     .bottom-bar {
       position: sticky;
       bottom: 0;
@@ -202,6 +217,7 @@
     }
     .cancel { background: #c62828; color: white; }
     .done { background: var(--accent); color: white; }
+
     #success-popup {
       position: fixed;
       bottom: 20px;
@@ -221,6 +237,7 @@
       opacity: 1;
       transform: translateX(-50%) translateY(0);
     }
+
     @media (max-width: 900px) {
       .sections { grid-template-columns: 1fr; }
     }
@@ -316,6 +333,18 @@
     { key: "tub", label: "Takeaway", price: 19 }
   ];
 
+  const greyFlavours = [
+    "Amarena",
+    "Banana Caramel",
+    "Cookie Crumble",
+    "Chocolate Velvet",
+    "Lemon Cake Delight",
+    "Moka",
+    "Pineapple Paradise",
+    "Simply Coconut",
+    "Salted White"
+  ];
+
   const flavourData = [
     { name: "Biscoff",              image: "images/biscoff.png" },
     { name: "Black Sand Piha",      image: "images/black-sand-piha.png" },
@@ -354,9 +383,6 @@
     return str.replace(/\s+/g, "_").replace(/[^a-zA-Z0-9_]/g, "");
   }
 
-  // ============================
-  // NZ LOCAL TIMESTAMP FUNCTION
-  // ============================
   function getLocalTimestamp() {
     const d = new Date();
 
@@ -407,10 +433,15 @@
 
   function renderFlavours() {
     const grid = document.getElementById("flavour-grid");
+
     flavourData.forEach(f => {
       const safeId = cssSafe(f.name);
+
       const card = document.createElement("div");
-      card.className = "flavour-card";
+      const isGrey = greyFlavours.includes(f.name);
+
+      card.className = "flavour-card" + (isGrey ? " grey" : "");
+
       card.innerHTML = `
         <div class="flavour-top">
           <img src="${f.image}" alt="${f.name}" class="flavour-image" />
@@ -459,11 +490,9 @@
       updateSummary();
     });
 
-    document.querySelectorAll('input[name="payment"]').forEach(radio =>
-      radio.addEventListener("change", () => {
-        state.payment = document.querySelector(
-          'input[name="payment"]:checked'
-        ).value;
+    document.querySelectorAll('input[name="payment"]').forEach(r =>
+      r.addEventListener("change", () => {
+        state.payment = document.querySelector('input[name="payment"]:checked').value;
 
         document.getElementById("mixed-fields").style.display =
           state.payment === "mixed" ? "block" : "none";
@@ -489,10 +518,9 @@
 
     document.getElementById("cancel-btn").addEventListener("click", resetAll);
 
-    // DONE button with tap sound + double-click prevention
+    // DONE button: tap sound + double click lock
     document.getElementById("done-btn").addEventListener("click", async () => {
       const btn = document.getElementById("done-btn");
-
       if (btn.disabled) return;
 
       document.getElementById("tap-sound").play();
@@ -505,7 +533,9 @@
   }
 
   function calcTotal() {
-    return sizes.reduce((sum, sz) => sum + state.sizes[sz.key] * sz.price, 0);
+    return sizes.reduce((sum, sz) =>
+      sum + state.sizes[sz.key] * sz.price,
+    0);
   }
 
   function updateTotal() {
@@ -581,7 +611,6 @@
 
     document.getElementById("saving-indicator").style.display = "inline";
 
-    // USE NZ LOCAL TIME HERE:
     const payload = {
       timestamp: getLocalTimestamp(),
       customers: state.customers,
