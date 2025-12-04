@@ -327,15 +327,17 @@
     { name: "Reese's Peanut Butter",image: "images/reeses-peanut-butter.png" },
     { name: "Strawberry Dream",     image: "images/strawberry-dream.png" },
     { name: "Vanilla Oreo",         image: "images/vanilla-oreo.png" },
-    { name: "Amarena",              image: "images/amarena.png" },
-    { name: "Banana Caramel",       image: "images/banana-caramel.png" },
-    { name: "Cookie Crumble",       image: "images/cookie-crumble.png" },
-    { name: "Chocolate Velvet",     image: "images/chocolate-velvet.png" },
-    { name: "Lemon Cake Delight",   image: "images/lemon-cake-delight.png" },
-    { name: "Moka",                 image: "images/moka.png" },
-    { name: "Pineapple Paradise",   image: "images/pineapple-paradise.png" },
-    { name: "Simply Coconut",       image: "images/simply-coconut.png" },
-    { name: "Salted White",         image: "images/salted-white.png" }
+
+    /* ---- SPECIAL BACKGROUNDS ---- */
+    { name: "Amarena",              image: "images/amarena.png", bg: "#cde4ea" },
+    { name: "Banana Caramel",       image: "images/banana-caramel.png", bg: "#cde4ea" },
+    { name: "Cookie Crumble",       image: "images/cookie-crumble.png", bg: "#cde4ea" },
+    { name: "Chocolate Velvet",     image: "images/chocolate-velvet.png", bg: "#cde4ea" },
+    { name: "Lemon Cake Delight",   image: "images/lemon-cake-delight.png", bg: "#cde4ea" },
+    { name: "Moka",                 image: "images/moka.png", bg: "#cde4ea" },
+    { name: "Pineapple Paradise",   image: "images/pineapple-paradise.png", bg: "#cde4ea" },
+    { name: "Simply Coconut",       image: "images/simply-coconut.png", bg: "#cde4ea" },
+    { name: "Salted White",         image: "images/salted-white.png", bg: "#cde4ea" }
   ];
 
   const state = {
@@ -354,22 +356,16 @@
     return str.replace(/\s+/g, "_").replace(/[^a-zA-Z0-9_]/g, "");
   }
 
-  // ============================
-  // NZ LOCAL TIMESTAMP FUNCTION
-  // ============================
   function getLocalTimestamp() {
     const d = new Date();
-
     const day = String(d.getDate()).padStart(2, "0");
     const month = String(d.getMonth() + 1).padStart(2, "0");
     const year = d.getFullYear();
-
     let hours = d.getHours();
     const minutes = String(d.getMinutes()).padStart(2, "0");
     const ampm = hours >= 12 ? "PM" : "AM";
     hours = hours % 12;
     hours = hours ? hours : 12;
-
     return `${day}/${month}/${year} ${hours}:${minutes} ${ampm}`;
   }
 
@@ -411,6 +407,10 @@
       const safeId = cssSafe(f.name);
       const card = document.createElement("div");
       card.className = "flavour-card";
+
+      /* APPLY CUSTOM BACKGROUND IF SET */
+      if (f.bg) card.style.background = f.bg;
+
       card.innerHTML = `
         <div class="flavour-top">
           <img src="${f.image}" alt="${f.name}" class="flavour-image" />
@@ -489,17 +489,12 @@
 
     document.getElementById("cancel-btn").addEventListener("click", resetAll);
 
-    // DONE button with tap sound + double-click prevention
     document.getElementById("done-btn").addEventListener("click", async () => {
       const btn = document.getElementById("done-btn");
-
       if (btn.disabled) return;
-
       document.getElementById("tap-sound").play();
       btn.disabled = true;
-
       await submitOrder();
-
       setTimeout(() => { btn.disabled = false; }, 800);
     });
   }
@@ -581,7 +576,6 @@
 
     document.getElementById("saving-indicator").style.display = "inline";
 
-    // USE NZ LOCAL TIME HERE:
     const payload = {
       timestamp: getLocalTimestamp(),
       customers: state.customers,
@@ -641,4 +635,3 @@
 
 </body>
 </html>
-
