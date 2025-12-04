@@ -9,11 +9,14 @@
       --bg-main: #f4efea;
       --card-bg: #ffffff;
       --accent: #077791;
-      --accent-soft: #c8c3b8;
+      --accent-soft: #dfdbd2;
       --danger: #c62828;
       --success: #2e7d32;
       --text-main: #333333;
       --text-soft: #777777;
+
+      /* NEW grey background colour */
+      --grey-card: #c8c3b8;
     }
     * { box-sizing: border-box; }
     body {
@@ -66,7 +69,11 @@
       margin: 6px 0;
     }
     .label { font-size: 0.95rem; }
-    .price { font-size: 0.8rem; color: var(--text-soft); margin-left: 6px; }
+    .price {
+      font-size: 0.8rem;
+      color: var(--text-soft);
+      margin-left: 6px;
+    }
     .controls { display: flex; align-items: center; gap: 6px; }
     button.btn {
       border: none;
@@ -88,7 +95,6 @@
       font-weight: 700;
       font-size: 1.05rem;
     }
-
     .flavour-grid {
       display: grid;
       grid-template-columns: repeat(auto-fill, minmax(155px, 1fr));
@@ -98,7 +104,7 @@
       padding-right: 4px;
     }
     .flavour-card {
-      background: #ffffff;
+      background: var(--card-bg);
       border: 2px solid var(--accent);
       border-radius: 16px;
       padding: 8px;
@@ -107,6 +113,12 @@
       flex-direction: column;
       justify-content: space-between;
     }
+
+    /* NEW CLASS FOR GREY FLAVOURS */
+    .flavour-card.grey {
+      background: var(--grey-card) !important;
+    }
+
     .flavour-top {
       display: flex;
       align-items: center;
@@ -122,14 +134,12 @@
       background: #eee;
     }
     .flavour-name { font-size: 0.9rem; font-weight: 600; }
-
     .flavour-controls {
       display: flex;
       align-items: center;
       justify-content: flex-end;
       gap: 6px;
     }
-
     .summary {
       margin-top: 6px;
       font-size: 0.85rem;
@@ -137,14 +147,12 @@
       color: var(--text-soft);
       min-height: 40px;
     }
-
     .payment-options {
       display: flex;
       gap: 10px;
       flex-wrap: wrap;
       margin-bottom: 8px;
     }
-
     .payment-options label {
       background: #f3f3f3;
       padding: 4px 8px;
@@ -155,7 +163,6 @@
       align-items: center;
       gap: 5px;
     }
-
     #mixed-fields {
       display: none;
       margin-top: 6px;
@@ -163,7 +170,6 @@
       background: #f9f9f9;
       border-radius: 10px;
     }
-
     #mixed-fields input {
       width: 120px;
       padding: 6px;
@@ -171,7 +177,6 @@
       border: 1px solid #ccc;
       font-size: 1rem;
     }
-
     #saving-indicator {
       display: none;
       font-size: 1rem;
@@ -179,9 +184,7 @@
       font-weight: 600;
       animation: pulse 0.6s infinite alternate;
     }
-
     @keyframes pulse { from { opacity: .4; } to { opacity: 1; } }
-
     .bottom-bar {
       position: sticky;
       bottom: 0;
@@ -192,11 +195,11 @@
       display: flex;
       align-items: center;
     }
-
-    .total { font-size: 1.1rem; font-weight: 700; }
-
+    .total {
+      font-size: 1.1rem;
+      font-weight: 700;
+    }
     .bottom-buttons { margin-left: auto; display: flex; gap: 8px; }
-
     .action {
       border: none;
       border-radius: 999px;
@@ -206,10 +209,8 @@
       cursor: pointer;
       user-select: none;
     }
-
     .cancel { background: #c62828; color: white; }
     .done { background: var(--accent); color: white; }
-
     #success-popup {
       position: fixed;
       bottom: 20px;
@@ -229,7 +230,6 @@
       opacity: 1;
       transform: translateX(-50%) translateY(0);
     }
-
     @media (max-width: 900px) {
       .sections { grid-template-columns: 1fr; }
     }
@@ -242,7 +242,6 @@
 
     <div class="sections">
       <div>
-
         <section id="customer-section">
           <h2>Customer Type <span>Adults, kids, online</span></h2>
         </section>
@@ -298,10 +297,12 @@
 
   <div id="success-popup">Order Saved!</div>
 
+  <!-- TAP SOUND -->
   <audio id="tap-sound">
     <source src="https://actions.google.com/sounds/v1/cartoon/pop.ogg" type="audio/ogg">
   </audio>
 
+  <!-- CASH SOUND -->
   <audio id="cash-sound">
     <source src="https://actions.google.com/sounds/v1/cartoon/clang_and_wobble.ogg" type="audio/ogg">
   </audio>
@@ -324,7 +325,6 @@
     { key: "tub", label: "Takeaway", price: 19 }
   ];
 
-  //  FLAVOUR DATA
   const flavourData = [
     { name: "Biscoff",              image: "images/biscoff.png" },
     { name: "Black Sand Piha",      image: "images/black-sand-piha.png" },
@@ -336,28 +336,17 @@
     { name: "Reese's Peanut Butter",image: "images/reeses-peanut-butter.png" },
     { name: "Strawberry Dream",     image: "images/strawberry-dream.png" },
     { name: "Vanilla Oreo",         image: "images/vanilla-oreo.png" },
-    { name: "Amarena",              image: "images/amarena.png" },
-    { name: "Banana Caramel",       image: "images/banana-caramel.png" },
-    { name: "Cookie Crumble",       image: "images/cookie-crumble.png" },
-    { name: "Chocolate Velvet",     image: "images/chocolate-velvet.png" },
-    { name: "Lemon Cake Delight",   image: "images/lemon-cake-delight.png" },
-    { name: "Moka",                 image: "images/moka.png" },
-    { name: "Pineapple Paradise",   image: "images/pineapple-paradise.png" },
-    { name: "Simply Coconut",       image: "images/simply-coconut.png" },
-    { name: "Salted White",         image: "images/salted-white.png" }
-  ];
 
-  //  ⭐ NEW: Grey background flavours
-  const greyBackgroundFlavours = [
-    "Amarena",
-    "Banana Caramel",
-    "Cookie Crumble",
-    "Chocolate Velvet",
-    "Lemon Cake Delight",
-    "Moka",
-    "Pineapple Paradise",
-    "Simply Coconut",
-    "Salted White"
+    /* GREY COLLECTION */
+    { name: "Amarena",              image: "images/amarena.png", grey: true },
+    { name: "Banana Caramel",       image: "images/banana-caramel.png", grey: true },
+    { name: "Cookie Crumble",       image: "images/cookie-crumble.png", grey: true },
+    { name: "Chocolate Velvet",     image: "images/chocolate-velvet.png", grey: true },
+    { name: "Lemon Cake Delight",   image: "images/lemon-cake-delight.png", grey: true },
+    { name: "Moka",                 image: "images/moka.png", grey: true },
+    { name: "Pineapple Paradise",   image: "images/pineapple-paradise.png", grey: true },
+    { name: "Simply Coconut",       image: "images/simply-coconut.png", grey: true },
+    { name: "Salted White",         image: "images/salted-white.png", grey: true }
   ];
 
   const state = {
@@ -381,10 +370,12 @@
     const day = String(d.getDate()).padStart(2, "0");
     const month = String(d.getMonth() + 1).padStart(2, "0");
     const year = d.getFullYear();
+
     let hours = d.getHours();
     const minutes = String(d.getMinutes()).padStart(2, "0");
     const ampm = hours >= 12 ? "PM" : "AM";
     hours = hours % 12 || 12;
+
     return `${day}/${month}/${year} ${hours}:${minutes} ${ampm}`;
   }
 
@@ -422,15 +413,14 @@
 
   function renderFlavours() {
     const grid = document.getElementById("flavour-grid");
+
     flavourData.forEach(f => {
       const safeId = cssSafe(f.name);
+
       const card = document.createElement("div");
       card.className = "flavour-card";
 
-      //  ⭐ Apply grey background if flavour matches list
-      if (greyBackgroundFlavours.includes(f.name)) {
-        card.style.background = "#c8c3b8";
-      }
+      if (f.grey) card.classList.add("grey");
 
       card.innerHTML = `
         <div class="flavour-top">
@@ -482,13 +472,9 @@
 
     document.querySelectorAll('input[name="payment"]').forEach(radio =>
       radio.addEventListener("change", () => {
-        state.payment = document.querySelector(
-          'input[name="payment"]:checked'
-        ).value;
-
+        state.payment = document.querySelector('input[name="payment"]:checked').value;
         document.getElementById("mixed-fields").style.display =
           state.payment === "mixed" ? "block" : "none";
-
         updateSummary();
       })
     );
@@ -496,15 +482,12 @@
     document.getElementById("card-input").addEventListener("input", () => {
       const total = calcTotal();
       let val = parseFloat(document.getElementById("card-input").value || "0");
-
       if (val > total) {
         val = total;
         document.getElementById("card-input").value = total.toFixed(2);
       }
-
       state.cardAmount = val;
       const cash = total - val;
-
       document.getElementById("cash-output").textContent = `$${cash.toFixed(2)}`;
     });
 
@@ -619,10 +602,11 @@
       });
 
       document.getElementById("saving-indicator").style.display = "none";
+
       document.getElementById("cash-sound").play();
       showPopup();
-      resetAll();
 
+      resetAll();
     } catch (err) {
       document.getElementById("saving-indicator").style.display = "none";
       alert("Error sending order.");
