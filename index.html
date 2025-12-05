@@ -92,6 +92,8 @@
       font-weight: 700;
       font-size: 1.05rem;
     }
+
+    /* --- FLAVOUR CARD STYLES WITH SELECT BORDER --- */
     .flavour-grid {
       display: grid;
       grid-template-columns: repeat(auto-fill, minmax(155px, 1fr));
@@ -102,13 +104,17 @@
     }
     .flavour-card {
       background: #ffffff;
-      border: 2px solid var(--accent);
+      border: 2px solid transparent; /* Default: no border */
       border-radius: 16px;
       padding: 8px;
       box-shadow: 0 1px 4px rgba(0,0,0,0.06);
       display: flex;
       flex-direction: column;
       justify-content: space-between;
+      transition: border 0.2s ease;
+    }
+    .flavour-card.active {
+      border-color: var(--accent); /* Show border when selected */
     }
     .flavour-top {
       display: flex;
@@ -131,6 +137,7 @@
       justify-content: flex-end;
       gap: 6px;
     }
+
     .summary {
       margin-top: 6px;
       font-size: 0.85rem;
@@ -176,6 +183,7 @@
       animation: pulse 0.6s infinite alternate;
     }
     @keyframes pulse { from { opacity: .4; } to { opacity: 1; } }
+
     .bottom-bar {
       position: sticky;
       bottom: 0;
@@ -202,6 +210,7 @@
     }
     .cancel { background: #c62828; color: white; }
     .done { background: var(--accent); color: white; }
+
     #success-popup {
       position: fixed;
       bottom: 20px;
@@ -300,7 +309,7 @@
 
 <script>
   const GOOGLE_SCRIPT_URL =
-    "https://script.google.com/macros/s/AKfycbw8Suc6FTas9VKNOXaZweh27dqVe12EpoySMJUchLtpAGtSiTcEo0k2CYKXlPFvx9RB/exec";
+    "YOUR_GOOGLE_URL_HERE";
 
   const customerTypes = [
     { key: "adult", label: "Adult" },
@@ -317,27 +326,26 @@
   ];
 
   const flavourData = [
-    { name: "Biscoff",              image: "images/biscoff.png" },
-    { name: "Black Sand Piha",      image: "images/black-sand-piha.png" },
-    { name: "Dark Choco Brownie",   image: "images/dark-choco-brownie.png" },
-    { name: "Dulce de Leche",       image: "images/dulce-de-leche.png" },
-    { name: "Hazelnut Crunch",      image: "images/hazelnut-crunch.png" },
-    { name: "Mango Bliss",          image: "images/mango-bliss.png" },
-    { name: "Menta Cioccolato",     image: "images/menta-cioccolato.png" },
-    { name: "Reese's Peanut Butter",image: "images/reeses-peanut-butter.png" },
-    { name: "Strawberry Dream",     image: "images/strawberry-dream.png" },
-    { name: "Vanilla Oreo",         image: "images/vanilla-oreo.png" },
+    { name: "Biscoff", image: "images/biscoff.png" },
+    { name: "Black Sand Piha", image: "images/black-sand-piha.png" },
+    { name: "Dark Choco Brownie", image: "images/dark-choco-brownie.png" },
+    { name: "Dulce de Leche", image: "images/dulce-de-leche.png" },
+    { name: "Hazelnut Crunch", image: "images/hazelnut-crunch.png" },
+    { name: "Mango Bliss", image: "images/mango-bliss.png" },
+    { name: "Menta Cioccolato", image: "images/menta-cioccolato.png" },
+    { name: "Reese's Peanut Butter", image: "images/reeses-peanut-butter.png" },
+    { name: "Strawberry Dream", image: "images/strawberry-dream.png" },
+    { name: "Vanilla Oreo", image: "images/vanilla-oreo.png" },
 
-    /* ---- SPECIAL BACKGROUNDS ---- */
-    { name: "Amarena",              image: "images/amarena.png", bg: "#cde4ea" },
-    { name: "Banana Caramel",       image: "images/banana-caramel.png", bg: "#cde4ea" },
-    { name: "Cookie Crumble",       image: "images/cookie-crumble.png", bg: "#cde4ea" },
-    { name: "Chocolate Velvet",     image: "images/chocolate-velvet.png", bg: "#cde4ea" },
-    { name: "Lemon Cake Delight",   image: "images/lemon-cake-delight.png", bg: "#cde4ea" },
-    { name: "Moka",                 image: "images/moka.png", bg: "#cde4ea" },
-    { name: "Pineapple Paradise",   image: "images/pineapple-paradise.png", bg: "#cde4ea" },
-    { name: "Simply Coconut",       image: "images/simply-coconut.png", bg: "#cde4ea" },
-    { name: "Salted White",         image: "images/salted-white.png", bg: "#cde4ea" }
+    { name: "Amarena", image: "images/amarena.png", bg: "#cde4ea" },
+    { name: "Banana Caramel", image: "images/banana-caramel.png", bg: "#cde4ea" },
+    { name: "Cookie Crumble", image: "images/cookie-crumble.png", bg: "#cde4ea" },
+    { name: "Chocolate Velvet", image: "images/chocolate-velvet.png", bg: "#cde4ea" },
+    { name: "Lemon Cake Delight", image: "images/lemon-cake-delight.png", bg: "#cde4ea" },
+    { name: "Moka", image: "images/moka.png", bg: "#cde4ea" },
+    { name: "Pineapple Paradise", image: "images/pineapple-paradise.png", bg: "#cde4ea" },
+    { name: "Simply Coconut", image: "images/simply-coconut.png", bg: "#cde4ea" },
+    { name: "Salted White", image: "images/salted-white.png", bg: "#cde4ea" }
   ];
 
   const state = {
@@ -408,7 +416,6 @@
       const card = document.createElement("div");
       card.className = "flavour-card";
 
-      /* APPLY CUSTOM BACKGROUND IF SET */
       if (f.bg) card.style.background = f.bg;
 
       card.innerHTML = `
@@ -452,8 +459,19 @@
       }
 
       if (type === "flavour") {
-        state.flavours[key] = Math.max(0, state.flavours[key] + delta);
-        document.getElementById(`flavour-${cssSafe(key)}`).textContent = state.flavours[key];
+        const newVal = Math.max(0, state.flavours[key] + delta);
+        state.flavours[key] = newVal;
+
+        const countEl = document.getElementById(`flavour-${cssSafe(key)}`);
+        countEl.textContent = newVal;
+
+        const card = countEl.closest(".flavour-card");
+
+        if (newVal > 0) {
+          card.classList.add("active");
+        } else {
+          card.classList.remove("active");
+        }
       }
 
       updateSummary();
@@ -546,7 +564,11 @@
 
     flavourData.forEach(f => {
       state.flavours[f.name] = 0;
-      document.getElementById(`flavour-${cssSafe(f.name)}`).textContent = "0";
+      const id = cssSafe(f.name);
+      document.getElementById(`flavour-${id}`).textContent = "0";
+
+      const card = document.getElementById(`flavour-${id}`).closest(".flavour-card");
+      card.classList.remove("active");
     });
 
     state.payment = "card";
