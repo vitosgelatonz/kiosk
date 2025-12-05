@@ -139,7 +139,7 @@
       min-height: 40px;
     }
 
-    /* ✅ ONLY CHANGE YOU REQUESTED — bigger payment buttons */
+    /* ✅ ONLY CHANGE — Bigger Card/Cash/Mixed buttons */
     .payment-options {
       display: flex;
       gap: 10px;
@@ -148,16 +148,13 @@
     }
     .payment-options label {
       background: #f3f3f3;
-      padding: 6px 12px; /* bigger */
+      padding: 6px 12px;   /* bigger */
       border-radius: 999px;
-      font-size: 1.05rem; /* bigger */
+      font-size: 1.05rem;  /* bigger */
       cursor: pointer;
       display: flex;
       align-items: center;
-      gap: 6px;
-    }
-    .payment-options input {
-      transform: scale(1.25); /* bigger radio */
+      gap: 5px;
     }
 
     #mixed-fields {
@@ -322,9 +319,330 @@
   const flavourData = [
     { name: "Biscoff",              image: "images/biscoff.png" },
     { name: "Black Sand Piha",      image: "images/black-sand-piha.png" },
-    {
-       … (NOTE: YOUR SCRIPT CONTINUES *UNCHANGED*)
+    { name: "Dark Choco Brownie",   image: "images/dark-choco-brownie.png" },
+    { name: "Dulce de Leche",       image: "images/dulce-de-leche.png" },
+    { name: "Hazelnut Crunch",      image: "images/hazelnut-crunch.png" },
+    { name: "Mango Bliss",          image: "images/mango-bliss.png" },
+    { name: "Menta Cioccolato",     image: "images/menta-cioccolato.png" },
+    { name: "Reese's Peanut Butter",image: "images/reeses-peanut-butter.png" },
+    { name: "Strawberry Dream",     image: "images/strawberry-dream.png" },
+    { name: "Vanilla Oreo",         image: "images/vanilla-oreo.png" },
+
+    { name: "Amarena",              image: "images/amarena.png", bg: "#cde4ea" },
+    { name: "Banana Caramel",       image: "images/banana-caramel.png", bg: "#cde4ea" },
+    { name: "Cookie Crumble",       image: "images/cookie-crumble.png", bg: "#cde4ea" },
+    { name: "Chocolate Velvet",     image: "images/chocolate-velvet.png", bg: "#cde4ea" },
+    { name: "Lemon Cake Delight",   image: "images/lemon-cake-delight.png", bg: "#cde4ea" },
+    { name: "Moka",                 image: "images/moka.png", bg: "#cde4ea" },
+    { name: "Pineapple Paradise",   image: "images/pineapple-paradise.png", bg: "#cde4ea" },
+    { name: "Simply Coconut",       image: "images/simply-coconut.png", bg: "#cde4ea" },
+    { name: "Salted White",         image: "images/salted-white.png", bg: "#cde4ea" }
+  ];
+
+  const state = {
+    customers: {},
+    sizes: {},
+    flavours: {},
+    payment: "card",
+    cardAmount: 0
+  };
+
+  customerTypes.forEach(c => state.customers[c.key] = 0);
+  sizes.forEach(s => state.sizes[s.key] = 0);
+  flavourData.forEach(f => state.flavours[f.name] = 0);
+
+  function cssSafe(str) {
+    return str.replace(/\s+/g, "_").replace(/[^a-zA-Z0-9_]/g, "");
+  }
+
+  function getLocalTimestamp() {
+    const d = new Date();
+    const day = String(d.getDate()).padStart(2, "0");
+    const month = String(d.getMonth() + 1).padStart(2, "0");
+    const year = d.getFullYear();
+    let hours = d.getHours();
+    const minutes = String(d.getMinutes()).padStart(2, "0");
+    const ampm = hours >= 12 ? "PM" : "AM";
+    hours = hours % 12;
+    hours = hours ? hours : 12;
+    return `${day}/${month}/${year} ${hours}:${minutes} ${ampm}`;
+  }
+
+  function renderCustomerSection() {
+    const container = document.getElementById("customer-section");
+    customerTypes.forEach(ct => {
+      const row = document.createElement("div");
+      row.className = "row";
+      row.innerHTML = `
+        <div class="label">${ct.label}</div>
+        <div class="controls">
+          <button class="btn btn-minus" data-type="customer" data-key="${ct.key}" data-delta="-1">−</button>
+          <span class="count" id="customer-${ct.key}">0</span>
+          <button class="btn btn-plus" data-type="customer" data-key="${ct.key}" data-delta="1">+</button>
+        </div>`;
+      container.appendChild(row);
+    });
+  }
+
+  function renderSizeSection() {
+    const container = document.getElementById("size-section");
+    sizes.forEach(sz => {
+      const row = document.createElement("div");
+      row.className = "row";
+      row.innerHTML = `
+        <div class="label">${sz.label} <span class="price">$${sz.price.toFixed(2)}</span></div>
+        <div class="controls">
+          <button class="btn btn-minus" data-type="size" data-key="${sz.key}" data-delta="-1">−</button>
+          <span class="count" id="size-${sz.key}">0</span>
+          <button class="btn btn-plus" data-type="size" data-key="${sz.key}" data-delta="1">+</button>
+        </div>`;
+      container.appendChild(row);
+    });
+  }
+
+  function renderFlavours() {
+    const grid = document.getElementById("flavour-grid");
+    flavourData.forEach(f => {
+      const safeId = cssSafe(f.name);
+      const card = document.createElement("div");
+      card.className = "flavour-card";
+
+      if (f.bg) card.style.background = f.bg;
+
+      card.innerHTML = `
+        <div class="flavour-top">
+          <img src="${f.image}" alt="${f.name}" class="flavour-image" />
+          <div class="flavour-name">${f.name}</div>
+        </div>
+        <div class="flavour-controls">
+          <button class="btn btn-minus" data-type="flavour" data-key="${f.name}" data-delta="-1">−</button>
+          <span class="count" id="flavour-${safeId}">0</span>
+          <button class="btn btn-plus" data-type="flavour" data-key="${f.name}" data-delta="1">+</button>
+        </div>`;
+      grid.appendChild(card);
+    });
+  }
+
+  function updateFlavourBorders() {
+    const cards = document.querySelectorAll(".flavour-card");
+    cards.forEach((card, index) => {
+      const f = flavourData[index];
+      const count = state.flavours[f.name];
+      card.style.borderColor = count > 0 ? "var(--accent)" : "transparent";
+    });
+  }
+
+  function showPopup() {
+    const popup = document.getElementById("success-popup");
+    popup.classList.add("show");
+    setTimeout(() => popup.classList.remove("show"), 1800);
+  }
+
+  function attachHandlers() {
+    document.body.addEventListener("click", e => {
+      const btn = e.target.closest("button");
+      if (!btn) return;
+
+      const type = btn.dataset.type;
+      const key = btn.dataset.key;
+      const delta = parseInt(btn.dataset.delta || "0", 10);
+
+      if (type === "customer") {
+        state.customers[key] = Math.max(0, state.customers[key] + delta);
+        document.getElementById(`customer-${key}`).textContent = state.customers[key];
+      }
+
+      if (type === "size") {
+        state.sizes[key] = Math.max(0, state.sizes[key] + delta);
+        document.getElementById(`size-${key}`).textContent = state.sizes[key];
+        updateTotal();
+      }
+
+      if (type === "flavour") {
+        state.flavours[key] = Math.max(0, state.flavours[key] + delta);
+        document.getElementById(`flavour-${cssSafe(key)}`).textContent = state.flavours[key];
+
+        updateFlavourBorders();
+      }
+
+      updateSummary();
+    });
+
+    document.querySelectorAll('input[name="payment"]').forEach(radio =>
+      radio.addEventListener("change", () => {
+        state.payment = document.querySelector(
+          'input[name="payment"]:checked'
+        ).value;
+
+        document.getElementById("mixed-fields").style.display =
+          state.payment === "mixed" ? "block" : "none";
+
+        updateSummary();
+      })
+    );
+
+    document.getElementById("card-input").addEventListener("input", () => {
+      const total = calcTotal();
+      let val = parseFloat(document.getElementById("card-input").value || "0");
+
+      if (val > total) {
+        val = total;
+        document.getElementById("card-input").value = total.toFixed(2);
+      }
+
+      state.cardAmount = val;
+      const cash = total - val;
+
+      document.getElementById("cash-output").textContent = `$${cash.toFixed(2)}`;
+    });
+
+    document.getElementById("cancel-btn").addEventListener("click", resetAll);
+
+    document.getElementById("done-btn").addEventListener("click", async () => {
+      const btn = document.getElementById("done-btn");
+      if (btn.disabled) return;
+      document.getElementById("tap-sound").play();
+      btn.disabled = true;
+      await submitOrder();
+      setTimeout(() => { btn.disabled = false; }, 800);
+    });
+  }
+
+  function calcTotal() {
+    return sizes.reduce((sum, sz) => sum + state.sizes[sz.key] * sz.price, 0);
+  }
+
+  function updateTotal() {
+    document.getElementById("total-box").textContent =
+      `Total: $${calcTotal().toFixed(2)}`;
+  }
+
+  function updateSummary() {
+    const parts = [];
+
+    const custParts = customerTypes
+      .filter(ct => state.customers[ct.key] > 0)
+      .map(ct => `${ct.label}: ${state.customers[ct.key]}`);
+
+    const sizeParts = sizes
+      .filter(sz => state.sizes[sz.key] > 0)
+      .map(sz => `${sz.label}: ${state.sizes[sz.key]}`);
+
+    const flavourParts = flavourData
+      .filter(f => state.flavours[f.name] > 0)
+      .map(f => `${f.name}: ${f.flavours[f.name]}`);
+
+    if (custParts.length) parts.push("Customers – " + custParts.join(", "));
+    if (sizeParts.length) parts.push("Sizes – " + sizeParts.join(", "));
+    if (flavourParts.length) parts.push("Flavours – " + flavourParts.join(", "));
+
+    parts.push("Payment: " + state.payment.toUpperCase());
+    parts.push("Total: $" + calcTotal().toFixed(2));
+
+    document.getElementById("summary-box").textContent = parts.join(" | ");
+  }
+
+  function resetAll() {
+    customerTypes.forEach(ct => {
+      state.customers[ct.key] = 0;
+      document.getElementById(`customer-${ct.key}`).textContent = "0";
+    });
+
+    sizes.forEach(sz => {
+      state.sizes[sz.key] = 0;
+      document.getElementById(`size-${sz.key}`).textContent = "0";
+    });
+
+    flavourData.forEach(f => {
+      state.flavours[f.name] = 0;
+      document.getElementById(`flavour-${cssSafe(f.name)}`).textContent = "0";
+    });
+
+    updateFlavourBorders();
+
+    state.payment = "card";
+    state.cardAmount = 0;
+
+    document.querySelector('input[name="payment"][value="card"]').checked = true;
+    document.getElementById("mixed-fields").style.display = "none";
+    document.getElementById("card-input").value = "";
+    document.getElementById("cash-output").textContent = "$0.00";
+
+    updateTotal();
+    updateSummary();
+  }
+
+  async function submitOrder() {
+    const total = calcTotal();
+
+    if (total === 0) {
+      alert("No sizes selected yet.");
+      return;
     }
+
+    if (state.payment === "mixed" && state.cardAmount > total) {
+      alert("Card amount cannot exceed total.");
+      return;
+    }
+
+    document.getElementById("saving-indicator").style.display = "inline";
+
+    const payload = {
+      timestamp: getLocalTimestamp(),
+      customers: state.customers,
+      sizes: state.sizes,
+      flavours: state.flavours,
+      payment: state.payment,
+      cardAmount: state.cardAmount,
+      total
+    };
+
+    try {
+      await fetch(GOOGLE_SCRIPT_URL, {
+        method: "POST",
+        mode: "no-cors",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ row: payload })
+      });
+
+      document.getElementById("saving-indicator").style.display = "none";
+
+      document.getElementById("cash-sound").play();
+      showPopup();
+
+      resetAll();
+    } catch (err) {
+      document.getElementById("saving-indicator").style.display = "none";
+      alert("Error sending order.");
+    }
+  }
+
+  function unlockSounds() {
+    const tap = document.getElementById("tap-sound");
+    const cash = document.getElementById("cash-sound");
+
+    tap.play().then(() => {
+      tap.pause();
+      tap.currentTime = 0;
+    });
+
+    cash.play().then(() => {
+      cash.pause();
+      cash.currentTime = 0;
+    });
+
+    document.removeEventListener("click", unlockSounds);
+  }
+
+  document.addEventListener("click", unlockSounds);
+
+  renderCustomerSection();
+  renderSizeSection();
+  renderFlavours();
+  updateFlavourBorders();
+  attachHandlers();
+  updateTotal();
+  updateSummary();
 </script>
 
 </body>
