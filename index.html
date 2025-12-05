@@ -139,7 +139,7 @@
       min-height: 40px;
     }
 
-    /* ✅ ONLY CHANGE — Bigger Card/Cash/Mixed buttons */
+    /* Larger payment options */
     .payment-options {
       display: flex;
       gap: 10px;
@@ -148,9 +148,9 @@
     }
     .payment-options label {
       background: #f3f3f3;
-      padding: 6px 12px;   /* bigger */
+      padding: 6px 12px;
       border-radius: 999px;
-      font-size: 1.05rem;  /* bigger */
+      font-size: 1.05rem;
       cursor: pointer;
       display: flex;
       align-items: center;
@@ -336,7 +336,10 @@
     { name: "Moka",                 image: "images/moka.png", bg: "#cde4ea" },
     { name: "Pineapple Paradise",   image: "images/pineapple-paradise.png", bg: "#cde4ea" },
     { name: "Simply Coconut",       image: "images/simply-coconut.png", bg: "#cde4ea" },
-    { name: "Salted White",         image: "images/salted-white.png", bg: "#cde4ea" }
+    { name: "Salted White",         image: "images/salted-white.png", bg: "#cde4ea" },
+
+    /* ✅ NEW FLAVOUR ADDED */
+    { name: "Pup Cup",              image: "images/pup-cup.png", bg: "#cde4ea" }
   ];
 
   const state = {
@@ -530,7 +533,7 @@
 
     const flavourParts = flavourData
       .filter(f => state.flavours[f.name] > 0)
-      .map(f => `${f.name}: ${f.flavours[f.name]}`);
+      .map(f => `${f.name}: ${state.flavours[f.name]}`);
 
     if (custParts.length) parts.push("Customers – " + custParts.join(", "));
     if (sizeParts.length) parts.push("Sizes – " + sizeParts.join(", "));
@@ -607,7 +610,7 @@
 
       document.getElementById("saving-indicator").style.display = "none";
 
-      document.getElementById("cash-sound").play();
+      document.getEmElementById("cash-sound").play();
       showPopup();
 
       resetAll();
