@@ -58,24 +58,20 @@
       font-size: 1.05rem;
       font-weight: 600;
     }
-
-    /* ⭐ FIX: restore proper subtitle size */
-    section h2 span {
-      font-size: 0.8rem !important;
-      opacity: 0.9;
-      font-weight: normal;
-    }
-
+    section h2 span { font-size: 0.8rem; opacity: 0.9; }
     .row {
       display: flex;
       align-items: center;
       justify-content: space-between;
       margin: 6px 0;
     }
-    .controls { display: flex; align-items: center; gap: 6px; }
     .label { font-size: 0.95rem; }
-    .price { font-size: 0.8rem; color: var(--text-soft); margin-left: 6px; }
-
+    .price {
+      font-size: 0.8rem;
+      color: var(--text-soft);
+      margin-left: 6px;
+    }
+    .controls { display: flex; align-items: center; gap: 6px; }
     button.btn {
       border: none;
       border-radius: 999px;
@@ -86,6 +82,7 @@
       display: flex;
       align-items: center;
       justify-content: center;
+      touch-action: manipulation;
     }
     .btn-plus { background: var(--success); color: #fff; }
     .btn-minus { background: var(--danger); color: #fff; }
@@ -95,8 +92,6 @@
       font-weight: 700;
       font-size: 1.05rem;
     }
-
-    /* -------- FLAVOUR CARDS -------- */
     .flavour-grid {
       display: grid;
       grid-template-columns: repeat(auto-fill, minmax(155px, 1fr));
@@ -105,69 +100,82 @@
       overflow-y: auto;
       padding-right: 4px;
     }
-
     .flavour-card {
       background: #ffffff;
-      border: 3px solid transparent;
+      border: 2px solid var(--accent);
       border-radius: 16px;
       padding: 8px;
       box-shadow: 0 1px 4px rgba(0,0,0,0.06);
       display: flex;
       flex-direction: column;
       justify-content: space-between;
-      transition: border-color 0.2s ease;
     }
-
-    .flavour-card.active {
-      border-color: var(--accent);
+    .flavour-top {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      margin-bottom: 4px;
     }
-
-    .flavour-top { display: flex; align-items: center; gap: 8px; margin-bottom: 4px; }
     .flavour-image {
-      width: 36px; height: 36px; border-radius: 50%;
-      object-fit: cover; background: #eee;
+      width: 36px;
+      height: 36px;
+      border-radius: 50%;
+      object-fit: cover;
+      flex-shrink: 0;
+      background: #eee;
     }
     .flavour-name { font-size: 0.9rem; font-weight: 600; }
-    .flavour-controls { display: flex; justify-content: flex-end; gap: 6px; }
-
+    .flavour-controls {
+      display: flex;
+      align-items: center;
+      justify-content: flex-end;
+      gap: 6px;
+    }
     .summary {
       margin-top: 6px;
       font-size: 0.85rem;
+      line-height: 1.4;
       color: var(--text-soft);
       min-height: 40px;
     }
-
-    /* ---------- BIGGER PAYMENT BUTTONS, isolated safely ---------- */
-    #payment-section .payment-options label {
-      background: #f3f3f3;
-      padding: 10px 18px;
-      border-radius: 999px;
-      font-size: 1rem;
-      font-weight: 600;
-      cursor: pointer;
-      display: inline-flex;
-      align-items: center;
-      gap: 8px;
-      border: 2px solid transparent;
-    }
-    #payment-section .payment-options input[type="radio"] {
-      transform: scale(1.3);
-    }
-
     .payment-options {
       display: flex;
       gap: 10px;
-      flex-wrap: nowrap;
+      flex-wrap: wrap;
       margin-bottom: 8px;
     }
-
+    .payment-options label {
+      background: #f3f3f3;
+      padding: 4px 8px;
+      border-radius: 999px;
+      font-size: 0.9rem;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      gap: 5px;
+    }
     #mixed-fields {
       display: none;
+      margin-top: 6px;
       padding: 6px;
       background: #f9f9f9;
       border-radius: 10px;
     }
-
+    #mixed-fields input {
+      width: 120px;
+      padding: 6px;
+      border-radius: 6px;
+      border: 1px solid #ccc;
+      font-size: 1rem;
+    }
+    #saving-indicator {
+      display: none;
+      font-size: 1rem;
+      color: #333;
+      font-weight: 600;
+      animation: pulse 0.6s infinite alternate;
+    }
+    @keyframes pulse { from { opacity: .4; } to { opacity: 1; } }
     .bottom-bar {
       position: sticky;
       bottom: 0;
@@ -178,9 +186,10 @@
       display: flex;
       align-items: center;
     }
-
-    .total { font-size: 1.1rem; font-weight: 700; }
-
+    .total {
+      font-size: 1.1rem;
+      font-weight: 700;
+    }
     .bottom-buttons { margin-left: auto; display: flex; gap: 8px; }
     .action {
       border: none;
@@ -189,10 +198,10 @@
       font-size: 1rem;
       font-weight: 600;
       cursor: pointer;
+      user-select: none;
     }
     .cancel { background: #c62828; color: white; }
     .done { background: var(--accent); color: white; }
-
     #success-popup {
       position: fixed;
       bottom: 20px;
@@ -211,6 +220,9 @@
     #success-popup.show {
       opacity: 1;
       transform: translateX(-50%) translateY(0);
+    }
+    @media (max-width: 900px) {
+      .sections { grid-template-columns: 1fr; }
     }
   </style>
 </head>
@@ -239,10 +251,15 @@
           </div>
 
           <div id="mixed-fields">
-            <label>Card Amount:</label>
-            <input type="number" id="card-input" min="0" step="0.10">
-            <br>
-            Cash: <strong id="cash-output">$0.00</strong>
+            <div style="margin-bottom:6px;">
+              <label>Card Amount:</label><br>
+              <input type="number" id="card-input" min="0" step="0.10">
+            </div>
+
+            <div>
+              <label>Cash Amount:</label><br>
+              <strong id="cash-output">$0.00</strong>
+            </div>
           </div>
 
           <div class="summary" id="summary-box"></div>
@@ -257,7 +274,11 @@
 
     <div class="bottom-bar">
       <div class="total" id="total-box">Total: $0.00</div>
-      <div style="flex:1; text-align:center;"><span id="saving-indicator">Saving…</span></div>
+
+      <div style="flex:1; text-align:center;">
+        <span id="saving-indicator">Saving…</span>
+      </div>
+
       <div class="bottom-buttons">
         <button class="action cancel" id="cancel-btn">Cancel</button>
         <button class="action done" id="done-btn">Done</button>
@@ -267,8 +288,19 @@
 
   <div id="success-popup">Order Saved!</div>
 
+  <!-- TAP SOUND -->
+  <audio id="tap-sound">
+    <source src="https://actions.google.com/sounds/v1/cartoon/pop.ogg" type="audio/ogg">
+  </audio>
+
+  <!-- CASH SOUND -->
+  <audio id="cash-sound">
+    <source src="https://actions.google.com/sounds/v1/cartoon/clang_and_wobble.ogg" type="audio/ogg">
+  </audio>
+
 <script>
-  const GOOGLE_SCRIPT_URL = "YOUR_SCRIPT_URL_HERE";
+  const GOOGLE_SCRIPT_URL =
+    "https://script.google.com/macros/s/AKfycbw8Suc6FTas9VKNOXaZweh27dqVe12EpoySMJUchLtpAGtSiTcEo0k2CYKXlPFvx9RB/exec";
 
   const customerTypes = [
     { key: "adult", label: "Adult" },
@@ -285,26 +317,27 @@
   ];
 
   const flavourData = [
-    { name: "Biscoff", image: "images/biscoff.png" },
-    { name: "Black Sand Piha", image: "images/black-sand-piha.png" },
-    { name: "Dark Choco Brownie", image: "images/dark-choco-brownie.png" },
-    { name: "Dulce de Leche", image: "images/dulce-de-leche.png" },
-    { name: "Hazelnut Crunch", image: "images/hazelnut-crunch.png" },
-    { name: "Mango Bliss", image: "images/mango-bliss.png" },
-    { name: "Menta Cioccolato", image: "images/menta-cioccolato.png" },
-    { name: "Reese's Peanut Butter", image: "images/reeses-peanut-butter.png" },
-    { name: "Strawberry Dream", image: "images/strawberry-dream.png" },
-    { name: "Vanilla Oreo", image: "images/vanilla-oreo.png" },
+    { name: "Biscoff",              image: "images/biscoff.png" },
+    { name: "Black Sand Piha",      image: "images/black-sand-piha.png" },
+    { name: "Dark Choco Brownie",   image: "images/dark-choco-brownie.png" },
+    { name: "Dulce de Leche",       image: "images/dulce-de-leche.png" },
+    { name: "Hazelnut Crunch",      image: "images/hazelnut-crunch.png" },
+    { name: "Mango Bliss",          image: "images/mango-bliss.png" },
+    { name: "Menta Cioccolato",     image: "images/menta-cioccolato.png" },
+    { name: "Reese's Peanut Butter",image: "images/reeses-peanut-butter.png" },
+    { name: "Strawberry Dream",     image: "images/strawberry-dream.png" },
+    { name: "Vanilla Oreo",         image: "images/vanilla-oreo.png" },
 
-    { name: "Amarena", image: "images/amarena.png", bg: "#cde4ea" },
-    { name: "Banana Caramel", image: "images/banana-caramel.png", bg: "#cde4ea" },
-    { name: "Cookie Crumble", image: "images/cookie-crumble.png", bg: "#cde4ea" },
-    { name: "Chocolate Velvet", image: "images/chocolate-velvet.png", bg: "#cde4ea" },
-    { name: "Lemon Cake Delight", image: "images/lemon-cake-delight.png", bg: "#cde4ea" },
-    { name: "Moka", image: "images/moka.png", bg: "#cde4ea" },
-    { name: "Pineapple Paradise", image: "images/pineapple-paradise.png", bg: "#cde4ea" },
-    { name: "Simply Coconut", image: "images/simply-coconut.png", bg: "#cde4ea" },
-    { name: "Salted White", image: "images/salted-white.png", bg: "#cde4ea" }
+    /* ---- SPECIAL BACKGROUNDS ---- */
+    { name: "Amarena",              image: "images/amarena.png", bg: "#cde4ea" },
+    { name: "Banana Caramel",       image: "images/banana-caramel.png", bg: "#cde4ea" },
+    { name: "Cookie Crumble",       image: "images/cookie-crumble.png", bg: "#cde4ea" },
+    { name: "Chocolate Velvet",     image: "images/chocolate-velvet.png", bg: "#cde4ea" },
+    { name: "Lemon Cake Delight",   image: "images/lemon-cake-delight.png", bg: "#cde4ea" },
+    { name: "Moka",                 image: "images/moka.png", bg: "#cde4ea" },
+    { name: "Pineapple Paradise",   image: "images/pineapple-paradise.png", bg: "#cde4ea" },
+    { name: "Simply Coconut",       image: "images/simply-coconut.png", bg: "#cde4ea" },
+    { name: "Salted White",         image: "images/salted-white.png", bg: "#cde4ea" }
   ];
 
   const state = {
@@ -321,6 +354,19 @@
 
   function cssSafe(str) {
     return str.replace(/\s+/g, "_").replace(/[^a-zA-Z0-9_]/g, "");
+  }
+
+  function getLocalTimestamp() {
+    const d = new Date();
+    const day = String(d.getDate()).padStart(2, "0");
+    const month = String(d.getMonth() + 1).padStart(2, "0");
+    const year = d.getFullYear();
+    let hours = d.getHours();
+    const minutes = String(d.getMinutes()).padStart(2, "0");
+    const ampm = hours >= 12 ? "PM" : "AM";
+    hours = hours % 12;
+    hours = hours ? hours : 12;
+    return `${day}/${month}/${year} ${hours}:${minutes} ${ampm}`;
   }
 
   function renderCustomerSection() {
@@ -361,11 +407,13 @@
       const safeId = cssSafe(f.name);
       const card = document.createElement("div");
       card.className = "flavour-card";
+
+      /* APPLY CUSTOM BACKGROUND IF SET */
       if (f.bg) card.style.background = f.bg;
 
       card.innerHTML = `
         <div class="flavour-top">
-          <img src="${f.image}" class="flavour-image">
+          <img src="${f.image}" alt="${f.name}" class="flavour-image" />
           <div class="flavour-name">${f.name}</div>
         </div>
         <div class="flavour-controls">
@@ -375,6 +423,12 @@
         </div>`;
       grid.appendChild(card);
     });
+  }
+
+  function showPopup() {
+    const popup = document.getElementById("success-popup");
+    popup.classList.add("show");
+    setTimeout(() => popup.classList.remove("show"), 1800);
   }
 
   function attachHandlers() {
@@ -398,23 +452,15 @@
       }
 
       if (type === "flavour") {
-        const id = cssSafe(key);
-        const newVal = Math.max(0, state.flavours[key] + delta);
-        state.flavours[key] = newVal;
-
-        const countEl = document.getElementById(`flavour-${id}`);
-        countEl.textContent = newVal;
-
-        const card = countEl.closest(".flavour-card");
-        if (newVal > 0) card.classList.add("active");
-        else card.classList.remove("active");
+        state.flavours[key] = Math.max(0, state.flavours[key] + delta);
+        document.getElementById(`flavour-${cssSafe(key)}`).textContent = state.flavours[key];
       }
 
       updateSummary();
     });
 
-    document.querySelectorAll('input[name="payment"]').forEach(r =>
-      r.addEventListener("change", () => {
+    document.querySelectorAll('input[name="payment"]').forEach(radio =>
+      radio.addEventListener("change", () => {
         state.payment = document.querySelector(
           'input[name="payment"]:checked'
         ).value;
@@ -429,10 +475,16 @@
     document.getElementById("card-input").addEventListener("input", () => {
       const total = calcTotal();
       let val = parseFloat(document.getElementById("card-input").value || "0");
-      if (val > total) val = total;
+
+      if (val > total) {
+        val = total;
+        document.getElementById("card-input").value = total.toFixed(2);
+      }
+
       state.cardAmount = val;
-      document.getElementById("cash-output").textContent =
-        `$${(total - val).toFixed(2)}`;
+      const cash = total - val;
+
+      document.getElementById("cash-output").textContent = `$${cash.toFixed(2)}`;
     });
 
     document.getElementById("cancel-btn").addEventListener("click", resetAll);
@@ -440,9 +492,10 @@
     document.getElementById("done-btn").addEventListener("click", async () => {
       const btn = document.getElementById("done-btn");
       if (btn.disabled) return;
+      document.getElementById("tap-sound").play();
       btn.disabled = true;
       await submitOrder();
-      setTimeout(() => btn.disabled = false, 900);
+      setTimeout(() => { btn.disabled = false; }, 800);
     });
   }
 
@@ -463,7 +516,7 @@
       .map(ct => `${ct.label}: ${state.customers[ct.key]}`);
 
     const sizeParts = sizes
-      .filter(sz => state.sIZES[sz.key] > 0)
+      .filter(sz => state.sizes[sz.key] > 0)
       .map(sz => `${sz.label}: ${state.sizes[sz.key]}`);
 
     const flavourParts = flavourData
@@ -493,16 +546,16 @@
 
     flavourData.forEach(f => {
       state.flavours[f.name] = 0;
-      const id = cssSafe(f.name);
-      document.getElementById(`flavour-${id}`).textContent = "0";
-      const card = document.getElementById(`flavour-${id}`).closest(".flavour-card");
-      card.classList.remove("active");
+      document.getElementById(`flavour-${cssSafe(f.name)}`).textContent = "0";
     });
 
     state.payment = "card";
     state.cardAmount = 0;
 
     document.querySelector('input[name="payment"][value="card"]').checked = true;
+    document.getElementById("mixed-fields").style.display = "none";
+    document.getElementById("card-input").value = "";
+    document.getElementById("cash-output").textContent = "$0.00";
 
     updateTotal();
     updateSummary();
@@ -510,12 +563,21 @@
 
   async function submitOrder() {
     const total = calcTotal();
-    if (total === 0) return alert("Select at least one item.");
+
+    if (total === 0) {
+      alert("No sizes selected yet.");
+      return;
+    }
+
+    if (state.payment === "mixed" && state.cardAmount > total) {
+      alert("Card amount cannot exceed total.");
+      return;
+    }
 
     document.getElementById("saving-indicator").style.display = "inline";
 
     const payload = {
-      timestamp: new Date().toLocaleString(),
+      timestamp: getLocalTimestamp(),
       customers: state.customers,
       sizes: state.sizes,
       flavours: state.flavours,
@@ -533,15 +595,35 @@
       });
 
       document.getElementById("saving-indicator").style.display = "none";
-      document.getElementById("success-popup").classList.add("show");
-      setTimeout(() => document.getElementById("success-popup").classList.remove("show"), 1800);
+
+      document.getElementById("cash-sound").play();
+      showPopup();
 
       resetAll();
-    } catch {
-      alert("Error sending order.");
+    } catch (err) {
       document.getElementById("saving-indicator").style.display = "none";
+      alert("Error sending order.");
     }
   }
+
+  function unlockSounds() {
+    const tap = document.getElementById("tap-sound");
+    const cash = document.getElementById("cash-sound");
+
+    tap.play().then(() => {
+      tap.pause();
+      tap.currentTime = 0;
+    });
+
+    cash.play().then(() => {
+      cash.pause();
+      cash.currentTime = 0;
+    });
+
+    document.removeEventListener("click", unlockSounds);
+  }
+
+  document.addEventListener("click", unlockSounds);
 
   renderCustomerSection();
   renderSizeSection();
@@ -553,3 +635,5 @@
 
 </body>
 </html>
+
+
