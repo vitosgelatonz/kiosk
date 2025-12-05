@@ -59,6 +59,7 @@
       font-weight: 600;
     }
     section h2 span { font-size: 0.8rem; opacity: 0.9; }
+
     .row {
       display: flex;
       align-items: center;
@@ -92,6 +93,7 @@
       font-weight: 700;
       font-size: 1.05rem;
     }
+
     .flavour-grid {
       display: grid;
       grid-template-columns: repeat(auto-fill, minmax(155px, 1fr));
@@ -100,6 +102,7 @@
       overflow-y: auto;
       padding-right: 4px;
     }
+
     .flavour-card {
       background: #ffffff;
       border: 2px solid transparent;
@@ -110,6 +113,7 @@
       flex-direction: column;
       justify-content: space-between;
     }
+
     .flavour-top {
       display: flex;
       align-items: center;
@@ -131,6 +135,7 @@
       justify-content: flex-end;
       gap: 6px;
     }
+
     .summary {
       margin-top: 6px;
       font-size: 0.85rem;
@@ -171,6 +176,7 @@
       border: 1px solid #ccc;
       font-size: 1rem;
     }
+
     #saving-indicator {
       display: none;
       font-size: 1rem;
@@ -179,6 +185,7 @@
       animation: pulse 0.6s infinite alternate;
     }
     @keyframes pulse { from { opacity: .4; } to { opacity: 1; } }
+
     .bottom-bar {
       position: sticky;
       bottom: 0;
@@ -205,6 +212,7 @@
     }
     .cancel { background: #c62828; color: white; }
     .done { background: var(--accent); color: white; }
+
     #success-popup {
       position: fixed;
       bottom: 20px;
@@ -224,6 +232,7 @@
       opacity: 1;
       transform: translateX(-50%) translateY(0);
     }
+
     @media (max-width: 900px) {
       .sections { grid-template-columns: 1fr; }
     }
@@ -235,14 +244,41 @@
 
     <div class="sections">
       <div>
+
+        <!-- CUSTOMER SECTION -->
         <section id="customer-section">
           <h2>Customer Type <span>Adults, kids, online</span></h2>
         </section>
 
+        <!-- SIZE SECTION -->
         <section id="size-section">
           <h2>Order Size <span>Price per item</span></h2>
         </section>
 
+        <!-- ACCESSORIES SECTION (NEW) -->
+        <section id="accessories-section">
+          <h2>Accessories <span>Optional</span></h2>
+
+          <div class="row">
+            <div class="label">Cones</div>
+            <div class="controls">
+              <button class="btn btn-minus" data-type="cones" data-delta="-1">−</button>
+              <span class="count" id="cones-count">0</span>
+              <button class="btn btn-plus" data-type="cones" data-delta="1">+</button>
+            </div>
+          </div>
+
+          <div class="row">
+            <div class="label">Cups</div>
+            <div class="controls">
+              <button class="btn btn-minus" data-type="cups" data-delta="-1">−</button>
+              <span class="count" id="cups-count">0</span>
+              <button class="btn btn-plus" data-type="cups" data-delta="1">+</button>
+            </div>
+          </div>
+        </section>
+
+        <!-- PAYMENT SECTION -->
         <section id="payment-section">
           <h2>Payment & Summary <span>Payment method</span></h2>
 
@@ -266,8 +302,10 @@
 
           <div class="summary" id="summary-box"></div>
         </section>
+
       </div>
 
+      <!-- FLAVOUR SECTION -->
       <section id="flavour-section">
         <h2>Flavours <span>Tap to add or remove</span></h2>
         <div class="flavour-grid" id="flavour-grid"></div>
@@ -338,7 +376,6 @@
     { name: "Simply Coconut",       image: "images/simply-coconut.png", bg: "#cde4ea" },
     { name: "Salted White",         image: "images/salted-white.png", bg: "#cde4ea" },
 
-    /* ✅ NEW FLAVOUR ADDED */
     { name: "Pup Cup",              image: "images/pup-cup.png", bg: "#ffffff" }
   ];
 
@@ -346,6 +383,8 @@
     customers: {},
     sizes: {},
     flavours: {},
+    cones: 0,
+    cups: 0,
     payment: "card",
     cardAmount: 0
   };
@@ -468,6 +507,16 @@
         updateFlavourBorders();
       }
 
+      if (type === "cones") {
+        state.cones = Math.max(0, state.cones + delta);
+        document.getElementById("cones-count").textContent = state.cones;
+      }
+
+      if (type === "cups") {
+        state.cups = Math.max(0, state.cups + delta);
+        document.getElementById("cups-count").textContent = state.cups;
+      }
+
       updateSummary();
     });
 
@@ -535,9 +584,14 @@
       .filter(f => state.flavours[f.name] > 0)
       .map(f => `${f.name}: ${state.flavours[f.name]}`);
 
+    const accessories = [];
+    if (state.cones > 0) accessories.push(`Cones: ${state.cones}`);
+    if (state.cups > 0) accessories.push(`Cups: ${state.cups}`);
+
     if (custParts.length) parts.push("Customers – " + custParts.join(", "));
     if (sizeParts.length) parts.push("Sizes – " + sizeParts.join(", "));
     if (flavourParts.length) parts.push("Flavours – " + flavourParts.join(", "));
+    if (accessories.length) parts.push("Accessories – " + accessories.join(", "));
 
     parts.push("Payment: " + state.payment.toUpperCase());
     parts.push("Total: $" + calcTotal().toFixed(2));
@@ -560,6 +614,12 @@
       state.flavours[f.name] = 0;
       document.getElementById(`flavour-${cssSafe(f.name)}`).textContent = "0";
     });
+
+    state.cones = 0;
+    document.getElementById("cones-count").textContent = "0";
+
+    state.cups = 0;
+    document.getElementById("cups-count").textContent = "0";
 
     updateFlavourBorders();
 
@@ -595,6 +655,8 @@
       customers: state.customers,
       sizes: state.sizes,
       flavours: state.flavours,
+      cones: state.cones,
+      cups: state.cups,
       payment: state.payment,
       cardAmount: state.cardAmount,
       total
