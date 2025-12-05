@@ -529,7 +529,18 @@
           document.querySelector('input[name="payment"]:checked').value;
 
         document.getElementById("mixed-fields").style.display =
-          state.payment === "mixed" ? "grid" : "none";
+  state.payment === "mixed" ? "grid" : "none";
+
+if (state.payment !== "mixed") {
+  // reset mixed fields when switching back
+  document.getElementById("card-input").value = "";
+  document.getElementById("cash-output").textContent = "$0.00";
+} else {
+  // ensure card field starts empty every time MIXED is selected
+  document.getElementById("card-input").value = "";
+  document.getElementById("cash-output").textContent = `$${calcTotal().toFixed(2)}`;
+}
+
 
         updateSummary();
       })
