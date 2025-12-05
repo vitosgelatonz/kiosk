@@ -102,7 +102,7 @@
     }
     .flavour-card {
       background: #ffffff;
-      border: 2px solid var(--accent);
+      border: 2px solid transparent; /* <<< updated */
       border-radius: 16px;
       padding: 8px;
       box-shadow: 0 1px 4px rgba(0,0,0,0.06);
@@ -287,12 +287,10 @@
 
   <div id="success-popup">Order Saved!</div>
 
-  <!-- TAP SOUND -->
   <audio id="tap-sound">
     <source src="https://actions.google.com/sounds/v1/cartoon/pop.ogg" type="audio/ogg">
   </audio>
 
-  <!-- CASH SOUND -->
   <audio id="cash-sound">
     <source src="https://actions.google.com/sounds/v1/cartoon/clang_and_wobble.ogg" type="audio/ogg">
   </audio>
@@ -327,7 +325,6 @@
     { name: "Strawberry Dream",     image: "images/strawberry-dream.png" },
     { name: "Vanilla Oreo",         image: "images/vanilla-oreo.png" },
 
-    /* ---- SPECIAL BACKGROUNDS ---- */
     { name: "Amarena",              image: "images/amarena.png", bg: "#cde4ea" },
     { name: "Banana Caramel",       image: "images/banana-caramel.png", bg: "#cde4ea" },
     { name: "Cookie Crumble",       image: "images/cookie-crumble.png", bg: "#cde4ea" },
@@ -407,7 +404,6 @@
       const card = document.createElement("div");
       card.className = "flavour-card";
 
-      /* APPLY CUSTOM BACKGROUND IF SET */
       if (f.bg) card.style.background = f.bg;
 
       card.innerHTML = `
@@ -421,6 +417,16 @@
           <button class="btn btn-plus" data-type="flavour" data-key="${f.name}" data-delta="1">+</button>
         </div>`;
       grid.appendChild(card);
+    });
+  }
+
+  /* NEW FUNCTION — updates the border for each flavour card */
+  function updateFlavourBorders() {
+    const cards = document.querySelectorAll(".flavour-card");
+    cards.forEach((card, index) => {
+      const f = flavourData[index];
+      const count = state.flavours[f.name];
+      card.style.borderColor = count > 0 ? "var(--accent)" : "transparent";
     });
   }
 
@@ -453,6 +459,8 @@
       if (type === "flavour") {
         state.flavours[key] = Math.max(0, state.flavours[key] + delta);
         document.getElementById(`flavour-${cssSafe(key)}`).textContent = state.flavours[key];
+
+        updateFlavourBorders(); /* <<< NEW */
       }
 
       updateSummary();
@@ -548,6 +556,8 @@
       document.getElementById(`flavour-${cssSafe(f.name)}`).textContent = "0";
     });
 
+    updateFlavourBorders(); /* <<< NEW */
+
     state.payment = "card";
     state.cardAmount = 0;
 
@@ -627,6 +637,7 @@
   renderCustomerSection();
   renderSizeSection();
   renderFlavours();
+  updateFlavourBorders(); /* <<< initial */
   attachHandlers();
   updateTotal();
   updateSummary();
@@ -634,5 +645,3 @@
 
 </body>
 </html>
-
-
