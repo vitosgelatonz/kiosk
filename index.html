@@ -28,12 +28,6 @@
       margin: 0 auto;
       padding: 12px;
     }
-    h1 {
-      font-size: 1.9rem;
-      margin: 4px 0 18px;
-      text-align: center;
-      font-weight: 700;
-    }
     .sections {
       display: grid;
       grid-template-columns: 0.36fr 0.64fr;
@@ -67,12 +61,9 @@
       margin: 6px 0;
     }
     .label { font-size: 0.95rem; }
-    .price {
-      font-size: 0.8rem;
-      color: var(--text-soft);
-      margin-left: 6px;
-    }
+    .price { font-size: 0.8rem; color: var(--text-soft); margin-left: 6px; }
     .controls { display: flex; align-items: center; gap: 6px; }
+
     button.btn {
       border: none;
       border-radius: 999px;
@@ -87,6 +78,7 @@
     }
     .btn-plus { background: var(--success); color: #fff; }
     .btn-minus { background: var(--danger); color: #fff; }
+
     .count {
       min-width: 32px;
       text-align: center;
@@ -102,7 +94,6 @@
       overflow-y: auto;
       padding-right: 4px;
     }
-
     .flavour-card {
       background: #ffffff;
       border: 2px solid transparent;
@@ -113,7 +104,6 @@
       flex-direction: column;
       justify-content: space-between;
     }
-
     .flavour-top {
       display: flex;
       align-items: center;
@@ -129,6 +119,7 @@
       background: #eee;
     }
     .flavour-name { font-size: 0.9rem; font-weight: 600; }
+
     .flavour-controls {
       display: flex;
       align-items: center;
@@ -144,7 +135,6 @@
       min-height: 40px;
     }
 
-    /* Larger payment options */
     .payment-options {
       display: flex;
       gap: 10px;
@@ -196,11 +186,9 @@
       display: flex;
       align-items: center;
     }
-    .total {
-      font-size: 1.1rem;
-      font-weight: 700;
-    }
+    .total { font-size: 1.1rem; font-weight: 700; }
     .bottom-buttons { margin-left: auto; display: flex; gap: 8px; }
+
     .action {
       border: none;
       border-radius: 999px;
@@ -244,38 +232,14 @@
 
     <div class="sections">
       <div>
-
         <!-- CUSTOMER SECTION -->
         <section id="customer-section">
           <h2>Customer Type <span>Adults, kids, online</span></h2>
         </section>
 
-        <!-- SIZE SECTION -->
+        <!-- ORDER SIZE SECTION -->
         <section id="size-section">
           <h2>Order Size <span>Price per item</span></h2>
-        </section>
-
-        <!-- ACCESSORIES SECTION (NEW) -->
-        <section id="accessories-section">
-          <h2>Accessories <span>Optional</span></h2>
-
-          <div class="row">
-            <div class="label">Cones</div>
-            <div class="controls">
-              <button class="btn btn-minus" data-type="cones" data-delta="-1">−</button>
-              <span class="count" id="cones-count">0</span>
-              <button class="btn btn-plus" data-type="cones" data-delta="1">+</button>
-            </div>
-          </div>
-
-          <div class="row">
-            <div class="label">Cups</div>
-            <div class="controls">
-              <button class="btn btn-minus" data-type="cups" data-delta="-1">−</button>
-              <span class="count" id="cups-count">0</span>
-              <button class="btn btn-plus" data-type="cups" data-delta="1">+</button>
-            </div>
-          </div>
         </section>
 
         <!-- PAYMENT SECTION -->
@@ -303,15 +267,45 @@
           <div class="summary" id="summary-box"></div>
         </section>
 
+        <!-- ACCESSORIES SECTION (NEW) -->
+        <section id="accessories-section">
+          <h2>Accessories <span>Optional</span></h2>
+
+          <div class="row" style="justify-content:flex-start; gap:40px;">
+
+            <!-- Cones -->
+            <div style="display:flex; align-items:center; gap:6px;">
+              <div class="label">Cones</div>
+              <div class="controls">
+                <button class="btn btn-minus" data-type="accessory" data-key="cones" data-delta="-1">−</button>
+                <span class="count" id="accessory-cones">0</span>
+                <button class="btn btn-plus" data-type="accessory" data-key="cones" data-delta="1">+</button>
+              </div>
+            </div>
+
+            <!-- Cups -->
+            <div style="display:flex; align-items:center; gap:6px;">
+              <div class="label">Cups</div>
+              <div class="controls">
+                <button class="btn btn-minus" data-type="accessory" data-key="cups" data-delta="-1">−</button>
+                <span class="count" id="accessory-cups">0</span>
+                <button class="btn btn-plus" data-type="accessory" data-key="cups" data-delta="1">+</button>
+              </div>
+            </div>
+
+          </div>
+        </section>
+
       </div>
 
-      <!-- FLAVOUR SECTION -->
+      <!-- FLAVOURS SECTION -->
       <section id="flavour-section">
         <h2>Flavours <span>Tap to add or remove</span></h2>
         <div class="flavour-grid" id="flavour-grid"></div>
       </section>
     </div>
 
+    <!-- BOTTOM BAR -->
     <div class="bottom-bar">
       <div class="total" id="total-box">Total: $0.00</div>
 
@@ -355,38 +349,38 @@
   ];
 
   const flavourData = [
-    { name: "Biscoff",              image: "images/biscoff.png" },
-    { name: "Black Sand Piha",      image: "images/black-sand-piha.png" },
-    { name: "Dark Choco Brownie",   image: "images/dark-choco-brownie.png" },
-    { name: "Dulce de Leche",       image: "images/dulce-de-leche.png" },
-    { name: "Hazelnut Crunch",      image: "images/hazelnut-crunch.png" },
-    { name: "Mango Bliss",          image: "images/mango-bliss.png" },
-    { name: "Menta Cioccolato",     image: "images/menta-cioccolato.png" },
-    { name: "Reese's Peanut Butter",image: "images/reeses-peanut-butter.png" },
-    { name: "Strawberry Dream",     image: "images/strawberry-dream.png" },
-    { name: "Vanilla Oreo",         image: "images/vanilla-oreo.png" },
+    { name: "Biscoff", image: "images/biscoff.png" },
+    { name: "Black Sand Piha", image: "images/black-sand-piha.png" },
+    { name: "Dark Choco Brownie", image: "images/dark-choco-brownie.png" },
+    { name: "Dulce de Leche", image: "images/dulce-de-leche.png" },
+    { name: "Hazelnut Crunch", image: "images/hazelnut-crunch.png" },
+    { name: "Mango Bliss", image: "images/mango-bliss.png" },
+    { name: "Menta Cioccolato", image: "images/menta-cioccolato.png" },
+    { name: "Reese's Peanut Butter", image: "images/reeses-peanut-butter.png" },
+    { name: "Strawberry Dream", image: "images/strawberry-dream.png" },
+    { name: "Vanilla Oreo", image: "images/vanilla-oreo.png" },
 
-    { name: "Amarena",              image: "images/amarena.png", bg: "#cde4ea" },
-    { name: "Banana Caramel",       image: "images/banana-caramel.png", bg: "#cde4ea" },
-    { name: "Cookie Crumble",       image: "images/cookie-crumble.png", bg: "#cde4ea" },
-    { name: "Chocolate Velvet",     image: "images/chocolate-velvet.png", bg: "#cde4ea" },
-    { name: "Lemon Cake Delight",   image: "images/lemon-cake-delight.png", bg: "#cde4ea" },
-    { name: "Moka",                 image: "images/moka.png", bg: "#cde4ea" },
-    { name: "Pineapple Paradise",   image: "images/pineapple-paradise.png", bg: "#cde4ea" },
-    { name: "Simply Coconut",       image: "images/simply-coconut.png", bg: "#cde4ea" },
-    { name: "Salted White",         image: "images/salted-white.png", bg: "#cde4ea" },
+    { name: "Amarena", image: "images/amarena.png", bg: "#cde4ea" },
+    { name: "Banana Caramel", image: "images/banana-caramel.png", bg: "#cde4ea" },
+    { name: "Cookie Crumble", image: "images/cookie-crumble.png", bg: "#cde4ea" },
+    { name: "Chocolate Velvet", image: "images/chocolate-velvet.png", bg: "#cde4ea" },
+    { name: "Lemon Cake Delight", image: "images/lemon-cake-delight.png", bg: "#cde4ea" },
+    { name: "Moka", image: "images/moka.png", bg: "#cde4ea" },
+    { name: "Pineapple Paradise", image: "images/pineapple-paradise.png", bg: "#cde4ea" },
+    { name: "Simply Coconut", image: "images/simply-coconut.png", bg: "#cde4ea" },
+    { name: "Salted White", image: "images/salted-white.png", bg: "#cde4ea" },
 
-    { name: "Pup Cup",              image: "images/pup-cup.png", bg: "#ffffff" }
+    { name: "Pup Cup", image: "images/pup-cup.png", bg: "#ffffff" }
   ];
 
   const state = {
     customers: {},
     sizes: {},
     flavours: {},
-    cones: 0,
-    cups: 0,
     payment: "card",
-    cardAmount: 0
+    cardAmount: 0,
+    cones: 0,
+    cups: 0
   };
 
   customerTypes.forEach(c => state.customers[c.key] = 0);
@@ -503,18 +497,12 @@
       if (type === "flavour") {
         state.flavours[key] = Math.max(0, state.flavours[key] + delta);
         document.getElementById(`flavour-${cssSafe(key)}`).textContent = state.flavours[key];
-
         updateFlavourBorders();
       }
 
-      if (type === "cones") {
-        state.cones = Math.max(0, state.cones + delta);
-        document.getElementById("cones-count").textContent = state.cones;
-      }
-
-      if (type === "cups") {
-        state.cups = Math.max(0, state.cups + delta);
-        document.getElementById("cups-count").textContent = state.cups;
+      if (type === "accessory") {
+        state[key] = Math.max(0, state[key] + delta);
+        document.getElementById(`accessory-${key}`).textContent = state[key];
       }
 
       updateSummary();
@@ -522,13 +510,9 @@
 
     document.querySelectorAll('input[name="payment"]').forEach(radio =>
       radio.addEventListener("change", () => {
-        state.payment = document.querySelector(
-          'input[name="payment"]:checked'
-        ).value;
-
+        state.payment = document.querySelector('input[name="payment"]:checked').value;
         document.getElementById("mixed-fields").style.display =
           state.payment === "mixed" ? "block" : "none";
-
         updateSummary();
       })
     );
@@ -584,14 +568,14 @@
       .filter(f => state.flavours[f.name] > 0)
       .map(f => `${f.name}: ${state.flavours[f.name]}`);
 
-    const accessories = [];
-    if (state.cones > 0) accessories.push(`Cones: ${state.cones}`);
-    if (state.cups > 0) accessories.push(`Cups: ${state.cups}`);
+    const accessoryParts = [];
+    if (state.cones > 0) accessoryParts.push(`Cones: ${state.cones}`);
+    if (state.cups > 0) accessoryParts.push(`Cups: ${state.cups}`);
 
     if (custParts.length) parts.push("Customers – " + custParts.join(", "));
     if (sizeParts.length) parts.push("Sizes – " + sizeParts.join(", "));
     if (flavourParts.length) parts.push("Flavours – " + flavourParts.join(", "));
-    if (accessories.length) parts.push("Accessories – " + accessories.join(", "));
+    if (accessoryParts.length) parts.push("Accessories – " + accessoryParts.join(", "));
 
     parts.push("Payment: " + state.payment.toUpperCase());
     parts.push("Total: $" + calcTotal().toFixed(2));
@@ -616,10 +600,9 @@
     });
 
     state.cones = 0;
-    document.getElementById("cones-count").textContent = "0";
-
     state.cups = 0;
-    document.getElementById("cups-count").textContent = "0";
+    document.getElementById("accessory-cones").textContent = "0";
+    document.getElementById("accessory-cups").textContent = "0";
 
     updateFlavourBorders();
 
