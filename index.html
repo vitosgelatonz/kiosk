@@ -181,7 +181,6 @@
       font-weight: 600;
       animation: pulse 0.6s infinite alternate;
     }
-    @keyframes pulse { from { opacity: .4; } to { opacity: 1; } }
 
     .bottom-bar {
       position: sticky;
@@ -221,15 +220,10 @@
       opacity: 0;
       transition: all 0.4s ease;
       z-index: 9999;
-      font-weight: 600;
     }
     #success-popup.show {
       opacity: 1;
       transform: translateX(-50%) translateY(0);
-    }
-
-    @media (max-width: 900px) {
-      .sections { grid-template-columns: 1fr; }
     }
 
     /* --- ORDER NOTE BUTTON + POPUP --- */
@@ -279,17 +273,14 @@
 
     <div class="sections">
       <div>
-        <!-- CUSTOMER SECTION -->
         <section id="customer-section">
           <h2>Customer Type <span>Adults, kids, online</span></h2>
         </section>
 
-        <!-- ORDER SIZE SECTION -->
         <section id="size-section">
           <h2>Order Size <span>Price per item</span></h2>
         </section>
 
-        <!-- PAYMENT SECTION -->
         <section id="payment-section">
           <h2>Payment & Summary <span>Payment method</span></h2>
 
@@ -311,7 +302,6 @@
           <div class="summary" id="summary-box"></div>
         </section>
 
-        <!-- ACCESSORIES SECTION -->
         <section id="accessories-section" style="padding-top: 8px;">
           <div class="row" style="justify-content:flex-start; gap:40px; margin-top:0;">
 
@@ -338,14 +328,12 @@
 
       </div>
 
-      <!-- FLAVOURS SECTION -->
       <section id="flavour-section">
         <h2>Flavours <span>Tap to add or remove</span></h2>
         <div class="flavour-grid" id="flavour-grid"></div>
       </section>
     </div>
 
-    <!-- BOTTOM BAR -->
     <div class="bottom-bar">
       <div class="total" id="total-box">Total: $0.00</div>
 
@@ -370,15 +358,12 @@
   </audio>
 
 <script>
+document.addEventListener("DOMContentLoaded", () => {   <!-- ⭐ FIXED WRAPPER -->
+
   const GOOGLE_SCRIPT_URL =
     "https://script.google.com/macros/s/AKfycbzIYjCGlvb05J9HvmhyToojCdT0Ou8PTRgyS-Lor82BwoBNKWTufzV3hCir6YSkDvx_/exec";
 
-  const customerTypes = [
-    { key: "adult", label: "Adult" },
-    { key: "child", label: "Child" },
-    { key: "online", label: "Online" }
-  ];
-
+  const customerTypes = [ { key: "adult", label: "Adult" }, { key: "child", label: "Child" }, { key: "online", label: "Online" } ];
   const sizes = [
     { key: "kiddie", label: "Kiddie", price: 5 },
     { key: "single", label: "Single", price: 8 },
@@ -443,8 +428,6 @@
     return `${day}/${month}/${year} ${hours}:${minutes} ${ampm}`;
   }
 
-  // ----------------------------- RENDER SECTIONS -----------------------------
-
   function renderCustomerSection() {
     const container = document.getElementById("customer-section");
     customerTypes.forEach(ct => {
@@ -502,8 +485,7 @@
   }
 
   function updateFlavourBorders() {
-    const cards = document.querySelectorAll(".flavour-card");
-    cards.forEach((card, index)=>{
+    document.querySelectorAll(".flavour-card").forEach((card, index)=>{
       const f = flavourData[index];
       const count = state.flavours[f.name];
       card.style.borderColor = count > 0 ? "var(--accent)" : "transparent";
@@ -516,9 +498,16 @@
     setTimeout(()=> popup.classList.remove("show"), 1800);
   }
 
-  // ----------------------------- EVENT HANDLERS -----------------------------
-
   function attachHandlers() {
+
+    document.getElementById("note-icon").addEventListener("click", () => {
+      document.getElementById("note-popup").style.display = "block";
+    });
+
+    document.getElementById("close-note").addEventListener("click", () => {
+      document.getElementById("note-popup").style.display = "none";
+    });
+
     document.body.addEventListener("click", e => {
       const btn = e.target.closest("button");
       if (!btn) return;
@@ -529,28 +518,24 @@
 
       if (type === "customer") {
         state.customers[key] = Math.max(0, state.customers[key] + delta);
-        document.getElementById(`customer-${key}`).textContent =
-          state.customers[key];
+        document.getElementById(`customer-${key}`).textContent = state.customers[key];
       }
 
       if (type === "size") {
         state.sizes[key] = Math.max(0, state.sizes[key] + delta);
-        document.getElementById(`size-${key}`).textContent =
-          state.sizes[key];
+        document.getElementById(`size-${key}`).textContent = state.sizes[key];
         updateTotal();
       }
 
       if (type === "flavour") {
         state.flavours[key] = Math.max(0, state.flavours[key] + delta);
-        document.getElementById(`flavour-${cssSafe(key)}`).textContent =
-          state.flavours[key];
+        document.getElementById(`flavour-${cssSafe(key)}`).textContent = state.flavours[key];
         updateFlavourBorders();
       }
 
       if (type === "accessory") {
         state[key] = Math.max(0, state[key] + delta);
-        document.getElementById(`accessory-${key}`).textContent =
-          state[key];
+        document.getElementById(`accessory-${key}`).textContent = state[key];
       }
 
       updateSummary();
@@ -578,15 +563,11 @@
 
     document.getElementById("card-input").addEventListener("input", ()=>{
       const total = calcTotal();
-      let val =
-        parseFloat(document.getElementById("card-input").value || "0");
-
+      let val = parseFloat(document.getElementById("card-input").value || "0");
       if (val > total) {
         val = total;
-        document.getElementById("card-input").value =
-          total.toFixed(2);
+        document.getElementById("card-input").value = total.toFixed(2);
       }
-
       state.cardAmount = val;
       const cash = total - val;
       document.getElementById("cash-output").textContent =
@@ -598,29 +579,15 @@
     document.getElementById("done-btn").addEventListener("click", async ()=>{
       const btn = document.getElementById("done-btn");
       if (btn.disabled) return;
-
       document.getElementById("tap-sound").play();
       btn.disabled = true;
       await submitOrder();
       setTimeout(()=>{ btn.disabled = false; }, 800);
     });
-
-    // NOTE POPUP
-    document.getElementById("note-icon").addEventListener("click", () => {
-      document.getElementById("note-popup").style.display = "block";
-    });
-
-    document.getElementById("close-note").addEventListener("click", () => {
-      document.getElementById("note-popup").style.display = "none";
-    });
   }
 
-  // ----------------------------- SUMMARY & TOTAL -----------------------------
-
   function calcTotal() {
-    return sizes.reduce((sum, sz)=>{
-      return sum + state.sizes[sz.key] * sz.price;
-    }, 0);
+    return sizes.reduce((sum, sz)=> sum + state.sizes[sz.key] * sz.price, 0);
   }
 
   function updateTotal() {
@@ -631,16 +598,13 @@
   function updateSummary() {
     const parts = [];
 
-    const custParts = customerTypes
-      .filter(ct=> state.customers[ct.key] > 0)
+    const custParts = customerTypes.filter(ct=> state.customers[ct.key] > 0)
       .map(ct=> `${ct.label}: ${state.customers[ct.key]}`);
 
-    const sizeParts = sizes
-      .filter(sz=> state.sizes[sz.key] > 0)
+    const sizeParts = sizes.filter(sz=> state.sizes[sz.key] > 0)
       .map(sz=> `${sz.label}: ${state.sizes[sz.key]}`);
 
-    const flavourParts = flavourData
-      .filter(f=> state.flavours[f.name] > 0)
+    const flavourParts = flavourData.filter(f=> state.flavours[f.name] > 0)
       .map(f=> `${f.name}: ${state.flavours[f.name]}`);
 
     const accessoryParts = [];
@@ -659,8 +623,6 @@
     document.getElementById("summary-box").textContent =
       parts.join(" | ");
   }
-
-  // ----------------------------- RESET -----------------------------
 
   function resetAll() {
     customerTypes.forEach(ct=>{
@@ -688,8 +650,7 @@
     state.payment = "card";
     state.cardAmount = 0;
 
-    document.querySelector('input[name="payment"][value="card"]').checked =
-      true;
+    document.querySelector('input[name="payment"][value="card"]').checked = true;
 
     document.getElementById("mixed-fields").style.display = "none";
 
@@ -699,8 +660,6 @@
     updateTotal();
     updateSummary();
   }
-
-  // ----------------------------- SUBMIT ORDER -----------------------------
 
   async function submitOrder() {
     const total = calcTotal();
@@ -715,8 +674,7 @@
       return;
     }
 
-    document.getElementById("saving-indicator").style.display =
-      "inline";
+    document.getElementById("saving-indicator").style.display = "inline";
 
     const payload = {
       timestamp: getLocalTimestamp(),
@@ -735,40 +693,31 @@
       await fetch(GOOGLE_SCRIPT_URL, {
         method: "POST",
         mode: "no-cors",
-        headers: {
-          "Content-Type": "application/json"
-        },
+        headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ row: payload })
       });
 
-      document.getElementById("saving-indicator").style.display =
-        "none";
-
+      document.getElementById("saving-indicator").style.display = "none";
       document.getElementById("cash-sound").play();
       showPopup();
-
       resetAll();
-    } catch (err) {
-      document.getElementById("saving-indicator").style.display =
-        "none";
+    }
+    catch (err) {
+      document.getElementById("saving-indicator").style.display = "none";
       alert("Error sending order.");
     }
   }
-
-  // ----------------------------- SOUND UNLOCK -----------------------------
 
   function unlockSounds() {
     const tap = document.getElementById("tap-sound");
     const cash = document.getElementById("cash-sound");
 
     tap.play().then(()=>{
-      tap.pause();
-      tap.currentTime = 0;
+      tap.pause(); tap.currentTime = 0;
     });
 
     cash.play().then(()=>{
-      cash.pause();
-      cash.currentTime = 0;
+      cash.pause(); cash.currentTime = 0;
     });
 
     document.removeEventListener("click", unlockSounds);
@@ -776,7 +725,7 @@
 
   document.addEventListener("click", unlockSounds);
 
-  // ----------------------------- INIT -----------------------------
+  // INIT
   renderCustomerSection();
   renderSizeSection();
   renderFlavours();
@@ -784,6 +733,8 @@
   attachHandlers();
   updateTotal();
   updateSummary();
+
+});  <!-- END OF DOMContentLoaded WRAPPER -->
 </script>
 
 </body>
