@@ -152,15 +152,12 @@
       gap: 5px;
     }
 
-    /* ✅ FIXED MIXED PAYMENT LAYOUT */
     #mixed-fields {
-      display: none;                 /* stays hidden unless JS shows it */
+      display: none;
       margin-top: 6px;
       padding: 10px;
       background: #f9f9f9;
       border-radius: 10px;
-
-      /* 2 columns */
       grid-template-columns: 1fr 1fr;
       gap: 10px 16px;
       align-items: center;
@@ -230,6 +227,41 @@
     @media (max-width: 900px) {
       .sections { grid-template-columns: 1fr; }
     }
+
+    /* ⭐ NOTES POPUP BOX */
+    #notes-popup {
+      position: fixed;
+      bottom: 20px;
+      left: 50%;
+      transform: translateX(-50%) translateY(120px);
+      background: white;
+      padding: 16px;
+      border-radius: 12px;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+      width: 90%;
+      max-width: 380px;
+      display: none;
+      flex-direction: column;
+      gap: 10px;
+      z-index: 99999;
+    }
+    #notes-popup textarea {
+      width: 100%;
+      height: 100px;
+      font-size: 1rem;
+      padding: 10px;
+      border-radius: 8px;
+      border: 1px solid #ccc;
+    }
+    #close-notes {
+      background: var(--accent);
+      color: white;
+      border: none;
+      padding: 10px;
+      border-radius: 8px;
+      font-size: 1rem;
+      cursor: pointer;
+    }
   </style>
 </head>
 
@@ -250,7 +282,22 @@
 
         <!-- PAYMENT SECTION -->
         <section id="payment-section">
-          <h2>Payment & Summary <span>Payment method</span></h2>
+          <h2>
+            Payment & Summary
+            <span>Payment method</span>
+
+            <!-- ⭐ NOTES BUTTON -->
+            <button id="notes-btn" style="
+              background:#e0c58a;
+              border:none;
+              border-radius:50%;
+              width:34px;
+              height:34px;
+              font-size:18px;
+              cursor:pointer;
+            ">📝</button>
+
+          </h2>
 
           <div class="payment-options">
             <label><input type="radio" name="payment" value="card" checked> Card</label>
@@ -258,7 +305,6 @@
             <label><input type="radio" name="payment" value="mixed"> Mixed</label>
           </div>
 
-          <!-- ✅ UPDATED MIXED PAYMENT HTML -->
           <div id="mixed-fields">
             <div>
               <label>Card Amount:</label>
@@ -274,35 +320,30 @@
           <div class="summary" id="summary-box"></div>
         </section>
 
-        <!-- ACCESSORIES SECTION (NO TITLE) -->
-<section id="accessories-section" style="padding-top: 8px;">
+        <!-- ACCESSORIES SECTION -->
+        <section id="accessories-section" style="padding-top: 8px;">
+          <div class="row" style="justify-content:flex-start; gap:40px; margin-top:0;">
 
-  <div class="row" style="justify-content:flex-start; gap:40px; margin-top:0;">
+            <div style="display:flex; align-items:center; gap:6px;">
+              <div class="label">Cones</div>
+              <div class="controls">
+                <button class="btn btn-minus" data-type="accessory" data-key="cones" data-delta="-1">−</button>
+                <span class="count" id="accessory-cones">0</span>
+                <button class="btn btn-plus" data-type="accessory" data-key="cones" data-delta="1">+</button>
+              </div>
+            </div>
 
-    <!-- Cones -->
-    <div style="display:flex; align-items:center; gap:6px;">
-      <div class="label">Cones</div>
-      <div class="controls">
-        <button class="btn btn-minus" data-type="accessory" data-key="cones" data-delta="-1">−</button>
-        <span class="count" id="accessory-cones">0</span>
-        <button class="btn btn-plus" data-type="accessory" data-key="cones" data-delta="1">+</button>
-      </div>
-    </div>
+            <div style="display:flex; align-items:center; gap:6px;">
+              <div class="label">Cups</div>
+              <div class="controls">
+                <button class="btn btn-minus" data-type="accessory" data-key="cups" data-delta="-1">−</button>
+                <span class="count" id="accessory-cups">0</span>
+                <button class="btn btn-plus" data-type="accessory" data-key="cups" data-delta="1">+</button>
+              </div>
+            </div>
 
-    <!-- Cups -->
-    <div style="display:flex; align-items:center; gap:6px;">
-      <div class="label">Cups</div>
-      <div class="controls">
-        <button class="btn btn-minus" data-type="accessory" data-key="cups" data-delta="-1">−</button>
-        <span class="count" id="accessory-cups">0</span>
-        <button class="btn btn-plus" data-type="accessory" data-key="cups" data-delta="1">+</button>
-      </div>
-    </div>
-
-  </div>
-</section>
-
-
+          </div>
+        </section>
 
       </div>
 
@@ -329,6 +370,12 @@
   </div>
 
   <div id="success-popup">Order Saved!</div>
+
+  <!-- ⭐ NOTES POPUP -->
+  <div id="notes-popup">
+    <textarea id="notes-input" placeholder="Enter notes here..."></textarea>
+    <button id="close-notes">Finish</button>
+  </div>
 
   <audio id="tap-sound">
     <source src="https://actions.google.com/sounds/v1/cartoon/pop.ogg" type="audio/ogg">
@@ -388,7 +435,8 @@
     payment: "card",
     cardAmount: 0,
     cones: 0,
-    cups: 0
+    cups: 0,
+    notes: ""   // ⭐ ADDED
   };
 
   customerTypes.forEach(c => state.customers[c.key] = 0);
@@ -411,6 +459,27 @@
     hours = hours ? hours : 12;
     return `${day}/${month}/${year} ${hours}:${minutes} ${ampm}`;
   }
+
+  /* ⭐ NOTES FUNCTIONALITY */
+  const notesBtn = document.getElementById("notes-btn");
+  const notesPopup = document.getElementById("notes-popup");
+  const notesInput = document.getElementById("notes-input");
+  const closeNotes = document.getElementById("close-notes");
+
+  notesBtn.addEventListener("click", () => {
+    notesPopup.style.display = "flex";
+    notesInput.value = state.notes;
+  });
+
+  closeNotes.addEventListener("click", () => {
+    state.notes = notesInput.value.trim();
+    notesPopup.style.display = "none";
+  });
+
+  /* ⭐ END NOTES CODE */
+
+
+  /* --- Your existing code continues unchanged below --- */
 
   function renderCustomerSection() {
     const container = document.getElementById("customer-section");
@@ -533,15 +602,12 @@
   state.payment === "mixed" ? "grid" : "none";
 
 if (state.payment !== "mixed") {
-  // reset mixed fields when switching back
   document.getElementById("card-input").value = "";
   document.getElementById("cash-output").textContent = "$0.00";
 } else {
-  // ensure card field starts empty every time MIXED is selected
   document.getElementById("card-input").value = "";
   document.getElementById("cash-output").textContent = `$${calcTotal().toFixed(2)}`;
 }
-
 
         updateSummary();
       })
@@ -616,6 +682,10 @@ if (state.payment !== "mixed") {
     parts.push("Payment: " + state.payment.toUpperCase());
     parts.push("Total: $" + calcTotal().toFixed(2));
 
+    if (state.notes.trim() !== "") {
+      parts.push("Notes: " + state.notes);
+    }
+
     document.getElementById("summary-box").textContent =
       parts.join(" | ");
   }
@@ -638,6 +708,9 @@ if (state.payment !== "mixed") {
 
     state.cones = 0;
     state.cups = 0;
+    state.notes = "";   // ⭐ reset notes
+    notesInput.value = "";
+
     document.getElementById("accessory-cones").textContent = "0";
     document.getElementById("accessory-cups").textContent = "0";
 
@@ -683,6 +756,7 @@ if (state.payment !== "mixed") {
       cups: state.cups,
       payment: state.payment,
       cardAmount: state.cardAmount,
+      notes: state.notes,   // ⭐ SEND NOTES
       total
     };
 
@@ -740,4 +814,3 @@ if (state.payment !== "mixed") {
 
 </body>
 </html>
-
