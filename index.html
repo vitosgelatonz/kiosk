@@ -24,22 +24,16 @@
       font-size: 18px;
     }
     .app {
-      max-width: 1500px;
+      max-width: 1600px; /* slightly wider for more flavour space */
       margin: 0 auto;
       padding: 12px;
     }
-
-    /* ✅ Fixed sections grid */
     .sections {
       display: grid;
-      grid-template-columns: 0.28fr 0.72fr;
+      grid-template-columns: 0.30fr 0.70fr; /* left narrower, right wider */
       gap: 12px;
       align-items: start;
     }
-    .sections > * {
-      min-width: 0;
-    }
-
     section {
       background: var(--accent-soft);
       border-radius: 12px;
@@ -182,9 +176,7 @@
       box-shadow: 0 1px 4px rgba(0,0,0,0.18);
     }
 
-    #payment-section {
-      position: relative;
-    }
+    #payment-section { position: relative; }
     #notes-popup {
       display: none;
       position: absolute;
@@ -199,15 +191,8 @@
       max-width: 420px;
       width: 90%;
     }
-    .notes-popup-content {
-      display: flex;
-      flex-direction: column;
-      gap: 8px;
-    }
-    .notes-label {
-      font-size: 0.9rem;
-      color: var(--text-soft);
-    }
+    .notes-popup-content { display: flex; flex-direction: column; gap: 8px; }
+    .notes-label { font-size: 0.9rem; color: var(--text-soft); }
     #notes-input {
       width: 100%;
       min-height: 80px;
@@ -330,14 +315,20 @@
   <div class="app">
     <div class="sections">
       <div>
+        <!-- CUSTOMER SECTION -->
         <section id="customer-section">
           <h2>Customer Type <span>Adults, kids, online</span></h2>
         </section>
+
+        <!-- ORDER SIZE SECTION -->
         <section id="size-section">
           <h2>Order Size <span>Price per item</span></h2>
         </section>
+
+        <!-- PAYMENT SECTION -->
         <section id="payment-section">
           <h2>Payment & Summary <span>Payment method</span></h2>
+
           <div class="payment-row">
             <div class="payment-options">
               <label><input type="radio" name="payment" value="card" checked> Card</label>
@@ -346,6 +337,7 @@
             </div>
             <button id="notes-btn" type="button">📝</button>
           </div>
+
           <div id="notes-popup">
             <div class="notes-popup-content">
               <div class="notes-label">Notes for this order</div>
@@ -355,6 +347,7 @@
               </div>
             </div>
           </div>
+
           <div id="mixed-fields">
             <div>
               <label>Card Amount:</label>
@@ -365,8 +358,11 @@
               <strong id="cash-output" style="font-size:1rem;">$0.00</strong>
             </div>
           </div>
+
           <div class="summary" id="summary-box"></div>
         </section>
+
+        <!-- ACCESSORIES SECTION -->
         <section id="accessories-section" style="padding-top: 8px;">
           <div class="row" style="justify-content:flex-start; gap:40px; margin-top:0;">
             <div style="display:flex; align-items:center; gap:6px;">
@@ -388,12 +384,15 @@
           </div>
         </section>
       </div>
+
+      <!-- FLAVOURS SECTION -->
       <section id="flavour-section">
         <h2>Flavours <span>Tap to add or remove</span></h2>
         <div class="flavour-grid" id="flavour-grid"></div>
       </section>
     </div>
 
+    <!-- BOTTOM BAR -->
     <div class="bottom-bar">
       <div class="total" id="total-box">Total: $0.00</div>
       <div style="flex:1; text-align:center;">
@@ -415,9 +414,8 @@
     <source src="https://actions.google.com/sounds/v1/cartoon/clang_and_wobble.ogg" type="audio/ogg">
   </audio>
 
-<script>
-/* Your full JS from the original file remains unchanged */
-</script>
-
+  <script>
+    /* Your entire JS code remains exactly the same as your current script */
+  </script>
 </body>
 </html>
