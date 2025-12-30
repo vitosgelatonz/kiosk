@@ -214,13 +214,13 @@
       width: 400px;
     }
     #adjust-popup {
-      width: 600px;
+      width: 480px;
     }
 
     .popup-content {
       display: flex;
       flex-direction: column;
-      gap: 14px;
+      gap: 10px;
     }
     .popup-label {
       font-size: 1.1rem;
@@ -245,25 +245,26 @@
     .adjust-fields-row {
       display: grid;
       grid-template-columns: 1fr 1fr;
-      gap: 16px;
+      gap: 12px;
     }
     .adjust-field {
       display: flex;
       flex-direction: column;
-      gap: 8px;
+      gap: 6px;
     }
     .adjust-field label {
-      font-size: 0.95rem;
+      font-size: 0.85rem;
       font-weight: 600;
       text-align: center;
     }
     .adjust-field input {
-      padding: 12px;
+      padding: 10px;
       border-radius: 8px;
       border: 2px solid #ccc;
-      font-size: 1.2rem;
+      font-size: 1.1rem;
       text-align: center;
       font-weight: 600;
+      width: 100%;
     }
     .adjust-field input:focus {
       outline: none;
@@ -272,39 +273,39 @@
 
     .adjust-preview {
       background: #e6f3f6;
-      padding: 14px;
-      border-radius: 10px;
+      padding: 10px 12px;
+      border-radius: 8px;
       display: flex;
       flex-direction: column;
-      gap: 8px;
+      gap: 6px;
       border: 2px solid var(--accent);
     }
     .adjust-preview-row {
       display: flex;
       justify-content: space-between;
       align-items: center;
-      font-size: 1rem;
+      font-size: 0.9rem;
     }
     .adjust-preview-row.final {
-      padding-top: 8px;
+      padding-top: 6px;
       border-top: 2px solid var(--accent);
-      font-size: 1.1rem;
+      font-size: 1rem;
     }
     .adjust-preview strong {
       color: var(--accent);
-      font-size: 1.1rem;
+      font-size: 1rem;
     }
 
     .popup-actions {
       display: flex;
       justify-content: center;
-      margin-top: 6px;
+      margin-top: 4px;
     }
     .popup-btn {
       border: none;
       border-radius: 999px;
-      padding: 10px 32px;
-      font-size: 1.05rem;
+      padding: 8px 28px;
+      font-size: 1rem;
       font-weight: 600;
       cursor: pointer;
       background: var(--accent);
@@ -496,7 +497,6 @@
   <!-- ADJUSTMENT POPUP -->
   <div id="adjust-popup">
     <div class="popup-content">
-      <div class="popup-label">Adjust Total</div>
       
       <div class="adjust-fields-row">
         <div class="adjust-field">
