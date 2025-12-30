@@ -30,7 +30,7 @@
     }
     .sections {
       display: grid;
-      grid-template-columns: 0.28fr 0.72fr;
+      grid-template-columns: 0.36fr 0.64fr;
       gap: 12px;
       align-items: start;
     }
@@ -151,6 +151,7 @@
       gap: 5px;
     }
 
+    /* Row with payment options + notes button */
     .payment-row {
       display: flex;
       justify-content: space-between;
@@ -160,6 +161,7 @@
       margin-top: 4px;
     }
 
+    /* Notes button (round, matches UI) */
     #notes-btn {
       border: none;
       border-radius: 50%;
@@ -176,6 +178,7 @@
       box-shadow: 0 1px 4px rgba(0,0,0,0.18);
     }
 
+    /* Floating notes popup inside payment section */
     #payment-section {
       position: relative;
     }
@@ -228,12 +231,15 @@
       color: #ffffff;
     }
 
+    /* ✅ FIXED MIXED PAYMENT LAYOUT */
     #mixed-fields {
-      display: none;
+      display: none;                 /* stays hidden unless JS shows it */
       margin-top: 6px;
       padding: 10px;
       background: #f9f9f9;
       border-radius: 10px;
+
+      /* 2 columns */
       grid-template-columns: 1fr 1fr;
       gap: 10px 16px;
       align-items: center;
@@ -325,17 +331,21 @@
 
     <div class="sections">
       <div>
+        <!-- CUSTOMER SECTION -->
         <section id="customer-section">
           <h2>Customer Type <span>Adults, kids, online</span></h2>
         </section>
 
+        <!-- ORDER SIZE SECTION -->
         <section id="size-section">
           <h2>Order Size <span>Price per item</span></h2>
         </section>
 
+        <!-- PAYMENT SECTION -->
         <section id="payment-section">
           <h2>Payment & Summary <span>Payment method</span></h2>
 
+          <!-- Payment row with radios + notes button -->
           <div class="payment-row">
             <div class="payment-options">
               <label><input type="radio" name="payment" value="card" checked> Card</label>
@@ -346,6 +356,7 @@
             <button id="notes-btn" type="button">📝</button>
           </div>
 
+          <!-- Floating notes popup -->
           <div id="notes-popup">
             <div class="notes-popup-content">
               <div class="notes-label">Notes for this order</div>
@@ -356,6 +367,7 @@
             </div>
           </div>
 
+          <!-- ✅ UPDATED MIXED PAYMENT HTML -->
           <div id="mixed-fields">
             <div>
               <label>Card Amount:</label>
@@ -371,10 +383,12 @@
           <div class="summary" id="summary-box"></div>
         </section>
 
+        <!-- ACCESSORIES SECTION (NO TITLE) -->
         <section id="accessories-section" style="padding-top: 8px;">
 
           <div class="row" style="justify-content:flex-start; gap:40px; margin-top:0;">
 
+            <!-- Cones -->
             <div style="display:flex; align-items:center; gap:6px;">
               <div class="label">Cones</div>
               <div class="controls">
@@ -384,6 +398,7 @@
               </div>
             </div>
 
+            <!-- Cups -->
             <div style="display:flex; align-items:center; gap:6px;">
               <div class="label">Cups</div>
               <div class="controls">
@@ -398,12 +413,14 @@
 
       </div>
 
+      <!-- FLAVOURS SECTION -->
       <section id="flavour-section">
         <h2>Flavours <span>Tap to add or remove</span></h2>
         <div class="flavour-grid" id="flavour-grid"></div>
       </section>
     </div>
 
+    <!-- BOTTOM BAR -->
     <div class="bottom-bar">
       <div class="total" id="total-box">Total: $0.00</div>
 
@@ -430,7 +447,7 @@
 
 <script>
   const GOOGLE_SCRIPT_URL =
-    "https://script.google.com/macros/s/AKfycbzHluxtq3QwKXPjmujQrLONO5jDCFvUhzQGTopLUlmK6b9z8R2fFE5f23gXW_44Wb2g/exec";
+    "https://script.google.com/macros/s/AKfycbzHluxtq3QwKXPjmujQrLONO5jDCFvUhzQGTopLUlmK6b9z8R2fFE5f23gXW_44Wb2g/exec";  <!-- replace with your actual URL -->
 
   const customerTypes = [
     { key: "adult", label: "Adult" },
@@ -482,8 +499,8 @@
     notes: ""
   };
 
-  let lastSavedOrder = null;
-  let editMode = false;
+  let lastSavedOrder = null;  // stores last payload
+  let editMode = false;       // true when editing last order
 
   customerTypes.forEach(c => state.customers[c.key] = 0);
   sizes.forEach(s => state.sizes[s.key] = 0);
@@ -643,10 +660,12 @@
           state.payment === "mixed" ? "grid" : "none";
 
         if (state.payment !== "mixed") {
+          // reset mixed fields when switching back
           document.getElementById("card-input").value = "";
           document.getElementById("cash-output").textContent = "$0.00";
           state.cardAmount = 0;
         } else {
+          // ensure card field starts empty every time MIXED is selected
           document.getElementById("card-input").value = "";
           document.getElementById("cash-output").textContent =
             `$${calcTotal().toFixed(2)}`;
@@ -769,6 +788,7 @@
     document.getElementById("card-input").value = "";
     document.getElementById("cash-output").textContent = "$0.00";
 
+    // Reset notes
     state.notes = "";
     const notesInputEl = document.getElementById("notes-input");
     const notesPopupEl = document.getElementById("notes-popup");
@@ -780,8 +800,10 @@
   }
 
   function loadOrderForEditing(order) {
+    // Start from a clean screen
     resetAll();
 
+    // Customers
     customerTypes.forEach(ct => {
       const value = (order.customers && order.customers[ct.key]) || 0;
       state.customers[ct.key] = value;
@@ -789,6 +811,7 @@
       if (el) el.textContent = value;
     });
 
+    // Sizes
     sizes.forEach(sz => {
       const value = (order.sizes && order.sizes[sz.key]) || 0;
       state.sizes[sz.key] = value;
@@ -796,6 +819,7 @@
       if (el) el.textContent = value;
     });
 
+    // Flavours
     flavourData.forEach(f => {
       const value = (order.flavours && order.flavours[f.name]) || 0;
       state.flavours[f.name] = value;
@@ -804,6 +828,7 @@
     });
     updateFlavourBorders();
 
+    // Accessories
     state.cones = order.cones || 0;
     state.cups  = order.cups  || 0;
     const conesEl = document.getElementById("accessory-cones");
@@ -811,6 +836,7 @@
     if (conesEl) conesEl.textContent = state.cones;
     if (cupsEl)  cupsEl.textContent  = state.cups;
 
+    // Payment
     state.payment = order.payment || "card";
     const paymentRadio = document.querySelector(`input[name="payment"][value="${state.payment}"]`);
     if (paymentRadio) paymentRadio.checked = true;
@@ -830,6 +856,7 @@
       document.getElementById("cash-output").textContent = "$0.00";
     }
 
+    // Notes
     state.notes = order.notes || "";
     const notesInputEl = document.getElementById("notes-input");
     if (notesInputEl) notesInputEl.value = state.notes;
@@ -869,6 +896,7 @@
       total
     };
 
+    // keep a copy for possible edit
     lastSavedOrder = JSON.parse(JSON.stringify(payload));
 
     const mode = isEditing ? "overwrite" : "append";
@@ -888,6 +916,7 @@
       document.getElementById("cash-sound").play();
       showPopup();
 
+      // after saving, go back to normal mode
       editMode = false;
 
       resetAll();
@@ -915,6 +944,7 @@
     document.removeEventListener("click", unlockSounds);
   }
 
+  // NOTES FUNCTIONALITY (wired to button + popup)
   const notesBtn = document.getElementById("notes-btn");
   const notesPopup = document.getElementById("notes-popup");
   const notesInput = document.getElementById("notes-input");
