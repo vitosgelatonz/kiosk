@@ -30,7 +30,7 @@
     }
     .sections {
       display: grid;
-      grid-template-columns: 380px 1fr;  /* Fixed left, flexible right */
+      grid-template-columns: 380px 1fr;
       gap: 12px;
       align-items: start;
     }
@@ -151,7 +151,7 @@
       gap: 5px;
     }
 
-    /* Row with payment options + notes button */
+    /* Row with payment options + buttons */
     .payment-row {
       display: flex;
       justify-content: space-between;
@@ -161,8 +161,14 @@
       margin-top: 4px;
     }
 
-    /* Notes button (round, matches UI) */
-    #notes-btn {
+    /* Button group for notes and adjustment */
+    .action-buttons {
+      display: flex;
+      gap: 8px;
+    }
+
+    /* Notes & Adjustment buttons */
+    #notes-btn, #adjust-btn {
       border: none;
       border-radius: 50%;
       width: 40px;
@@ -178,11 +184,11 @@
       box-shadow: 0 1px 4px rgba(0,0,0,0.18);
     }
 
-    /* Floating notes popup inside payment section */
+    /* Floating popups */
     #payment-section {
       position: relative;
     }
-    #notes-popup {
+    #notes-popup, #adjust-popup {
       display: none;
       position: absolute;
       top: 70px;
@@ -196,12 +202,12 @@
       max-width: 420px;
       width: 90%;
     }
-    .notes-popup-content {
+    .popup-content {
       display: flex;
       flex-direction: column;
       gap: 8px;
     }
-    .notes-label {
+    .popup-label {
       font-size: 0.9rem;
       color: var(--text-soft);
     }
@@ -215,12 +221,12 @@
       resize: vertical;
       font-family: inherit;
     }
-    .notes-actions {
+    .popup-actions {
       display: flex;
       justify-content: flex-end;
       margin-top: 4px;
     }
-    #finish-notes {
+    .popup-btn {
       border: none;
       border-radius: 999px;
       padding: 6px 18px;
@@ -231,15 +237,39 @@
       color: #ffffff;
     }
 
-    /* ✅ FIXED MIXED PAYMENT LAYOUT */
+    /* Adjustment popup specific styles */
+    .adjust-field {
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+    }
+    .adjust-field label {
+      font-size: 0.9rem;
+      font-weight: 600;
+    }
+    .adjust-field input {
+      padding: 8px;
+      border-radius: 8px;
+      border: 1px solid #ccc;
+      font-size: 1rem;
+    }
+    .adjust-preview {
+      background: #f9f9f9;
+      padding: 8px;
+      border-radius: 8px;
+      font-size: 0.9rem;
+      margin-top: 4px;
+    }
+    .adjust-preview strong {
+      color: var(--accent);
+    }
+
     #mixed-fields {
-      display: none;                 /* stays hidden unless JS shows it */
+      display: none;
       margin-top: 6px;
       padding: 10px;
       background: #f9f9f9;
       border-radius: 10px;
-
-      /* 2 columns */
       grid-template-columns: 1fr 1fr;
       gap: 10px 16px;
       align-items: center;
@@ -345,7 +375,7 @@
         <section id="payment-section">
           <h2>Payment & Summary <span>Payment method</span></h2>
 
-          <!-- Payment row with radios + notes button -->
+          <!-- Payment row with radios + action buttons -->
           <div class="payment-row">
             <div class="payment-options">
               <label><input type="radio" name="payment" value="card" checked> Card</label>
@@ -353,21 +383,51 @@
               <label><input type="radio" name="payment" value="mixed"> Mixed</label>
             </div>
 
-            <button id="notes-btn" type="button">📝</button>
+            <div class="action-buttons">
+              <button id="adjust-btn" type="button" title="Adjust Total">💰</button>
+              <button id="notes-btn" type="button" title="Add Notes">📝</button>
+            </div>
           </div>
 
-          <!-- Floating notes popup -->
-          <div id="notes-popup">
-            <div class="notes-popup-content">
-              <div class="notes-label">Notes for this order</div>
-              <textarea id="notes-input"></textarea>
-              <div class="notes-actions">
-                <button id="finish-notes" type="button">Finish</button>
+          <!-- Floating adjustment popup -->
+          <div id="adjust-popup">
+            <div class="popup-content">
+              <div class="popup-label">Adjust Total</div>
+              
+              <div class="adjust-field">
+                <label>Tip Amount ($)</label>
+                <input type="number" id="tip-input" min="0" step="0.10" placeholder="0.00">
+              </div>
+
+              <div class="adjust-field">
+                <label>Discount Amount ($)</label>
+                <input type="number" id="discount-input" min="0" step="0.10" placeholder="0.00">
+              </div>
+
+              <div class="adjust-preview">
+                <div>Base Total: <strong id="base-total-preview">$0.00</strong></div>
+                <div>Adjustment: <strong id="adjustment-preview">$0.00</strong></div>
+                <div style="margin-top: 4px; font-size: 1.05rem;">Final Total: <strong id="final-total-preview">$0.00</strong></div>
+              </div>
+
+              <div class="popup-actions">
+                <button id="finish-adjust" type="button" class="popup-btn">Done</button>
               </div>
             </div>
           </div>
 
-          <!-- ✅ UPDATED MIXED PAYMENT HTML -->
+          <!-- Floating notes popup -->
+          <div id="notes-popup">
+            <div class="popup-content">
+              <div class="popup-label">Notes for this order</div>
+              <textarea id="notes-input"></textarea>
+              <div class="popup-actions">
+                <button id="finish-notes" type="button" class="popup-btn">Done</button>
+              </div>
+            </div>
+          </div>
+
+          <!-- Mixed payment fields -->
           <div id="mixed-fields">
             <div>
               <label>Card Amount:</label>
@@ -383,11 +443,9 @@
           <div class="summary" id="summary-box"></div>
         </section>
 
-        <!-- ACCESSORIES SECTION (NO TITLE) -->
+        <!-- ACCESSORIES SECTION -->
         <section id="accessories-section" style="padding: 8px;">
-
           <div class="row" style="justify-content:flex-start; gap:20px; margin-top:0;">
-
             <!-- Cones -->
             <div style="display:flex; align-items:center; gap:6px;">
               <div class="label">Cones</div>
@@ -407,7 +465,6 @@
                 <button class="btn btn-plus" data-type="accessory" data-key="cups" data-delta="1">+</button>
               </div>
             </div>
-
           </div>
         </section>
 
@@ -447,7 +504,7 @@
 
 <script>
   const GOOGLE_SCRIPT_URL =
-    "https://script.google.com/macros/s/AKfycbzHluxtq3QwKXPjmujQrLONO5jDCFvUhzQGTopLUlmK6b9z8R2fFE5f23gXW_44Wb2g/exec";  <!-- replace with your actual URL -->
+    "https://script.google.com/macros/s/AKfycbzHluxtq3QwKXPjmujQrLONO5jDCFvUhzQGTopLUlmK6b9z8R2fFE5f23gXW_44Wb2g/exec";
 
   const customerTypes = [
     { key: "adult", label: "Adult" },
@@ -464,31 +521,31 @@
   ];
 
   const flavourData = [
-  { name: "Biscoff", image: "images/biscoff.png" },
-  { name: "Black Sand Piha", image: "images/black-sand-piha.png" },
-  { name: "Dark Choco Brownie", image: "images/dark-choco-brownie.png" },
-  { name: "Dulce de Leche", image: "images/dulce-de-leche.png" },
-  { name: "Hazelnut Crunch", image: "images/hazelnut-crunch.png" },
-  { name: "Mango Bliss", image: "images/mango-bliss.png" },
-  { name: "Menta Cioccolato", image: "images/menta-cioccolato.png" },
-  { name: "Reese's Peanut Butter", image: "images/reeses-peanut-butter.png" },
-  { name: "Strawberry Dream", image: "images/strawberry-dream.png" },
-  { name: "Vanilla Oreo", image: "images/vanilla-oreo.png" },
+    { name: "Biscoff", image: "images/biscoff.png" },
+    { name: "Black Sand Piha", image: "images/black-sand-piha.png" },
+    { name: "Dark Choco Brownie", image: "images/dark-choco-brownie.png" },
+    { name: "Dulce de Leche", image: "images/dulce-de-leche.png" },
+    { name: "Hazelnut Crunch", image: "images/hazelnut-crunch.png" },
+    { name: "Mango Bliss", image: "images/mango-bliss.png" },
+    { name: "Menta Cioccolato", image: "images/menta-cioccolato.png" },
+    { name: "Reese's Peanut Butter", image: "images/reeses-peanut-butter.png" },
+    { name: "Strawberry Dream", image: "images/strawberry-dream.png" },
+    { name: "Vanilla Oreo", image: "images/vanilla-oreo.png" },
 
-  { name: "Amarena", image: "images/amarena.png", bg: "#cde4ea" },
-  { name: "Banana Caramel", image: "images/banana-caramel.png", bg: "#cde4ea" },
-  { name: "Cookie Crumble", image: "images/cookie-crumble.png", bg: "#cde4ea" },
-  { name: "Chocolate Velvet", image: "images/chocolate-velvet.png", bg: "#cde4ea" },
-  { name: "Just Vanilla", image: "images/just-vanilla.png", bg: "#cde4ea" },  // ← NEW
-  { name: "Lemon Cake Delight", image: "images/lemon-cake-delight.png", bg: "#cde4ea" },
-  { name: "Moka", image: "images/moka.png", bg: "#cde4ea" },
-  { name: "Pineapple Paradise", image: "images/pineapple-paradise.png", bg: "#cde4ea" },
-  { name: "Simply Coconut", image: "images/simply-coconut.png", bg: "#cde4ea" },
-  { name: "Salted White", image: "images/salted-white.png", bg: "#cde4ea" },
-  { name: "Other", image: "images/other.png", bg: "#cde4ea" },  // ← NEW
+    { name: "Amarena", image: "images/amarena.png", bg: "#cde4ea" },
+    { name: "Banana Caramel", image: "images/banana-caramel.png", bg: "#cde4ea" },
+    { name: "Cookie Crumble", image: "images/cookie-crumble.png", bg: "#cde4ea" },
+    { name: "Chocolate Velvet", image: "images/chocolate-velvet.png", bg: "#cde4ea" },
+    { name: "Just Vanilla", image: "images/just-vanilla.png", bg: "#cde4ea" },
+    { name: "Lemon Cake Delight", image: "images/lemon-cake-delight.png", bg: "#cde4ea" },
+    { name: "Moka", image: "images/moka.png", bg: "#cde4ea" },
+    { name: "Pineapple Paradise", image: "images/pineapple-paradise.png", bg: "#cde4ea" },
+    { name: "Simply Coconut", image: "images/simply-coconut.png", bg: "#cde4ea" },
+    { name: "Salted White", image: "images/salted-white.png", bg: "#cde4ea" },
+    { name: "Other", image: "images/other.png", bg: "#cde4ea" },
 
-  { name: "Pup Cup", image: "images/pup-cup.png", bg: "#ffffff" }
-];
+    { name: "Pup Cup", image: "images/pup-cup.png", bg: "#ffffff" }
+  ];
 
   const state = {
     customers: {},
@@ -498,11 +555,13 @@
     cardAmount: 0,
     cones: 0,
     cups: 0,
-    notes: ""
+    notes: "",
+    tip: 0,
+    discount: 0
   };
 
-  let lastSavedOrder = null;  // stores last payload
-  let editMode = false;       // true when editing last order
+  let lastSavedOrder = null;
+  let editMode = false;
 
   customerTypes.forEach(c => state.customers[c.key] = 0);
   sizes.forEach(s => state.sizes[s.key] = 0);
@@ -628,26 +687,22 @@
       }
 
       if (type === "size") {
-        state.sizes[key] =
-          Math.max(0, state.sizes[key] + delta);
-        document.getElementById(`size-${key}`).textContent =
-          state.sizes[key];
+        state.sizes[key] = Math.max(0, state.sizes[key] + delta);
+        document.getElementById(`size-${key}`).textContent = state.sizes[key];
         updateTotal();
+        updateAdjustmentPreview();
       }
 
       if (type === "flavour") {
-        state.flavours[key] =
-          Math.max(0, state.flavours[key] + delta);
+        state.flavours[key] = Math.max(0, state.flavours[key] + delta);
         document.getElementById(`flavour-${cssSafe(key)}`).textContent =
           state.flavours[key];
         updateFlavourBorders();
       }
 
       if (type === "accessory") {
-        state[key] =
-          Math.max(0, state[key] + delta);
-        document.getElementById(`accessory-${key}`).textContent =
-          state[key];
+        state[key] = Math.max(0, state[key] + delta);
+        document.getElementById(`accessory-${key}`).textContent = state[key];
       }
 
       updateSummary();
@@ -662,15 +717,13 @@
           state.payment === "mixed" ? "grid" : "none";
 
         if (state.payment !== "mixed") {
-          // reset mixed fields when switching back
           document.getElementById("card-input").value = "";
           document.getElementById("cash-output").textContent = "$0.00";
           state.cardAmount = 0;
         } else {
-          // ensure card field starts empty every time MIXED is selected
           document.getElementById("card-input").value = "";
           document.getElementById("cash-output").textContent =
-            `$${calcTotal().toFixed(2)}`;
+            `$${getFinalTotal().toFixed(2)}`;
           state.cardAmount = 0;
         }
 
@@ -679,20 +732,17 @@
     );
 
     document.getElementById("card-input").addEventListener("input", ()=>{
-      const total = calcTotal();
-      let val =
-        parseFloat(document.getElementById("card-input").value || "0");
+      const total = getFinalTotal();
+      let val = parseFloat(document.getElementById("card-input").value || "0");
 
       if (val > total) {
         val = total;
-        document.getElementById("card-input").value =
-          total.toFixed(2);
+        document.getElementById("card-input").value = total.toFixed(2);
       }
 
       state.cardAmount = val;
       const cash = total - val;
-      document.getElementById("cash-output").textContent =
-        `$${cash.toFixed(2)}`;
+      document.getElementById("cash-output").textContent = `$${cash.toFixed(2)}`;
     });
 
     document.getElementById("cancel-btn").addEventListener("click", resetAll);
@@ -708,15 +758,39 @@
     });
   }
 
-  function calcTotal() {
+  function calcBaseTotal() {
     return sizes.reduce((sum, sz)=>{
       return sum + state.sizes[sz.key] * sz.price;
     }, 0);
   }
 
+  function getFinalTotal() {
+    const base = calcBaseTotal();
+    const adjustment = state.tip - state.discount;
+    return Math.max(0, base + adjustment);
+  }
+
   function updateTotal() {
-    document.getElementById("total-box").textContent =
-      `Total: $${calcTotal().toFixed(2)}`;
+    const finalTotal = getFinalTotal();
+    document.getElementById("total-box").textContent = `Total: $${finalTotal.toFixed(2)}`;
+  }
+
+  function updateAdjustmentPreview() {
+    const base = calcBaseTotal();
+    const adjustment = state.tip - state.discount;
+    const final = getFinalTotal();
+
+    document.getElementById("base-total-preview").textContent = `$${base.toFixed(2)}`;
+    
+    let adjustText = "$0.00";
+    if (adjustment > 0) {
+      adjustText = `+$${adjustment.toFixed(2)}`;
+    } else if (adjustment < 0) {
+      adjustText = `-$${Math.abs(adjustment).toFixed(2)}`;
+    }
+    document.getElementById("adjustment-preview").textContent = adjustText;
+    
+    document.getElementById("final-total-preview").textContent = `${final.toFixed(2)}`;
   }
 
   function updateSummary() {
@@ -745,7 +819,9 @@
       parts.push("Accessories – " + accessoryParts.join(", "));
 
     parts.push("Payment: " + state.payment.toUpperCase());
-    parts.push("Total: $" + calcTotal().toFixed(2));
+    
+    const finalTotal = getFinalTotal();
+    parts.push("Total: $" + finalTotal.toFixed(2));
 
     document.getElementById("summary-box").textContent =
       parts.join(" | ");
@@ -781,12 +857,13 @@
 
     state.payment = "card";
     state.cardAmount = 0;
+    state.tip = 0;
+    state.discount = 0;
 
     const cardRadio = document.querySelector('input[name="payment"][value="card"]');
     if (cardRadio) cardRadio.checked = true;
 
     document.getElementById("mixed-fields").style.display = "none";
-
     document.getElementById("card-input").value = "";
     document.getElementById("cash-output").textContent = "$0.00";
 
@@ -797,12 +874,17 @@
     if (notesInputEl) notesInputEl.value = "";
     if (notesPopupEl) notesPopupEl.style.display = "none";
 
+    // Reset adjustment
+    document.getElementById("tip-input").value = "";
+    document.getElementById("discount-input").value = "";
+    document.getElementById("adjust-popup").style.display = "none";
+
     updateTotal();
     updateSummary();
+    updateAdjustmentPreview();
   }
 
   function loadOrderForEditing(order) {
-    // Start from a clean screen
     resetAll();
 
     // Customers
@@ -848,9 +930,9 @@
       document.getElementById("mixed-fields").style.display = "grid";
       document.getElementById("card-input").value =
         state.cardAmount ? state.cardAmount.toFixed(2) : "";
-      const total = order.total || calcTotal();
+      const total = order.total || getFinalTotal();
       const cash = total - state.cardAmount;
-      document.getElementById("cash-output").textContent = `$${cash.toFixed(2)}`;
+      document.getElementById("cash-output").textContent = `${cash.toFixed(2)}`;
     } else {
       state.cardAmount = 0;
       document.getElementById("mixed-fields").style.display = "none";
@@ -863,19 +945,29 @@
     const notesInputEl = document.getElementById("notes-input");
     if (notesInputEl) notesInputEl.value = state.notes;
 
+    // Adjustment
+    state.tip = order.tip || 0;
+    state.discount = order.discount || 0;
+    document.getElementById("tip-input").value = state.tip > 0 ? state.tip.toFixed(2) : "";
+    document.getElementById("discount-input").value = state.discount > 0 ? state.discount.toFixed(2) : "";
+
     updateTotal();
     updateSummary();
+    updateAdjustmentPreview();
   }
 
   async function submitOrder() {
-    const total = calcTotal();
+    const baseTotal = calcBaseTotal();
 
-    if (total === 0) {
+    if (baseTotal === 0) {
       alert("No sizes selected yet.");
       return;
     }
 
-    if (state.payment === "mixed" && state.cardAmount > total) {
+    const finalTotal = getFinalTotal();
+    const adjustment = state.tip - state.discount;
+
+    if (state.payment === "mixed" && state.cardAmount > finalTotal) {
       alert("Card amount cannot exceed total.");
       return;
     }
@@ -892,13 +984,15 @@
       flavours: state.flavours,
       cones: state.cones,
       cups: state.cups,
+      adjustment: adjustment,
       payment: state.payment,
       cardAmount: state.cardAmount,
       notes: state.notes,
-      total
+      tip: state.tip,
+      discount: state.discount,
+      total: finalTotal
     };
 
-    // keep a copy for possible edit
     lastSavedOrder = JSON.parse(JSON.stringify(payload));
 
     const mode = isEditing ? "overwrite" : "append";
@@ -918,7 +1012,6 @@
       document.getElementById("cash-sound").play();
       showPopup();
 
-      // after saving, go back to normal mode
       editMode = false;
 
       resetAll();
@@ -946,7 +1039,7 @@
     document.removeEventListener("click", unlockSounds);
   }
 
-  // NOTES FUNCTIONALITY (wired to button + popup)
+  // NOTES FUNCTIONALITY
   const notesBtn = document.getElementById("notes-btn");
   const notesPopup = document.getElementById("notes-popup");
   const notesInput = document.getElementById("notes-input");
@@ -963,6 +1056,38 @@
     notesPopup.style.display = "none";
   });
 
+  // ADJUSTMENT FUNCTIONALITY
+  const adjustBtn = document.getElementById("adjust-btn");
+  const adjustPopup = document.getElementById("adjust-popup");
+  const tipInput = document.getElementById("tip-input");
+  const discountInput = document.getElementById("discount-input");
+  const finishAdjust = document.getElementById("finish-adjust");
+
+  adjustBtn.addEventListener("click", () => {
+    tipInput.value = state.tip > 0 ? state.tip.toFixed(2) : "";
+    discountInput.value = state.discount > 0 ? state.discount.toFixed(2) : "";
+    updateAdjustmentPreview();
+    adjustPopup.style.display = "block";
+    tipInput.focus();
+  });
+
+  tipInput.addEventListener("input", () => {
+    state.tip = parseFloat(tipInput.value || "0");
+    updateAdjustmentPreview();
+    updateTotal();
+  });
+
+  discountInput.addEventListener("input", () => {
+    state.discount = parseFloat(discountInput.value || "0");
+    updateAdjustmentPreview();
+    updateTotal();
+  });
+
+  finishAdjust.addEventListener("click", () => {
+    adjustPopup.style.display = "none";
+    updateSummary();
+  });
+
   document.addEventListener("click", unlockSounds);
 
   renderCustomerSection();
@@ -972,6 +1097,7 @@
   attachHandlers();
   updateTotal();
   updateSummary();
+  updateAdjustmentPreview();
 </script>
 
 </body>
