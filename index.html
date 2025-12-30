@@ -30,7 +30,7 @@
     }
     .sections {
       display: grid;
-      grid-template-columns: 0.36fr 0.64fr;
+      grid-template-columns: 0.28fr 0.72fr;
       gap: 12px;
       align-items: start;
     }
@@ -57,12 +57,21 @@
     .row {
       display: flex;
       align-items: center;
-      justify-content: space-between;
-      margin: 6px 0;
+      gap: 8px;
+      margin: 5px 0;
     }
-    .label { font-size: 0.95rem; }
-    .price { font-size: 0.8rem; color: var(--text-soft); margin-left: 6px; }
-    .controls { display: flex; align-items: center; gap: 6px; }
+    .label { 
+      font-size: 0.95rem;
+      flex: 0 0 auto;
+      min-width: 90px;
+    }
+    .price { font-size: 0.8rem; color: var(--text-soft); margin-left: 4px; }
+    .controls {
+      margin-left: auto;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
 
     button.btn {
       border: none;
@@ -231,15 +240,13 @@
       color: #ffffff;
     }
 
-    /* ✅ FIXED MIXED PAYMENT LAYOUT */
+    /* Mixed payment layout */
     #mixed-fields {
-      display: none;                 /* stays hidden unless JS shows it */
+      display: none;
       margin-top: 6px;
       padding: 10px;
       background: #f9f9f9;
       border-radius: 10px;
-
-      /* 2 columns */
       grid-template-columns: 1fr 1fr;
       gap: 10px 16px;
       align-items: center;
@@ -367,7 +374,7 @@
             </div>
           </div>
 
-          <!-- ✅ UPDATED MIXED PAYMENT HTML -->
+          <!-- Mixed payment fields -->
           <div id="mixed-fields">
             <div>
               <label>Card Amount:</label>
@@ -447,7 +454,7 @@
 
 <script>
   const GOOGLE_SCRIPT_URL =
-    "https://script.google.com/macros/s/AKfycbzHluxtq3QwKXPjmujQrLONO5jDCFvUhzQGTopLUlmK6b9z8R2fFE5f23gXW_44Wb2g/exec";  <!-- replace with your actual URL -->
+    "https://script.google.com/macros/s/AKfycbzHluxtq3QwKXPjmujQrLONO5jDCFvUhzQGTopLUlmK6b9z8R2fFE5f23gXW_44Wb2g/exec";
 
   const customerTypes = [
     { key: "adult", label: "Adult" },
@@ -499,8 +506,8 @@
     notes: ""
   };
 
-  let lastSavedOrder = null;  // stores last payload
-  let editMode = false;       // true when editing last order
+  let lastSavedOrder = null;
+  let editMode = false;
 
   customerTypes.forEach(c => state.customers[c.key] = 0);
   sizes.forEach(s => state.sizes[s.key] = 0);
@@ -660,12 +667,10 @@
           state.payment === "mixed" ? "grid" : "none";
 
         if (state.payment !== "mixed") {
-          // reset mixed fields when switching back
           document.getElementById("card-input").value = "";
           document.getElementById("cash-output").textContent = "$0.00";
           state.cardAmount = 0;
         } else {
-          // ensure card field starts empty every time MIXED is selected
           document.getElementById("card-input").value = "";
           document.getElementById("cash-output").textContent =
             `$${calcTotal().toFixed(2)}`;
@@ -788,7 +793,6 @@
     document.getElementById("card-input").value = "";
     document.getElementById("cash-output").textContent = "$0.00";
 
-    // Reset notes
     state.notes = "";
     const notesInputEl = document.getElementById("notes-input");
     const notesPopupEl = document.getElementById("notes-popup");
@@ -800,10 +804,8 @@
   }
 
   function loadOrderForEditing(order) {
-    // Start from a clean screen
     resetAll();
 
-    // Customers
     customerTypes.forEach(ct => {
       const value = (order.customers && order.customers[ct.key]) || 0;
       state.customers[ct.key] = value;
@@ -811,7 +813,6 @@
       if (el) el.textContent = value;
     });
 
-    // Sizes
     sizes.forEach(sz => {
       const value = (order.sizes && order.sizes[sz.key]) || 0;
       state.sizes[sz.key] = value;
@@ -819,7 +820,6 @@
       if (el) el.textContent = value;
     });
 
-    // Flavours
     flavourData.forEach(f => {
       const value = (order.flavours && order.flavours[f.name]) || 0;
       state.flavours[f.name] = value;
@@ -828,7 +828,6 @@
     });
     updateFlavourBorders();
 
-    // Accessories
     state.cones = order.cones || 0;
     state.cups  = order.cups  || 0;
     const conesEl = document.getElementById("accessory-cones");
@@ -836,7 +835,6 @@
     if (conesEl) conesEl.textContent = state.cones;
     if (cupsEl)  cupsEl.textContent  = state.cups;
 
-    // Payment
     state.payment = order.payment || "card";
     const paymentRadio = document.querySelector(`input[name="payment"][value="${state.payment}"]`);
     if (paymentRadio) paymentRadio.checked = true;
@@ -856,7 +854,6 @@
       document.getElementById("cash-output").textContent = "$0.00";
     }
 
-    // Notes
     state.notes = order.notes || "";
     const notesInputEl = document.getElementById("notes-input");
     if (notesInputEl) notesInputEl.value = state.notes;
@@ -896,7 +893,6 @@
       total
     };
 
-    // keep a copy for possible edit
     lastSavedOrder = JSON.parse(JSON.stringify(payload));
 
     const mode = isEditing ? "overwrite" : "append";
@@ -916,7 +912,6 @@
       document.getElementById("cash-sound").play();
       showPopup();
 
-      // after saving, go back to normal mode
       editMode = false;
 
       resetAll();
@@ -944,7 +939,6 @@
     document.removeEventListener("click", unlockSounds);
   }
 
-  // NOTES FUNCTIONALITY (wired to button + popup)
   const notesBtn = document.getElementById("notes-btn");
   const notesPopup = document.getElementById("notes-popup");
   const notesInput = document.getElementById("notes-input");
@@ -974,4 +968,3 @@
 
 </body>
 </html>
-
