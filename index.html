@@ -420,6 +420,11 @@
           <h2>Order Size <span>Price per item</span></h2>
         </section>
 
+        <!-- NEW EXTRAS SECTION -->
+        <section id="extras-section">
+          <h2>Extras <span>Price per item</span></h2>
+        </section>
+
         <section id="payment-section">
           <h2>Payment & Summary <span>Payment method</span></h2>
 
@@ -571,6 +576,13 @@
     { key: "tub", label: "Takeaway", price: 19 }
   ];
 
+  // NEW: extras data
+  const extrasData = [
+    { key: "hotChocolate", label: "Hot Chocolate", price: 6 },
+    { key: "medialuna",    label: "Medialuna",     price: 5 },
+    { key: "combo",        label: "Combo",          price: 10 }
+  ];
+
   const flavourData = [
     { name: "Biscoff", image: "images/biscoff.png" },
     { name: "Black Sand Piha", image: "images/black-sand-piha.png" },
@@ -604,6 +616,7 @@
   const state = {
     customers: {},
     sizes: {},
+    extras: {},        // NEW
     flavours: {},
     payment: "card",
     cardAmount: 0,
@@ -619,6 +632,7 @@
 
   customerTypes.forEach(c => state.customers[c.key] = 0);
   sizes.forEach(s => state.sizes[s.key] = 0);
+  extrasData.forEach(ex => state.extras[ex.key] = 0);  // NEW
   flavourData.forEach(f => state.flavours[f.name] = 0);
 
   function cssSafe(str) {
@@ -665,6 +679,23 @@
           <button class="btn btn-minus" data-type="size" data-key="${sz.key}" data-delta="-1">−</button>
           <span class="count" id="size-${sz.key}">0</span>
           <button class="btn btn-plus" data-type="size" data-key="${sz.key}" data-delta="1">+</button>
+        </div>`;
+      container.appendChild(row);
+    });
+  }
+
+  // NEW: render extras section
+  function renderExtrasSection() {
+    const container = document.getElementById("extras-section");
+    extrasData.forEach(ex => {
+      const row = document.createElement("div");
+      row.className = "row";
+      row.innerHTML = `
+        <div class="label">${ex.label} <span class="price">$${ex.price.toFixed(2)}</span></div>
+        <div class="controls">
+          <button class="btn btn-minus" data-type="extra" data-key="${ex.key}" data-delta="-1">−</button>
+          <span class="count" id="extra-${ex.key}">0</span>
+          <button class="btn btn-plus" data-type="extra" data-key="${ex.key}" data-delta="1">+</button>
         </div>`;
       container.appendChild(row);
     });
@@ -746,6 +777,14 @@
         updateAdjustmentPreview();
       }
 
+      // NEW: handle extras clicks
+      if (type === "extra") {
+        state.extras[key] = Math.max(0, state.extras[key] + delta);
+        document.getElementById(`extra-${key}`).textContent = state.extras[key];
+        updateTotal();
+        updateAdjustmentPreview();
+      }
+
       if (type === "flavour") {
         state.flavours[key] = Math.max(0, state.flavours[key] + delta);
         document.getElementById(`flavour-${cssSafe(key)}`).textContent = state.flavours[key];
@@ -807,7 +846,9 @@
   }
 
   function calcBaseTotal() {
-    return sizes.reduce((sum, sz)=> sum + state.sizes[sz.key] * sz.price, 0);
+    const sizeTotal = sizes.reduce((sum, sz) => sum + state.sizes[sz.key] * sz.price, 0);
+    const extrasTotal = extrasData.reduce((sum, ex) => sum + state.extras[ex.key] * ex.price, 0); // NEW
+    return sizeTotal + extrasTotal;
   }
 
   function getFinalTotal() {
@@ -849,6 +890,10 @@
       .filter(sz=> state.sizes[sz.key] > 0)
       .map(sz=> `${sz.label}: ${state.sizes[sz.key]}`);
 
+    const extrasParts = extrasData  // NEW
+      .filter(ex => state.extras[ex.key] > 0)
+      .map(ex => `${ex.label}: ${state.extras[ex.key]}`);
+
     const flavourParts = flavourData
       .filter(f=> state.flavours[f.name] > 0)
       .map(f=> `${f.name}: ${state.flavours[f.name]}`);
@@ -859,6 +904,7 @@
 
     if (custParts.length) parts.push("Customers – " + custParts.join(", "));
     if (sizeParts.length) parts.push("Sizes – " + sizeParts.join(", "));
+    if (extrasParts.length) parts.push("Extras – " + extrasParts.join(", "));  // NEW
     if (flavourParts.length) parts.push("Flavours – " + flavourParts.join(", "));
     if (accessoryParts.length) parts.push("Accessories – " + accessoryParts.join(", "));
 
@@ -880,6 +926,13 @@
     sizes.forEach(sz=>{
       state.sizes[sz.key] = 0;
       const el = document.getElementById(`size-${sz.key}`);
+      if (el) el.textContent = "0";
+    });
+
+    // NEW: reset extras
+    extrasData.forEach(ex => {
+      state.extras[ex.key] = 0;
+      const el = document.getElementById(`extra-${ex.key}`);
       if (el) el.textContent = "0";
     });
 
@@ -939,6 +992,14 @@
       if (el) el.textContent = value;
     });
 
+    // NEW: restore extras
+    extrasData.forEach(ex => {
+      const value = (order.extras && order.extras[ex.key]) || 0;
+      state.extras[ex.key] = value;
+      const el = document.getElementById(`extra-${ex.key}`);
+      if (el) el.textContent = value;
+    });
+
     flavourData.forEach(f => {
       const value = (order.flavours && order.flavours[f.name]) || 0;
       state.flavours[f.name] = value;
@@ -987,10 +1048,9 @@
   }
 
   async function submitOrder() {
-    const baseTotal = calcBaseTotal();
-
-    if (baseTotal === 0) {
-      alert("No sizes selected yet.");
+    // UPDATED: allow save if any total > 0, not just sizes
+    if (getFinalTotal() === 0) {
+      alert("No items selected yet.");
       return;
     }
 
@@ -1011,6 +1071,7 @@
       timestamp: getLocalTimestamp(),
       customers: state.customers,
       sizes: state.sizes,
+      extras: state.extras,       // NEW
       flavours: state.flavours,
       cones: state.cones,
       cups: state.cups,
@@ -1118,6 +1179,7 @@
 
   renderCustomerSection();
   renderSizeSection();
+  renderExtrasSection();  // NEW
   renderFlavours();
   updateFlavourBorders();
   attachHandlers();
