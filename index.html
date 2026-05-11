@@ -21,56 +21,56 @@
       font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
       background: var(--bg-main);
       color: var(--text-main);
-      font-size: 18px;
+      font-size: 15px; /* reduced from 18px */
     }
     .app {
       max-width: 1500px;
       margin: 0 auto;
-      padding: 12px;
+      padding: 6px; /* reduced from 12px */
     }
     .sections {
       display: grid;
-      grid-template-columns: 380px 1fr;
-      gap: 12px;
+      grid-template-columns: 340px 1fr; /* reduced from 380px */
+      gap: 8px; /* reduced from 12px */
       align-items: start;
     }
     section {
       background: var(--accent-soft);
-      border-radius: 12px;
-      padding: 10px;
+      border-radius: 10px; /* reduced from 12px */
+      padding: 6px; /* reduced from 10px */
       box-shadow: 0 2px 6px rgba(0,0,0,0.08);
     }
     section h2 {
       background: var(--accent);
       color: white;
-      padding: 10px 14px;
-      margin: -10px -10px 10px -10px;
-      border-radius: 10px 10px 0 0;
+      padding: 6px 10px; /* reduced from 10px 14px */
+      margin: -6px -6px 6px -6px; /* match reduced padding */
+      border-radius: 8px 8px 0 0; /* reduced from 10px */
       display: flex;
       align-items: center;
       justify-content: space-between;
-      font-size: 1.05rem;
+      font-size: 0.82rem; /* reduced from 1.05rem */
       font-weight: 600;
     }
-    section h2 span { font-size: 0.8rem; opacity: 0.9; }
+    section h2 span { font-size: 0.7rem; opacity: 0.9; }
 
     .row {
       display: flex;
       align-items: center;
       justify-content: space-between;
-      margin: 6px 0;
+      margin: 3px 0; /* reduced from 6px */
     }
-    .label { font-size: 0.95rem; }
-    .price { font-size: 0.8rem; color: var(--text-soft); margin-left: 6px; }
-    .controls { display: flex; align-items: center; gap: 6px; }
+    .label { font-size: 0.82rem; } /* reduced from 0.95rem */
+    .price { font-size: 0.72rem; color: var(--text-soft); margin-left: 4px; }
+    .controls { display: flex; align-items: center; gap: 4px; } /* reduced gap from 6px */
 
     button.btn {
       border: none;
       border-radius: 999px;
-      padding: 6px 12px;
-      font-size: 1.2rem;
+      padding: 4px 9px; /* reduced from 6px 12px */
+      font-size: 1rem; /* reduced from 1.2rem */
       cursor: pointer;
-      min-width: 40px;
+      min-width: 32px; /* reduced from 40px */
       display: flex;
       align-items: center;
       justify-content: center;
@@ -80,25 +80,25 @@
     .btn-minus { background: var(--danger); color: #fff; }
 
     .count {
-      min-width: 32px;
+      min-width: 24px; /* reduced from 32px */
       text-align: center;
       font-weight: 700;
-      font-size: 1.05rem;
+      font-size: 0.9rem; /* reduced from 1.05rem */
     }
 
     .flavour-grid {
       display: grid;
-      grid-template-columns: repeat(auto-fill, minmax(155px, 1fr));
-      gap: 10px;
-      max-height: 650px;
+      grid-template-columns: repeat(auto-fill, minmax(145px, 1fr)); /* reduced from 155px */
+      gap: 8px; /* reduced from 10px */
+      max-height: 620px;
       overflow-y: auto;
       padding-right: 4px;
     }
     .flavour-card {
       background: #ffffff;
       border: 2px solid transparent;
-      border-radius: 16px;
-      padding: 8px;
+      border-radius: 14px; /* reduced from 16px */
+      padding: 6px; /* reduced from 8px */
       box-shadow: 0 1px 4px rgba(0,0,0,0.06);
       display: flex;
       flex-direction: column;
@@ -107,48 +107,48 @@
     .flavour-top {
       display: flex;
       align-items: center;
-      gap: 8px;
-      margin-bottom: 4px;
+      gap: 6px; /* reduced from 8px */
+      margin-bottom: 3px; /* reduced from 4px */
     }
     .flavour-image {
-      width: 36px;
-      height: 36px;
+      width: 30px; /* reduced from 36px */
+      height: 30px;
       border-radius: 50%;
       object-fit: cover;
       flex-shrink: 0;
       background: #eee;
     }
-    .flavour-name { font-size: 0.9rem; font-weight: 600; }
+    .flavour-name { font-size: 0.8rem; font-weight: 600; } /* reduced from 0.9rem */
 
     .flavour-controls {
       display: flex;
       align-items: center;
       justify-content: flex-end;
-      gap: 6px;
+      gap: 5px; /* reduced from 6px */
     }
 
     .summary {
-      margin-top: 6px;
-      font-size: 0.85rem;
-      line-height: 1.4;
+      margin-top: 4px; /* reduced from 6px */
+      font-size: 0.75rem; /* reduced from 0.85rem */
+      line-height: 1.3;
       color: var(--text-soft);
-      min-height: 40px;
+      min-height: 30px; /* reduced from 40px */
     }
 
     .payment-options {
       display: flex;
-      gap: 6px;
+      gap: 4px; /* reduced from 6px */
       flex-wrap: nowrap;
     }
     .payment-options label {
       background: #f3f3f3;
-      padding: 5px 10px;
+      padding: 3px 8px; /* reduced from 5px 10px */
       border-radius: 999px;
-      font-size: 0.9rem;
+      font-size: 0.78rem; /* reduced from 0.9rem */
       cursor: pointer;
       display: flex;
       align-items: center;
-      gap: 4px;
+      gap: 3px;
       white-space: nowrap;
     }
 
@@ -156,27 +156,27 @@
       display: flex;
       justify-content: space-between;
       align-items: center;
-      gap: 8px;
-      margin-bottom: 4px;
-      margin-top: 4px;
+      gap: 6px;
+      margin-bottom: 3px;
+      margin-top: 3px;
     }
 
     .action-buttons {
       display: flex;
-      gap: 6px;
+      gap: 4px;
     }
 
     #notes-btn, #adjust-btn {
       border: none;
       border-radius: 50%;
-      width: 36px;
-      height: 36px;
+      width: 30px; /* reduced from 36px */
+      height: 30px;
       background: var(--accent);
       color: #ffffff;
       display: flex;
       align-items: center;
       justify-content: center;
-      font-size: 1rem;
+      font-size: 0.85rem; /* reduced from 1rem */
       cursor: pointer;
       flex-shrink: 0;
       box-shadow: 0 1px 4px rgba(0,0,0,0.18);
@@ -186,16 +186,11 @@
     .modal-overlay {
       display: none;
       position: fixed;
-      top: 0;
-      left: 0;
-      right: 0;
-      bottom: 0;
-      background: rgba(0, 0, 0, 0.5);
+      top: 0; left: 0; right: 0; bottom: 0;
+      background: rgba(0,0,0,0.5);
       z-index: 99;
     }
-    .modal-overlay.show {
-      display: block;
-    }
+    .modal-overlay.show { display: block; }
 
     /* Centered popups */
     #notes-popup, #adjust-popup {
@@ -211,25 +206,11 @@
       z-index: 100;
       max-width: 90vw;
     }
-    #notes-popup {
-      width: 400px;
-    }
-    #adjust-popup {
-      width: 480px;
-    }
+    #notes-popup { width: 400px; }
+    #adjust-popup { width: 480px; }
 
-    .popup-content {
-      display: flex;
-      flex-direction: column;
-      gap: 10px;
-    }
-    .popup-label {
-      font-size: 1.1rem;
-      font-weight: 600;
-      color: var(--text-main);
-      text-align: center;
-      margin-bottom: 4px;
-    }
+    .popup-content { display: flex; flex-direction: column; gap: 10px; }
+    .popup-label { font-size: 1.1rem; font-weight: 600; color: var(--text-main); text-align: center; margin-bottom: 4px; }
 
     #notes-input {
       width: 100%;
@@ -242,22 +223,9 @@
       font-family: inherit;
     }
 
-    /* Horizontal layout for adjustment fields */
-    .adjust-fields-row {
-      display: grid;
-      grid-template-columns: 1fr 1fr;
-      gap: 12px;
-    }
-    .adjust-field {
-      display: flex;
-      flex-direction: column;
-      gap: 6px;
-    }
-    .adjust-field label {
-      font-size: 0.85rem;
-      font-weight: 600;
-      text-align: center;
-    }
+    .adjust-fields-row { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+    .adjust-field { display: flex; flex-direction: column; gap: 6px; }
+    .adjust-field label { font-size: 0.85rem; font-weight: 600; text-align: center; }
     .adjust-field input {
       padding: 10px;
       border-radius: 8px;
@@ -267,10 +235,7 @@
       font-weight: 600;
       width: 100%;
     }
-    .adjust-field input:focus {
-      outline: none;
-      border-color: var(--accent);
-    }
+    .adjust-field input:focus { outline: none; border-color: var(--accent); }
 
     .adjust-preview {
       background: #e6f3f6;
@@ -281,27 +246,11 @@
       gap: 6px;
       border: 2px solid var(--accent);
     }
-    .adjust-preview-row {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      font-size: 0.9rem;
-    }
-    .adjust-preview-row.final {
-      padding-top: 6px;
-      border-top: 2px solid var(--accent);
-      font-size: 1rem;
-    }
-    .adjust-preview strong {
-      color: var(--accent);
-      font-size: 1rem;
-    }
+    .adjust-preview-row { display: flex; justify-content: space-between; align-items: center; font-size: 0.9rem; }
+    .adjust-preview-row.final { padding-top: 6px; border-top: 2px solid var(--accent); font-size: 1rem; }
+    .adjust-preview strong { color: var(--accent); font-size: 1rem; }
 
-    .popup-actions {
-      display: flex;
-      justify-content: center;
-      margin-top: 4px;
-    }
+    .popup-actions { display: flex; justify-content: center; margin-top: 4px; }
     .popup-btn {
       border: none;
       border-radius: 999px;
@@ -315,20 +264,20 @@
 
     #mixed-fields {
       display: none;
-      margin-top: 6px;
-      padding: 10px;
+      margin-top: 4px;
+      padding: 6px 8px;
       background: #f9f9f9;
-      border-radius: 10px;
+      border-radius: 8px;
       grid-template-columns: 1fr 1fr;
-      gap: 10px 16px;
+      gap: 8px 14px;
       align-items: center;
     }
     #mixed-fields input {
       width: 100%;
-      padding: 6px;
+      padding: 5px;
       border-radius: 6px;
       border: 1px solid #ccc;
-      font-size: 1rem;
+      font-size: 0.9rem;
     }
 
     #saving-indicator {
@@ -345,19 +294,19 @@
       bottom: 0;
       background: rgba(244,239,234,0.98);
       backdrop-filter: blur(6px);
-      padding: 8px 4px;
+      padding: 6px 4px; /* reduced from 8px */
       border-top: 1px solid rgba(0,0,0,0.05);
       display: flex;
       align-items: center;
     }
-    .total { font-size: 1.1rem; font-weight: 700; }
+    .total { font-size: 1rem; font-weight: 700; } /* reduced from 1.1rem */
     .bottom-buttons { margin-left: auto; display: flex; gap: 8px; }
 
     .action {
       border: none;
       border-radius: 999px;
-      padding: 10px 22px;
-      font-size: 1rem;
+      padding: 8px 18px; /* reduced from 10px 22px */
+      font-size: 0.9rem; /* reduced from 1rem */
       font-weight: 600;
       cursor: pointer;
       user-select: none;
@@ -383,10 +332,7 @@
       align-items: center;
       gap: 12px;
     }
-    #success-popup.show {
-      opacity: 1;
-      transform: translateX(-50%) translateY(0);
-    }
+    #success-popup.show { opacity: 1; transform: translateX(-50%) translateY(0); }
 
     #edit-last-btn {
       border: none;
@@ -399,6 +345,16 @@
       color: var(--accent);
     }
 
+    /* Accessories inline strip */
+    #accessories-section {
+      padding: 5px 6px !important;
+    }
+    #accessories-section .row {
+      justify-content: flex-start;
+      gap: 14px;
+      margin-top: 0;
+    }
+
     @media (max-width: 900px) {
       .sections { grid-template-columns: 1fr; }
     }
@@ -409,23 +365,21 @@
   <div class="modal-overlay" id="modal-overlay"></div>
 
   <div class="app">
-
     <div class="sections">
       <div>
         <section id="customer-section">
           <h2>Customer Type <span>Adults, kids, online</span></h2>
         </section>
 
-        <section id="size-section">
+        <section id="size-section" style="margin-top:6px">
           <h2>Order Size <span>Price per item</span></h2>
         </section>
 
-        <!-- NEW EXTRAS SECTION -->
-        <section id="extras-section">
+        <section id="extras-section" style="margin-top:6px">
           <h2>Extras <span>Price per item</span></h2>
         </section>
 
-        <section id="payment-section">
+        <section id="payment-section" style="margin-top:6px">
           <h2>Payment & Summary <span>Payment method</span></h2>
 
           <div class="payment-row">
@@ -434,7 +388,6 @@
               <label><input type="radio" name="payment" value="cash"> Cash</label>
               <label><input type="radio" name="payment" value="mixed"> Mixed</label>
             </div>
-
             <div class="action-buttons">
               <button id="adjust-btn" type="button" title="Adjust Total">💰</button>
               <button id="notes-btn" type="button" title="Add Notes">📝</button>
@@ -443,22 +396,21 @@
 
           <div id="mixed-fields">
             <div>
-              <label>Card Amount:</label>
+              <label style="font-size:0.78rem">Card Amount:</label>
               <input type="number" id="card-input" min="0" step="0.10">
             </div>
-
             <div>
-              <label>Cash Amount:</label>
-              <strong id="cash-output" style="font-size:1rem;">$0.00</strong>
+              <label style="font-size:0.78rem">Cash Amount:</label>
+              <strong id="cash-output" style="font-size:0.9rem;">$0.00</strong>
             </div>
           </div>
 
           <div class="summary" id="summary-box"></div>
         </section>
 
-        <section id="accessories-section" style="padding: 8px;">
-          <div class="row" style="justify-content:flex-start; gap:20px; margin-top:0;">
-            <div style="display:flex; align-items:center; gap:6px;">
+        <section id="accessories-section" style="margin-top:6px">
+          <div class="row" style="justify-content:flex-start; gap:14px; margin-top:0;">
+            <div style="display:flex; align-items:center; gap:5px;">
               <div class="label">Cones</div>
               <div class="controls">
                 <button class="btn btn-minus" data-type="accessory" data-key="cones" data-delta="-1">−</button>
@@ -466,8 +418,7 @@
                 <button class="btn btn-plus" data-type="accessory" data-key="cones" data-delta="1">+</button>
               </div>
             </div>
-
-            <div style="display:flex; align-items:center; gap:6px;">
+            <div style="display:flex; align-items:center; gap:5px;">
               <div class="label">Cups</div>
               <div class="controls">
                 <button class="btn btn-minus" data-type="accessory" data-key="cups" data-delta="-1">−</button>
@@ -477,7 +428,6 @@
             </div>
           </div>
         </section>
-
       </div>
 
       <section id="flavour-section">
@@ -488,11 +438,9 @@
 
     <div class="bottom-bar">
       <div class="total" id="total-box">Total: $0.00</div>
-
       <div style="flex:1; text-align:center;">
         <span id="saving-indicator">Saving…</span>
       </div>
-
       <div class="bottom-buttons">
         <button class="action cancel" id="cancel-btn">Cancel</button>
         <button class="action done" id="done-btn">Done</button>
@@ -503,19 +451,16 @@
   <!-- ADJUSTMENT POPUP -->
   <div id="adjust-popup">
     <div class="popup-content">
-      
       <div class="adjust-fields-row">
         <div class="adjust-field">
           <label>💵 Tip</label>
           <input type="number" id="tip-input" min="0" step="0.10" placeholder="0.00">
         </div>
-
         <div class="adjust-field">
           <label>🏷️ Discount</label>
           <input type="number" id="discount-input" min="0" step="0.10" placeholder="0.00">
         </div>
       </div>
-
       <div class="adjust-preview">
         <div class="adjust-preview-row">
           <span>Base Total:</span>
@@ -530,7 +475,6 @@
           <strong id="final-total-preview">$0.00</strong>
         </div>
       </div>
-
       <div class="popup-actions">
         <button id="finish-adjust" type="button" class="popup-btn">Done</button>
       </div>
@@ -553,7 +497,6 @@
   <audio id="tap-sound">
     <source src="https://actions.google.com/sounds/v1/cartoon/pop.ogg" type="audio/ogg">
   </audio>
-
   <audio id="cash-sound">
     <source src="https://actions.google.com/sounds/v1/cartoon/clang_and_wobble.ogg" type="audio/ogg">
   </audio>
@@ -576,7 +519,6 @@
     { key: "tub", label: "Takeaway", price: 19 }
   ];
 
-  // NEW: extras data
   const extrasData = [
     { key: "hotChocolate", label: "Hot Chocolate", price: 6 },
     { key: "medialuna",    label: "Medialuna",     price: 5 },
@@ -594,7 +536,6 @@
     { name: "Reese's Peanut Butter", image: "images/reeses-peanut-butter.png" },
     { name: "Strawberry Dream", image: "images/strawberry-dream.png" },
     { name: "Vanilla Oreo", image: "images/vanilla-oreo.png" },
-
     { name: "Amarena", image: "images/amarena.png", bg: "#cde4ea" },
     { name: "Banana Caramel", image: "images/banana-caramel.png", bg: "#cde4ea" },
     { name: "Chocolate Velvet", image: "images/chocolate-velvet.png", bg: "#cde4ea" },
@@ -609,22 +550,13 @@
     { name: "Simply Coconut", image: "images/simply-coconut.png", bg: "#cde4ea" },
     { name: "Tiramisu", image: "images/tiramisu.png", bg: "#cde4ea" },
     { name: "Other", image: "images/other.png", bg: "#cde4ea" },
-
     { name: "Pup Cup", image: "images/pup-cup.png", bg: "#ffffff" }
   ];
 
   const state = {
-    customers: {},
-    sizes: {},
-    extras: {},        // NEW
-    flavours: {},
-    payment: "card",
-    cardAmount: 0,
-    cones: 0,
-    cups: 0,
-    notes: "",
-    tip: 0,
-    discount: 0
+    customers: {}, sizes: {}, extras: {}, flavours: {},
+    payment: "card", cardAmount: 0,
+    cones: 0, cups: 0, notes: "", tip: 0, discount: 0
   };
 
   let lastSavedOrder = null;
@@ -632,7 +564,7 @@
 
   customerTypes.forEach(c => state.customers[c.key] = 0);
   sizes.forEach(s => state.sizes[s.key] = 0);
-  extrasData.forEach(ex => state.extras[ex.key] = 0);  // NEW
+  extrasData.forEach(ex => state.extras[ex.key] = 0);
   flavourData.forEach(f => state.flavours[f.name] = 0);
 
   function cssSafe(str) {
@@ -684,7 +616,6 @@
     });
   }
 
-  // NEW: render extras section
   function renderExtrasSection() {
     const container = document.getElementById("extras-section");
     extrasData.forEach(ex => {
@@ -703,13 +634,11 @@
 
   function renderFlavours() {
     const grid = document.getElementById("flavour-grid");
-    flavourData.forEach(f =>{
+    flavourData.forEach(f => {
       const safeId = cssSafe(f.name);
       const card = document.createElement("div");
       card.className = "flavour-card";
-
       if (f.bg) card.style.background = f.bg;
-
       card.innerHTML = `
         <div class="flavour-top">
           <img src="${f.image}" alt="${f.name}" class="flavour-image"/>
@@ -719,48 +648,37 @@
           <button class="btn btn-minus" data-type="flavour" data-key="${f.name}" data-delta="-1">−</button>
           <span class="count" id="flavour-${safeId}">0</span>
           <button class="btn btn-plus" data-type="flavour" data-key="${f.name}" data-delta="1">+</button>
-        </div>
-      `;
+        </div>`;
       grid.appendChild(card);
     });
   }
 
   function updateFlavourBorders() {
     const cards = document.querySelectorAll(".flavour-card");
-    cards.forEach((card, index)=>{
+    cards.forEach((card, index) => {
       const f = flavourData[index];
-      const count = state.flavours[f.name];
-      card.style.borderColor = count > 0 ? "var(--accent)" : "transparent";
+      card.style.borderColor = state.flavours[f.name] > 0 ? "var(--accent)" : "transparent";
     });
   }
 
   function showPopup() {
     const popup = document.getElementById("success-popup");
-    popup.innerHTML = `
-      <span>Order Saved!</span>
-      <button id="edit-last-btn" type="button">Edit Last Order</button>
-    `;
+    popup.innerHTML = `<span>Order Saved!</span><button id="edit-last-btn" type="button">Edit Last Order</button>`;
     popup.classList.add("show");
-
     const editBtn = document.getElementById("edit-last-btn");
     if (editBtn) {
       editBtn.addEventListener("click", () => {
-        if (lastSavedOrder) {
-          loadOrderForEditing(lastSavedOrder);
-          editMode = true;
-        }
+        if (lastSavedOrder) { loadOrderForEditing(lastSavedOrder); editMode = true; }
         popup.classList.remove("show");
       });
     }
-
-    setTimeout(()=> popup.classList.remove("show"), 9000);
+    setTimeout(() => popup.classList.remove("show"), 9000);
   }
 
   function attachHandlers() {
     document.body.addEventListener("click", e => {
       const btn = e.target.closest("button");
       if (!btn) return;
-
       const type = btn.dataset.type;
       const key = btn.dataset.key;
       const delta = parseInt(btn.dataset.delta || "0", 10);
@@ -769,33 +687,25 @@
         state.customers[key] = Math.max(0, state.customers[key] + delta);
         document.getElementById(`customer-${key}`).textContent = state.customers[key];
       }
-
       if (type === "size") {
         state.sizes[key] = Math.max(0, state.sizes[key] + delta);
         document.getElementById(`size-${key}`).textContent = state.sizes[key];
-        updateTotal();
-        updateAdjustmentPreview();
+        updateTotal(); updateAdjustmentPreview();
       }
-
-      // NEW: handle extras clicks
       if (type === "extra") {
         state.extras[key] = Math.max(0, state.extras[key] + delta);
         document.getElementById(`extra-${key}`).textContent = state.extras[key];
-        updateTotal();
-        updateAdjustmentPreview();
+        updateTotal(); updateAdjustmentPreview();
       }
-
       if (type === "flavour") {
         state.flavours[key] = Math.max(0, state.flavours[key] + delta);
         document.getElementById(`flavour-${cssSafe(key)}`).textContent = state.flavours[key];
         updateFlavourBorders();
       }
-
       if (type === "accessory") {
         state[key] = Math.max(0, state[key] + delta);
         document.getElementById(`accessory-${key}`).textContent = state[key];
       }
-
       updateSummary();
     });
 
@@ -803,7 +713,6 @@
       radio.addEventListener("change", () => {
         state.payment = document.querySelector('input[name="payment"]:checked').value;
         document.getElementById("mixed-fields").style.display = state.payment === "mixed" ? "grid" : "none";
-
         if (state.payment !== "mixed") {
           document.getElementById("card-input").value = "";
           document.getElementById("cash-output").textContent = "$0.00";
@@ -813,193 +722,136 @@
           document.getElementById("cash-output").textContent = `$${getFinalTotal().toFixed(2)}`;
           state.cardAmount = 0;
         }
-
         updateSummary();
       })
     );
 
-    document.getElementById("card-input").addEventListener("input", ()=>{
+    document.getElementById("card-input").addEventListener("input", () => {
       const total = getFinalTotal();
       let val = parseFloat(document.getElementById("card-input").value || "0");
-
-      if (val > total) {
-        val = total;
-        document.getElementById("card-input").value = total.toFixed(2);
-      }
-
+      if (val > total) { val = total; document.getElementById("card-input").value = total.toFixed(2); }
       state.cardAmount = val;
-      const cash = total - val;
-      document.getElementById("cash-output").textContent = `$${cash.toFixed(2)}`;
+      document.getElementById("cash-output").textContent = `$${(total - val).toFixed(2)}`;
     });
 
     document.getElementById("cancel-btn").addEventListener("click", resetAll);
 
-    document.getElementById("done-btn").addEventListener("click", async ()=>{
+    document.getElementById("done-btn").addEventListener("click", async () => {
       const btn = document.getElementById("done-btn");
       if (btn.disabled) return;
-
       document.getElementById("tap-sound").play();
       btn.disabled = true;
       await submitOrder();
-      setTimeout(()=>{ btn.disabled = false; }, 800);
+      setTimeout(() => { btn.disabled = false; }, 800);
     });
   }
 
   function calcBaseTotal() {
     const sizeTotal = sizes.reduce((sum, sz) => sum + state.sizes[sz.key] * sz.price, 0);
-    const extrasTotal = extrasData.reduce((sum, ex) => sum + state.extras[ex.key] * ex.price, 0); // NEW
+    const extrasTotal = extrasData.reduce((sum, ex) => sum + state.extras[ex.key] * ex.price, 0);
     return sizeTotal + extrasTotal;
   }
 
   function getFinalTotal() {
-    const base = calcBaseTotal();
-    const adjustment = state.tip - state.discount;
-    return Math.max(0, base + adjustment);
+    return Math.max(0, calcBaseTotal() + state.tip - state.discount);
   }
 
   function updateTotal() {
-    const finalTotal = getFinalTotal();
-    document.getElementById("total-box").textContent = `Total: $${finalTotal.toFixed(2)}`;
+    document.getElementById("total-box").textContent = `Total: $${getFinalTotal().toFixed(2)}`;
   }
 
   function updateAdjustmentPreview() {
     const base = calcBaseTotal();
     const adjustment = state.tip - state.discount;
     const final = getFinalTotal();
-
     document.getElementById("base-total-preview").textContent = `$${base.toFixed(2)}`;
-    
     let adjustText = "$0.00";
-    if (adjustment > 0) {
-      adjustText = `+$${adjustment.toFixed(2)}`;
-    } else if (adjustment < 0) {
-      adjustText = `-$${Math.abs(adjustment).toFixed(2)}`;
-    }
+    if (adjustment > 0) adjustText = `+$${adjustment.toFixed(2)}`;
+    else if (adjustment < 0) adjustText = `-$${Math.abs(adjustment).toFixed(2)}`;
     document.getElementById("adjustment-preview").textContent = adjustText;
     document.getElementById("final-total-preview").textContent = `$${final.toFixed(2)}`;
   }
 
   function updateSummary() {
     const parts = [];
-
-    const custParts = customerTypes
-      .filter(ct=> state.customers[ct.key] > 0)
-      .map(ct=> `${ct.label}: ${state.customers[ct.key]}`);
-
-    const sizeParts = sizes
-      .filter(sz=> state.sizes[sz.key] > 0)
-      .map(sz=> `${sz.label}: ${state.sizes[sz.key]}`);
-
-    const extrasParts = extrasData  // NEW
-      .filter(ex => state.extras[ex.key] > 0)
-      .map(ex => `${ex.label}: ${state.extras[ex.key]}`);
-
-    const flavourParts = flavourData
-      .filter(f=> state.flavours[f.name] > 0)
-      .map(f=> `${f.name}: ${state.flavours[f.name]}`);
-
+    const custParts = customerTypes.filter(ct => state.customers[ct.key] > 0).map(ct => `${ct.label}: ${state.customers[ct.key]}`);
+    const sizeParts = sizes.filter(sz => state.sizes[sz.key] > 0).map(sz => `${sz.label}: ${state.sizes[sz.key]}`);
+    const extrasParts = extrasData.filter(ex => state.extras[ex.key] > 0).map(ex => `${ex.label}: ${state.extras[ex.key]}`);
+    const flavourParts = flavourData.filter(f => state.flavours[f.name] > 0).map(f => `${f.name}: ${state.flavours[f.name]}`);
     const accessoryParts = [];
     if (state.cones > 0) accessoryParts.push(`Cones: ${state.cones}`);
     if (state.cups > 0) accessoryParts.push(`Cups: ${state.cups}`);
-
     if (custParts.length) parts.push("Customers – " + custParts.join(", "));
     if (sizeParts.length) parts.push("Sizes – " + sizeParts.join(", "));
-    if (extrasParts.length) parts.push("Extras – " + extrasParts.join(", "));  // NEW
+    if (extrasParts.length) parts.push("Extras – " + extrasParts.join(", "));
     if (flavourParts.length) parts.push("Flavours – " + flavourParts.join(", "));
     if (accessoryParts.length) parts.push("Accessories – " + accessoryParts.join(", "));
-
     parts.push("Payment: " + state.payment.toUpperCase());
-    
-    const finalTotal = getFinalTotal();
-    parts.push("Total: $" + finalTotal.toFixed(2));
-
+    parts.push("Total: $" + getFinalTotal().toFixed(2));
     document.getElementById("summary-box").textContent = parts.join(" | ");
   }
 
   function resetAll() {
-    customerTypes.forEach(ct=>{
+    customerTypes.forEach(ct => {
       state.customers[ct.key] = 0;
       const el = document.getElementById(`customer-${ct.key}`);
       if (el) el.textContent = "0";
     });
-
-    sizes.forEach(sz=>{
+    sizes.forEach(sz => {
       state.sizes[sz.key] = 0;
       const el = document.getElementById(`size-${sz.key}`);
       if (el) el.textContent = "0";
     });
-
-    // NEW: reset extras
     extrasData.forEach(ex => {
       state.extras[ex.key] = 0;
       const el = document.getElementById(`extra-${ex.key}`);
       if (el) el.textContent = "0";
     });
-
-    flavourData.forEach(f=>{
+    flavourData.forEach(f => {
       state.flavours[f.name] = 0;
       const el = document.getElementById(`flavour-${cssSafe(f.name)}`);
       if (el) el.textContent = "0";
     });
-
-    state.cones = 0;
-    state.cups = 0;
+    state.cones = 0; state.cups = 0;
     const conesEl = document.getElementById("accessory-cones");
-    const cupsEl  = document.getElementById("accessory-cups");
+    const cupsEl = document.getElementById("accessory-cups");
     if (conesEl) conesEl.textContent = "0";
-    if (cupsEl)  cupsEl.textContent  = "0";
-
+    if (cupsEl) cupsEl.textContent = "0";
     updateFlavourBorders();
-
-    state.payment = "card";
-    state.cardAmount = 0;
-    state.tip = 0;
-    state.discount = 0;
-
+    state.payment = "card"; state.cardAmount = 0; state.tip = 0; state.discount = 0;
     const cardRadio = document.querySelector('input[name="payment"][value="card"]');
     if (cardRadio) cardRadio.checked = true;
-
     document.getElementById("mixed-fields").style.display = "none";
     document.getElementById("card-input").value = "";
     document.getElementById("cash-output").textContent = "$0.00";
-
     state.notes = "";
     const notesInputEl = document.getElementById("notes-input");
     if (notesInputEl) notesInputEl.value = "";
-
     document.getElementById("tip-input").value = "";
     document.getElementById("discount-input").value = "";
-
-    updateTotal();
-    updateSummary();
-    updateAdjustmentPreview();
+    updateTotal(); updateSummary(); updateAdjustmentPreview();
   }
 
   function loadOrderForEditing(order) {
     resetAll();
-
     customerTypes.forEach(ct => {
       const value = (order.customers && order.customers[ct.key]) || 0;
       state.customers[ct.key] = value;
       const el = document.getElementById(`customer-${ct.key}`);
       if (el) el.textContent = value;
     });
-
     sizes.forEach(sz => {
       const value = (order.sizes && order.sizes[sz.key]) || 0;
       state.sizes[sz.key] = value;
       const el = document.getElementById(`size-${sz.key}`);
       if (el) el.textContent = value;
     });
-
-    // NEW: restore extras
     extrasData.forEach(ex => {
       const value = (order.extras && order.extras[ex.key]) || 0;
       state.extras[ex.key] = value;
       const el = document.getElementById(`extra-${ex.key}`);
       if (el) el.textContent = value;
     });
-
     flavourData.forEach(f => {
       const value = (order.flavours && order.flavours[f.name]) || 0;
       state.flavours[f.name] = value;
@@ -1007,100 +859,61 @@
       if (el) el.textContent = value;
     });
     updateFlavourBorders();
-
-    state.cones = order.cones || 0;
-    state.cups  = order.cups  || 0;
+    state.cones = order.cones || 0; state.cups = order.cups || 0;
     const conesEl = document.getElementById("accessory-cones");
-    const cupsEl  = document.getElementById("accessory-cups");
+    const cupsEl = document.getElementById("accessory-cups");
     if (conesEl) conesEl.textContent = state.cones;
-    if (cupsEl)  cupsEl.textContent  = state.cups;
-
+    if (cupsEl) cupsEl.textContent = state.cups;
     state.payment = order.payment || "card";
     const paymentRadio = document.querySelector(`input[name="payment"][value="${state.payment}"]`);
     if (paymentRadio) paymentRadio.checked = true;
-
     if (state.payment === "mixed") {
       state.cardAmount = order.cardAmount || 0;
       document.getElementById("mixed-fields").style.display = "grid";
       document.getElementById("card-input").value = state.cardAmount ? state.cardAmount.toFixed(2) : "";
       const total = order.total || getFinalTotal();
-      const cash = total - state.cardAmount;
-      document.getElementById("cash-output").textContent = `$${cash.toFixed(2)}`;
+      document.getElementById("cash-output").textContent = `$${(total - state.cardAmount).toFixed(2)}`;
     } else {
       state.cardAmount = 0;
       document.getElementById("mixed-fields").style.display = "none";
       document.getElementById("card-input").value = "";
       document.getElementById("cash-output").textContent = "$0.00";
     }
-
     state.notes = order.notes || "";
     const notesInputEl = document.getElementById("notes-input");
     if (notesInputEl) notesInputEl.value = state.notes;
-
-    state.tip = order.tip || 0;
-    state.discount = order.discount || 0;
+    state.tip = order.tip || 0; state.discount = order.discount || 0;
     document.getElementById("tip-input").value = state.tip > 0 ? state.tip.toFixed(2) : "";
     document.getElementById("discount-input").value = state.discount > 0 ? state.discount.toFixed(2) : "";
-
-    updateTotal();
-    updateSummary();
-    updateAdjustmentPreview();
+    updateTotal(); updateSummary(); updateAdjustmentPreview();
   }
 
   async function submitOrder() {
-    // UPDATED: allow save if any total > 0, not just sizes
-    if (getFinalTotal() === 0) {
-      alert("No items selected yet.");
-      return;
-    }
-
+    if (getFinalTotal() === 0) { alert("No items selected yet."); return; }
     const finalTotal = getFinalTotal();
-    const adjustment = state.tip - state.discount;
-
-    if (state.payment === "mixed" && state.cardAmount > finalTotal) {
-      alert("Card amount cannot exceed total.");
-      return;
-    }
-
+    if (state.payment === "mixed" && state.cardAmount > finalTotal) { alert("Card amount cannot exceed total."); return; }
     const savingIndicator = document.getElementById("saving-indicator");
     savingIndicator.style.display = "inline";
-
     const isEditing = editMode;
-
     const payload = {
       timestamp: getLocalTimestamp(),
-      customers: state.customers,
-      sizes: state.sizes,
-      extras: state.extras,       // NEW
-      flavours: state.flavours,
-      cones: state.cones,
-      cups: state.cups,
-      adjustment: adjustment,
-      payment: state.payment,
-      cardAmount: state.cardAmount,
-      notes: state.notes,
-      tip: state.tip,
-      discount: state.discount,
-      total: finalTotal
+      customers: state.customers, sizes: state.sizes, extras: state.extras,
+      flavours: state.flavours, cones: state.cones, cups: state.cups,
+      adjustment: state.tip - state.discount,
+      payment: state.payment, cardAmount: state.cardAmount,
+      notes: state.notes, tip: state.tip, discount: state.discount, total: finalTotal
     };
-
     lastSavedOrder = JSON.parse(JSON.stringify(payload));
-
     const mode = isEditing ? "overwrite" : "append";
-
     try {
       await fetch(GOOGLE_SCRIPT_URL, {
-        method: "POST",
-        mode: "no-cors",
+        method: "POST", mode: "no-cors",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ row: payload, mode })
       });
-
       savingIndicator.style.display = "none";
       document.getElementById("cash-sound").play();
-      showPopup();
-      editMode = false;
-      resetAll();
+      showPopup(); editMode = false; resetAll();
     } catch (err) {
       savingIndicator.style.display = "none";
       editMode = false;
@@ -1111,8 +924,8 @@
   function unlockSounds() {
     const tap = document.getElementById("tap-sound");
     const cash = document.getElementById("cash-sound");
-    tap.play().then(()=>{ tap.pause(); tap.currentTime = 0; });
-    cash.play().then(()=>{ cash.pause(); cash.currentTime = 0; });
+    tap.play().then(() => { tap.pause(); tap.currentTime = 0; });
+    cash.play().then(() => { cash.pause(); cash.currentTime = 0; });
     document.removeEventListener("click", unlockSounds);
   }
 
@@ -1129,7 +942,6 @@
     modalOverlay.classList.add("show");
     notesInput.focus();
   });
-
   finishNotes.addEventListener("click", () => {
     state.notes = notesInput.value.trim();
     notesPopup.style.display = "none";
@@ -1150,25 +962,19 @@
     modalOverlay.classList.add("show");
     tipInput.focus();
   });
-
   tipInput.addEventListener("input", () => {
     state.tip = parseFloat(tipInput.value || "0");
-    updateAdjustmentPreview();
-    updateTotal();
+    updateAdjustmentPreview(); updateTotal();
   });
-
   discountInput.addEventListener("input", () => {
     state.discount = parseFloat(discountInput.value || "0");
-    updateAdjustmentPreview();
-    updateTotal();
+    updateAdjustmentPreview(); updateTotal();
   });
-
   finishAdjust.addEventListener("click", () => {
     adjustPopup.style.display = "none";
     modalOverlay.classList.remove("show");
     updateSummary();
   });
-
   modalOverlay.addEventListener("click", () => {
     adjustPopup.style.display = "none";
     notesPopup.style.display = "none";
@@ -1179,7 +985,7 @@
 
   renderCustomerSection();
   renderSizeSection();
-  renderExtrasSection();  // NEW
+  renderExtrasSection();
   renderFlavours();
   updateFlavourBorders();
   attachHandlers();
@@ -1187,6 +993,5 @@
   updateSummary();
   updateAdjustmentPreview();
 </script>
-
 </body>
 </html>
