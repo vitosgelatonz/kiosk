@@ -21,35 +21,35 @@
       font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
       background: var(--bg-main);
       color: var(--text-main);
-      font-size: 15px; /* reduced from 18px */
+      font-size: 15px;
     }
     .app {
       max-width: 1500px;
       margin: 0 auto;
-      padding: 6px; /* reduced from 12px */
+      padding: 6px;
     }
     .sections {
       display: grid;
-      grid-template-columns: 340px 1fr; /* reduced from 380px */
-      gap: 8px; /* reduced from 12px */
+      grid-template-columns: 340px 1fr;
+      gap: 8px;
       align-items: start;
     }
     section {
       background: var(--accent-soft);
-      border-radius: 10px; /* reduced from 12px */
-      padding: 6px; /* reduced from 10px */
+      border-radius: 10px;
+      padding: 6px;
       box-shadow: 0 2px 6px rgba(0,0,0,0.08);
     }
     section h2 {
       background: var(--accent);
       color: white;
-      padding: 6px 10px; /* reduced from 10px 14px */
-      margin: -6px -6px 6px -6px; /* match reduced padding */
-      border-radius: 8px 8px 0 0; /* reduced from 10px */
+      padding: 6px 10px;
+      margin: -6px -6px 6px -6px;
+      border-radius: 8px 8px 0 0;
       display: flex;
       align-items: center;
       justify-content: space-between;
-      font-size: 0.82rem; /* reduced from 1.05rem */
+      font-size: 0.82rem;
       font-weight: 600;
     }
     section h2 span { font-size: 0.7rem; opacity: 0.9; }
@@ -58,19 +58,19 @@
       display: flex;
       align-items: center;
       justify-content: space-between;
-      margin: 3px 0; /* reduced from 6px */
+      margin: 7px 0;
     }
-    .label { font-size: 0.82rem; } /* reduced from 0.95rem */
-    .price { font-size: 0.72rem; color: var(--text-soft); margin-left: 4px; }
-    .controls { display: flex; align-items: center; gap: 4px; } /* reduced gap from 6px */
+    .label { font-size: 0.95rem; }
+    .price { font-size: 0.82rem; color: var(--text-soft); margin-left: 4px; }
+    .controls { display: flex; align-items: center; gap: 6px; }
 
     button.btn {
       border: none;
       border-radius: 999px;
-      padding: 4px 9px; /* reduced from 6px 12px */
-      font-size: 1rem; /* reduced from 1.2rem */
+      padding: 6px 12px;
+      font-size: 1.1rem;
       cursor: pointer;
-      min-width: 32px; /* reduced from 40px */
+      min-width: 36px;
       display: flex;
       align-items: center;
       justify-content: center;
@@ -80,16 +80,16 @@
     .btn-minus { background: var(--danger); color: #fff; }
 
     .count {
-      min-width: 24px; /* reduced from 32px */
+      min-width: 24px;
       text-align: center;
       font-weight: 700;
-      font-size: 0.9rem; /* reduced from 1.05rem */
+      font-size: 1rem;
     }
 
     .flavour-grid {
       display: grid;
-      grid-template-columns: repeat(auto-fill, minmax(145px, 1fr)); /* reduced from 155px */
-      gap: 8px; /* reduced from 10px */
+      grid-template-columns: repeat(auto-fill, minmax(145px, 1fr));
+      gap: 8px;
       max-height: 620px;
       overflow-y: auto;
       padding-right: 4px;
@@ -97,8 +97,8 @@
     .flavour-card {
       background: #ffffff;
       border: 2px solid transparent;
-      border-radius: 14px; /* reduced from 16px */
-      padding: 6px; /* reduced from 8px */
+      border-radius: 14px;
+      padding: 6px;
       box-shadow: 0 1px 4px rgba(0,0,0,0.06);
       display: flex;
       flex-direction: column;
@@ -107,44 +107,44 @@
     .flavour-top {
       display: flex;
       align-items: center;
-      gap: 6px; /* reduced from 8px */
-      margin-bottom: 3px; /* reduced from 4px */
+      gap: 6px;
+      margin-bottom: 3px;
     }
     .flavour-image {
-      width: 30px; /* reduced from 36px */
+      width: 30px;
       height: 30px;
       border-radius: 50%;
       object-fit: cover;
       flex-shrink: 0;
       background: #eee;
     }
-    .flavour-name { font-size: 0.8rem; font-weight: 600; } /* reduced from 0.9rem */
+    .flavour-name { font-size: 0.8rem; font-weight: 600; }
 
     .flavour-controls {
       display: flex;
       align-items: center;
       justify-content: flex-end;
-      gap: 5px; /* reduced from 6px */
+      gap: 5px;
     }
 
     .summary {
-      margin-top: 4px; /* reduced from 6px */
-      font-size: 0.75rem; /* reduced from 0.85rem */
+      margin-top: 4px;
+      font-size: 0.75rem;
       line-height: 1.3;
       color: var(--text-soft);
-      min-height: 30px; /* reduced from 40px */
+      min-height: 30px;
     }
 
     .payment-options {
       display: flex;
-      gap: 4px; /* reduced from 6px */
+      gap: 4px;
       flex-wrap: nowrap;
     }
     .payment-options label {
       background: #f3f3f3;
-      padding: 3px 8px; /* reduced from 5px 10px */
+      padding: 3px 8px;
       border-radius: 999px;
-      font-size: 0.78rem; /* reduced from 0.9rem */
+      font-size: 0.78rem;
       cursor: pointer;
       display: flex;
       align-items: center;
@@ -169,14 +169,14 @@
     #notes-btn, #adjust-btn {
       border: none;
       border-radius: 50%;
-      width: 30px; /* reduced from 36px */
+      width: 30px;
       height: 30px;
       background: var(--accent);
       color: #ffffff;
       display: flex;
       align-items: center;
       justify-content: center;
-      font-size: 0.85rem; /* reduced from 1rem */
+      font-size: 0.85rem;
       cursor: pointer;
       flex-shrink: 0;
       box-shadow: 0 1px 4px rgba(0,0,0,0.18);
@@ -294,19 +294,19 @@
       bottom: 0;
       background: rgba(244,239,234,0.98);
       backdrop-filter: blur(6px);
-      padding: 6px 4px; /* reduced from 8px */
+      padding: 6px 4px;
       border-top: 1px solid rgba(0,0,0,0.05);
       display: flex;
       align-items: center;
     }
-    .total { font-size: 1rem; font-weight: 700; } /* reduced from 1.1rem */
+    .total { font-size: 1rem; font-weight: 700; }
     .bottom-buttons { margin-left: auto; display: flex; gap: 8px; }
 
     .action {
       border: none;
       border-radius: 999px;
-      padding: 8px 18px; /* reduced from 10px 22px */
-      font-size: 0.9rem; /* reduced from 1rem */
+      padding: 8px 18px;
+      font-size: 0.9rem;
       font-weight: 600;
       cursor: pointer;
       user-select: none;
@@ -355,6 +355,33 @@
       margin-top: 0;
     }
 
+    /* ── Extras: full-width bar below the two-column grid ── */
+    #extras-section {
+      margin-top: 8px;
+    }
+    #extras-section .extras-items {
+      display: flex;
+      flex-direction: row;
+      gap: 0;
+      flex-wrap: wrap;
+      padding: 2px 0;
+    }
+    #extras-section .extras-items .row {
+      flex: 0 0 auto;
+      width: auto;
+      justify-content: flex-start;
+      gap: 8px;
+      margin: 0;
+      padding: 0 24px;
+      border-right: 1px solid rgba(0,0,0,0.15);
+    }
+    #extras-section .extras-items .row:first-child {
+      padding-left: 0;
+    }
+    #extras-section .extras-items .row:last-child {
+      border-right: none;
+    }
+
     @media (max-width: 900px) {
       .sections { grid-template-columns: 1fr; }
     }
@@ -366,6 +393,7 @@
 
   <div class="app">
     <div class="sections">
+      <!-- LEFT COLUMN -->
       <div>
         <section id="customer-section">
           <h2>Customer Type <span>Adults, kids, online</span></h2>
@@ -373,10 +401,6 @@
 
         <section id="size-section" style="margin-top:6px">
           <h2>Order Size <span>Price per item</span></h2>
-        </section>
-
-        <section id="extras-section" style="margin-top:6px">
-          <h2>Extras <span>Price per item</span></h2>
         </section>
 
         <section id="payment-section" style="margin-top:6px">
@@ -430,10 +454,18 @@
         </section>
       </div>
 
-      <section id="flavour-section">
-        <h2>Flavours <span>Tap to add or remove</span></h2>
-        <div class="flavour-grid" id="flavour-grid"></div>
-      </section>
+      <!-- RIGHT COLUMN: Flavours + Extras -->
+      <div>
+        <section id="flavour-section">
+          <h2>Flavours <span>Tap to add or remove</span></h2>
+          <div class="flavour-grid" id="flavour-grid"></div>
+        </section>
+
+        <section id="extras-section" style="margin-top:6px">
+          <h2>Extras <span>Price per item</span></h2>
+          <div class="extras-items" id="extras-items"></div>
+        </section>
+      </div>
     </div>
 
     <div class="bottom-bar">
@@ -617,7 +649,7 @@
   }
 
   function renderExtrasSection() {
-    const container = document.getElementById("extras-section");
+    const container = document.getElementById("extras-items");
     extrasData.forEach(ex => {
       const row = document.createElement("div");
       row.className = "row";
