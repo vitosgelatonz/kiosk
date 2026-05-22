@@ -98,6 +98,23 @@
     }
     .flavour-name { font-size: 0.8rem; font-weight: 600; }
     .flavour-controls { display: flex; align-items: center; justify-content: flex-end; gap: 5px; }
+
+    /* Combo upgrade badge */
+    .combo-upgrade-badge {
+      display: none;
+      font-size: 0.68rem;
+      font-weight: 700;
+      background: var(--accent);
+      color: #fff;
+      border-radius: 999px;
+      padding: 2px 7px;
+      margin-top: 3px;
+      cursor: pointer;
+      text-align: center;
+      letter-spacing: 0.02em;
+    }
+    .combo-upgrade-badge.visible { display: block; }
+
     .summary { margin-top: 4px; font-size: 0.75rem; line-height: 1.3; color: var(--text-soft); min-height: 30px; }
     .payment-options { display: flex; gap: 4px; flex-wrap: nowrap; }
     .payment-options label {
@@ -135,7 +152,7 @@
       z-index: 99;
     }
     .modal-overlay.show { display: block; }
-    #notes-popup, #adjust-popup {
+    #notes-popup, #adjust-popup, #combo-popup {
       display: none;
       position: fixed;
       top: 20%; left: 50%;
@@ -149,8 +166,32 @@
     }
     #notes-popup { width: 400px; }
     #adjust-popup { width: 480px; }
+    #combo-popup { width: 360px; }
+
     .popup-content { display: flex; flex-direction: column; gap: 10px; }
     .popup-label { font-size: 1.1rem; font-weight: 600; color: var(--text-main); text-align: center; margin-bottom: 4px; }
+    .popup-sublabel { font-size: 0.82rem; color: var(--text-soft); text-align: center; margin-top: -6px; }
+
+    /* Combo option buttons */
+    .combo-options { display: flex; flex-direction: column; gap: 8px; }
+    .combo-option-btn {
+      border: 2px solid #e0e0e0;
+      border-radius: 10px;
+      padding: 10px 14px;
+      background: #fafafa;
+      cursor: pointer;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      font-size: 0.95rem;
+      font-weight: 600;
+      transition: border-color 0.15s, background 0.15s;
+    }
+    .combo-option-btn:hover { border-color: var(--accent); background: #e6f3f6; }
+    .combo-option-btn.selected { border-color: var(--accent); background: #e6f3f6; color: var(--accent); }
+    .combo-option-btn .combo-price { font-size: 0.85rem; color: var(--text-soft); font-weight: 500; }
+    .combo-option-btn.selected .combo-price { color: var(--accent); }
+
     #notes-input {
       width: 100%; min-height: 100px;
       border-radius: 8px; border: 1px solid #ccc;
@@ -337,6 +378,31 @@
     </div>
   </div>
 
+  <!-- COMBO UPGRADE POPUP -->
+  <div id="combo-popup">
+    <div class="popup-content">
+      <div class="popup-label">☕ Combo Type</div>
+      <div class="popup-sublabel">HC + Medialuna — pick your medialuna</div>
+      <div class="combo-options">
+        <button class="combo-option-btn" data-combo="classic">
+          <span>M Classic</span>
+          <span class="combo-price">$10.00</span>
+        </button>
+        <button class="combo-option-btn" data-combo="choco">
+          <span>M Choco</span>
+          <span class="combo-price">$10.50</span>
+        </button>
+        <button class="combo-option-btn" data-combo="ddl">
+          <span>M DDL</span>
+          <span class="combo-price">$11.00</span>
+        </button>
+      </div>
+      <div class="popup-actions">
+        <button id="finish-combo" type="button" class="popup-btn">Confirm</button>
+      </div>
+    </div>
+  </div>
+
   <div id="success-popup"></div>
 
   <audio id="tap-sound"><source src="https://actions.google.com/sounds/v1/cartoon/pop.ogg" type="audio/ogg"></audio>
@@ -344,6 +410,9 @@
 
 <script>
   const GOOGLE_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbywGUVx3WYdWFw-CsiY-6C5AgZpu-ysSUFPAtAG-sjZAk1T1uryNFaCn4cDxeMh8vSu/exec";
+
+  const COMBO_PRICES = { classic: 10.00, choco: 10.50, ddl: 11.00 };
+  const COMBO_LABELS = { classic: "M Classic", choco: "M Choco", ddl: "M DDL" };
 
   const customerTypes = [
     { key: "adult",  label: "Adult"  },
@@ -359,12 +428,12 @@
     { key: "tub",    label: "Takeaway",  price: 19 }
   ];
 
+  // Combo is handled separately; not in extrasData
   const extrasData = [
     { key: "hotChocolate", label: "Hot Chocolate", price: 6    },
     { key: "mClassic",     label: "M Classic",     price: 5    },
     { key: "mChoco",       label: "M Choco",       price: 5.50 },
     { key: "mDDL",         label: "M DDL",         price: 6    },
-    { key: "combo",        label: "Combo",         price: 10   }
   ];
 
   const flavourData = [
@@ -398,8 +467,9 @@
   const state = {
     customers: { adult: 0, child: 0, online: 0 },
     sizes:     { kiddie: 0, single: 0, double: 0, triple: 0, tub: 0 },
-    extras:    { hotChocolate: 0, mClassic: 0, mChoco: 0, mDDL: 0, combo: 0 },
+    extras:    { hotChocolate: 0, mClassic: 0, mChoco: 0, mDDL: 0 },
     flavours:  {},
+    combo: { qty: 0, type: "classic" }, // combo handled separately
     payment: "card", cardAmount: 0,
     cones: 0, cups: 0, notes: "", tip: 0, discount: 0
   };
@@ -408,6 +478,7 @@
 
   let lastSavedOrder = null;
   let editMode = false;
+  let pendingComboAction = null; // "add" or "change"
 
   function cssSafe(str) {
     return str.replace(/\s+/g, "_").replace(/[^a-zA-Z0-9_]/g, "");
@@ -425,6 +496,40 @@
     return `${day}/${month}/${year} ${hours}:${minutes} ${ampm}`;
   }
 
+  // ── Combo popup ──────────────────────────────────────────────
+  function openComboPopup(action) {
+    pendingComboAction = action;
+    // Highlight currently selected type
+    document.querySelectorAll(".combo-option-btn").forEach(btn => {
+      btn.classList.toggle("selected", btn.dataset.combo === state.combo.type);
+    });
+    document.getElementById("combo-popup").style.display = "block";
+    document.getElementById("modal-overlay").classList.add("show");
+  }
+
+  function closeComboPopup() {
+    document.getElementById("combo-popup").style.display = "none";
+    document.getElementById("modal-overlay").classList.remove("show");
+    pendingComboAction = null;
+  }
+
+  function updateComboCard() {
+    const badge = document.getElementById("combo-upgrade-badge");
+    const countEl = document.getElementById("combo-count");
+    if (!badge || !countEl) return;
+    countEl.textContent = state.combo.qty;
+    if (state.combo.qty > 0) {
+      badge.textContent = COMBO_LABELS[state.combo.type] + " ✎";
+      badge.classList.add("visible");
+    } else {
+      badge.classList.remove("visible");
+    }
+    // Border highlight
+    const card = countEl.closest(".flavour-card");
+    if (card) card.style.borderColor = state.combo.qty > 0 ? "var(--accent)" : "transparent";
+  }
+
+  // ── Render sections ──────────────────────────────────────────
   function renderCustomerSection() {
     const container = document.getElementById("customer-section");
     customerTypes.forEach(ct => {
@@ -459,6 +564,8 @@
 
   function renderExtrasSection() {
     const container = document.getElementById("extras-grid");
+
+    // Regular extras (no combo)
     extrasData.forEach(ex => {
       const card = document.createElement("div");
       card.className = "flavour-card";
@@ -473,6 +580,56 @@
         </div>`;
       container.appendChild(card);
     });
+
+    // Combo card — special handling
+    const comboCard = document.createElement("div");
+    comboCard.className = "flavour-card";
+    comboCard.id = "combo-card";
+    comboCard.innerHTML = `
+      <div class="flavour-top">
+        <div class="flavour-name">Combo <span class="price" id="combo-price-label">$10.00</span></div>
+      </div>
+      <div class="flavour-controls">
+        <button class="btn btn-minus" id="combo-minus">−</button>
+        <span class="count" id="combo-count">0</span>
+        <button class="btn btn-plus" id="combo-plus">+</button>
+      </div>
+      <div class="combo-upgrade-badge" id="combo-upgrade-badge"></div>
+    `;
+    container.appendChild(comboCard);
+
+    // Combo +/- handlers
+    document.getElementById("combo-plus").addEventListener("click", () => {
+      if (state.combo.qty === 0) {
+        // First add — open popup to choose type
+        openComboPopup("add");
+      } else {
+        // Already have combos — just increment, keep same type
+        state.combo.qty++;
+        updateComboCard();
+        updateComboPriceLabel();
+        updateTotal(); updateAdjustmentPreview(); updateSummary();
+      }
+    });
+
+    document.getElementById("combo-minus").addEventListener("click", () => {
+      if (state.combo.qty <= 0) return;
+      state.combo.qty--;
+      if (state.combo.qty === 0) state.combo.type = "classic"; // reset to default
+      updateComboCard();
+      updateComboPriceLabel();
+      updateTotal(); updateAdjustmentPreview(); updateSummary();
+    });
+
+    // Tap badge to change type
+    document.getElementById("combo-upgrade-badge").addEventListener("click", () => {
+      if (state.combo.qty > 0) openComboPopup("change");
+    });
+  }
+
+  function updateComboPriceLabel() {
+    const el = document.getElementById("combo-price-label");
+    if (el) el.textContent = `$${COMBO_PRICES[state.combo.type].toFixed(2)}`;
   }
 
   function renderFlavours() {
@@ -513,8 +670,10 @@
   }
 
   function calcBaseTotal() {
-    return sizes.reduce((sum, sz) => sum + state.sizes[sz.key] * sz.price, 0)
-         + extrasData.reduce((sum, ex) => sum + state.extras[ex.key] * ex.price, 0);
+    const sizesTotal  = sizes.reduce((sum, sz) => sum + state.sizes[sz.key] * sz.price, 0);
+    const extrasTotal = extrasData.reduce((sum, ex) => sum + state.extras[ex.key] * ex.price, 0);
+    const comboTotal  = state.combo.qty * COMBO_PRICES[state.combo.type];
+    return sizesTotal + extrasTotal + comboTotal;
   }
 
   function getFinalTotal() {
@@ -542,6 +701,7 @@
     const custParts   = customerTypes.filter(ct => state.customers[ct.key] > 0).map(ct => `${ct.label}: ${state.customers[ct.key]}`);
     const sizeParts   = sizes.filter(sz => state.sizes[sz.key] > 0).map(sz => `${sz.label}: ${state.sizes[sz.key]}`);
     const extrasParts = extrasData.filter(ex => state.extras[ex.key] > 0).map(ex => `${ex.label}: ${state.extras[ex.key]}`);
+    if (state.combo.qty > 0) extrasParts.push(`Combo (${COMBO_LABELS[state.combo.type]}): ${state.combo.qty}`);
     const flavourParts = flavourData.filter(f => state.flavours[f.name] > 0).map(f => `${f.name}: ${state.flavours[f.name]}`);
     const accessoryParts = [];
     if (state.cones > 0) accessoryParts.push(`Cones: ${state.cones}`);
@@ -561,6 +721,8 @@
     sizes.forEach(sz => { state.sizes[sz.key] = 0; const el = document.getElementById(`size-${sz.key}`); if (el) el.textContent = "0"; });
     extrasData.forEach(ex => { state.extras[ex.key] = 0; const el = document.getElementById(`extra-${ex.key}`); if (el) el.textContent = "0"; });
     flavourData.forEach(f => { state.flavours[f.name] = 0; const el = document.getElementById(`flavour-${cssSafe(f.name)}`); if (el) el.textContent = "0"; });
+    state.combo.qty = 0; state.combo.type = "classic";
+    updateComboCard(); updateComboPriceLabel();
     state.cones = 0; state.cups = 0;
     const conesEl = document.getElementById("accessory-cones");
     const cupsEl  = document.getElementById("accessory-cups");
@@ -588,6 +750,12 @@
     sizes.forEach(sz => { const v = (order.sizes && order.sizes[sz.key]) || 0; state.sizes[sz.key] = v; const el = document.getElementById(`size-${sz.key}`); if (el) el.textContent = v; });
     extrasData.forEach(ex => { const v = (order.extras && order.extras[ex.key]) || 0; state.extras[ex.key] = v; const el = document.getElementById(`extra-${ex.key}`); if (el) el.textContent = v; });
     flavourData.forEach(f => { const v = (order.flavours && order.flavours[f.name]) || 0; state.flavours[f.name] = v; const el = document.getElementById(`flavour-${cssSafe(f.name)}`); if (el) el.textContent = v; });
+    // Combo
+    if (order.combo) {
+      state.combo.qty  = order.combo.qty  || 0;
+      state.combo.type = order.combo.type || "classic";
+    }
+    updateComboCard(); updateComboPriceLabel();
     updateFlavourBorders();
     updateExtrasBorders();
     state.cones = order.cones || 0; state.cups = order.cups || 0;
@@ -637,10 +805,15 @@
     const savingIndicator = document.getElementById("saving-indicator");
     savingIndicator.style.display = "inline";
     const isEditing = editMode;
+
     const payload = {
       timestamp: getLocalTimestamp(),
-      customers: state.customers, sizes: state.sizes, extras: state.extras,
-      flavours: state.flavours, cones: state.cones, cups: state.cups,
+      customers: state.customers,
+      sizes: state.sizes,
+      extras: state.extras,
+      combo: { qty: state.combo.qty, type: state.combo.type },
+      flavours: state.flavours,
+      cones: state.cones, cups: state.cups,
       adjustment: state.tip - state.discount,
       payment: state.payment, cardAmount: state.cardAmount,
       notes: state.notes, tip: state.tip, discount: state.discount, total: finalTotal
@@ -694,6 +867,26 @@
         document.getElementById(`accessory-${key}`).textContent = state[key];
       }
       updateSummary();
+    });
+
+    // Combo popup option selection
+    document.querySelectorAll(".combo-option-btn").forEach(btn => {
+      btn.addEventListener("click", () => {
+        document.querySelectorAll(".combo-option-btn").forEach(b => b.classList.remove("selected"));
+        btn.classList.add("selected");
+        state.combo.type = btn.dataset.combo;
+      });
+    });
+
+    document.getElementById("finish-combo").addEventListener("click", () => {
+      if (pendingComboAction === "add") {
+        state.combo.qty++;
+      }
+      // "change" just updates the type (already set above)
+      updateComboCard();
+      updateComboPriceLabel();
+      updateTotal(); updateAdjustmentPreview(); updateSummary();
+      closeComboPopup();
     });
 
     document.querySelectorAll('input[name="payment"]').forEach(radio =>
@@ -776,9 +969,11 @@
     modalOverlay.classList.remove("show");
     updateSummary();
   });
+
   modalOverlay.addEventListener("click", () => {
     adjustPopup.style.display = "none";
     notesPopup.style.display = "none";
+    // Don't close combo popup on overlay click to avoid accidental dismissal
     modalOverlay.classList.remove("show");
   });
 
