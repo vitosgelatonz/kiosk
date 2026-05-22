@@ -669,9 +669,11 @@
   }
 
   function updateExtrasBorders() {
-    const cards = document.querySelectorAll("#extras-items .flavour-card");
-    cards.forEach((card, i) => {
-      card.style.borderColor = state.extras[extrasData[i].key] > 0 ? "var(--accent)" : "transparent";
+    extrasData.forEach(ex => {
+      const el = document.getElementById(`extra-${ex.key}`);
+      if (!el) return;
+      const card = el.closest(".flavour-card");
+      if (card) card.style.borderColor = state.extras[ex.key] > 0 ? "var(--accent)" : "transparent";
     });
   }
 
