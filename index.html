@@ -182,7 +182,6 @@
       box-shadow: 0 1px 4px rgba(0,0,0,0.18);
     }
 
-    /* Modal overlay */
     .modal-overlay {
       display: none;
       position: fixed;
@@ -192,7 +191,6 @@
     }
     .modal-overlay.show { display: block; }
 
-    /* Centered popups */
     #notes-popup, #adjust-popup {
       display: none;
       position: fixed;
@@ -345,7 +343,6 @@
       color: var(--accent);
     }
 
-    /* Accessories inline strip */
     #accessories-section {
       padding: 5px 6px !important;
     }
@@ -355,31 +352,13 @@
       margin-top: 0;
     }
 
-    /* ── Extras: full-width bar below the two-column grid ── */
     #extras-section {
       margin-top: 8px;
     }
-    #extras-section .extras-items {
-      display: flex;
-      flex-direction: row;
-      gap: 0;
-      flex-wrap: wrap;
-      padding: 2px 0;
-    }
-    #extras-section .extras-items .row {
-      flex: 0 0 auto;
-      width: auto;
-      justify-content: flex-start;
+    .extras-grid {
+      display: grid;
+      grid-template-columns: repeat(5, 1fr);
       gap: 8px;
-      margin: 0;
-      padding: 0 24px;
-      border-right: 1px solid rgba(0,0,0,0.15);
-    }
-    #extras-section .extras-items .row:first-child {
-      padding-left: 0;
-    }
-    #extras-section .extras-items .row:last-child {
-      border-right: none;
     }
 
     @media (max-width: 900px) {
@@ -463,7 +442,7 @@
 
         <section id="extras-section" style="margin-top:6px">
           <h2>Extras <span>Price per item</span></h2>
-          <div class="extras-items" id="extras-items"></div>
+          <div class="extras-grid" id="extras-items"></div>
         </section>
       </div>
     </div>
@@ -553,7 +532,9 @@
 
   const extrasData = [
     { key: "hotChocolate", label: "Hot Chocolate", price: 6 },
-    { key: "medialuna",    label: "Medialuna",     price: 5 },
+    { key: "mClassic",     label: "M Classic",     price: 5 },
+    { key: "mChoco",       label: "M Choco",        price: 5.50 },
+    { key: "mDDL",         label: "M DDL",          price: 6 },
     { key: "combo",        label: "Combo",          price: 10 }
   ];
 
@@ -651,16 +632,18 @@
   function renderExtrasSection() {
     const container = document.getElementById("extras-items");
     extrasData.forEach(ex => {
-      const row = document.createElement("div");
-      row.className = "row";
-      row.innerHTML = `
-        <div class="label">${ex.label} <span class="price">$${ex.price.toFixed(2)}</span></div>
-        <div class="controls">
+      const card = document.createElement("div");
+      card.className = "flavour-card";
+      card.innerHTML = `
+        <div class="flavour-top">
+          <div class="flavour-name">${ex.label} <span class="price">$${ex.price.toFixed(2)}</span></div>
+        </div>
+        <div class="flavour-controls">
           <button class="btn btn-minus" data-type="extra" data-key="${ex.key}" data-delta="-1">−</button>
           <span class="count" id="extra-${ex.key}">0</span>
           <button class="btn btn-plus" data-type="extra" data-key="${ex.key}" data-delta="1">+</button>
         </div>`;
-      container.appendChild(row);
+      container.appendChild(card);
     });
   }
 
@@ -682,6 +665,13 @@
           <button class="btn btn-plus" data-type="flavour" data-key="${f.name}" data-delta="1">+</button>
         </div>`;
       grid.appendChild(card);
+    });
+  }
+
+  function updateExtrasBorders() {
+    const cards = document.querySelectorAll("#extras-items .flavour-card");
+    cards.forEach((card, i) => {
+      card.style.borderColor = state.extras[extrasData[i].key] > 0 ? "var(--accent)" : "transparent";
     });
   }
 
@@ -727,7 +717,7 @@
       if (type === "extra") {
         state.extras[key] = Math.max(0, state.extras[key] + delta);
         document.getElementById(`extra-${key}`).textContent = state.extras[key];
-        updateTotal(); updateAdjustmentPreview();
+        updateTotal(); updateAdjustmentPreview(); updateExtrasBorders();
       }
       if (type === "flavour") {
         state.flavours[key] = Math.max(0, state.flavours[key] + delta);
@@ -961,7 +951,6 @@
     document.removeEventListener("click", unlockSounds);
   }
 
-  // POPUP HANDLERS
   const modalOverlay = document.getElementById("modal-overlay");
   const notesBtn = document.getElementById("notes-btn");
   const notesPopup = document.getElementById("notes-popup");
@@ -1020,6 +1009,7 @@
   renderExtrasSection();
   renderFlavours();
   updateFlavourBorders();
+  updateExtrasBorders();
   attachHandlers();
   updateTotal();
   updateSummary();
