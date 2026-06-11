@@ -76,7 +76,6 @@
       overflow-y: auto;
       padding-right: 4px;
     }
-    /* Extras: single row of 6 cards */
     .extras-grid {
       display: grid;
       grid-template-columns: repeat(6, 1fr);
@@ -89,7 +88,6 @@
       border: 2px solid transparent;
       padding: 6px 8px;
     }
-
     .flavour-card {
       background: #ffffff;
       border: 2px solid transparent;
@@ -101,28 +99,8 @@
       justify-content: space-between;
     }
     .flavour-top { display: flex; align-items: center; gap: 6px; margin-bottom: 3px; }
-    .flavour-image {
-      width: 30px; height: 30px; border-radius: 50%;
-      object-fit: cover; flex-shrink: 0; background: #eee;
-    }
     .flavour-name { font-size: 0.8rem; font-weight: 600; }
     .flavour-controls { display: flex; align-items: center; justify-content: flex-end; gap: 5px; }
-
-    .combo-upgrade-badge {
-      display: none;
-      font-size: 0.68rem;
-      font-weight: 700;
-      background: var(--accent);
-      color: #fff;
-      border-radius: 999px;
-      padding: 2px 7px;
-      margin-top: 3px;
-      cursor: pointer;
-      text-align: center;
-      letter-spacing: 0.02em;
-    }
-    .combo-upgrade-badge.visible { display: block; }
-
     .summary { margin-top: 4px; font-size: 0.75rem; line-height: 1.3; color: var(--text-soft); min-height: 30px; }
     .payment-options { display: flex; gap: 4px; flex-wrap: nowrap; }
     .payment-options label {
@@ -160,7 +138,7 @@
       z-index: 99;
     }
     .modal-overlay.show { display: block; }
-    #notes-popup, #adjust-popup, #other-popup {
+    #notes-popup, #adjust-popup, #other-popup, #special-other-popup {
       display: none;
       position: fixed;
       top: 20%; left: 50%;
@@ -175,11 +153,9 @@
     #notes-popup { width: 400px; }
     #adjust-popup { width: 480px; }
     #other-popup { width: 380px; }
-
+    #special-other-popup { width: 360px; }
     .popup-content { display: flex; flex-direction: column; gap: 10px; }
     .popup-label { font-size: 1.1rem; font-weight: 600; color: var(--text-main); text-align: center; margin-bottom: 4px; }
-    .popup-sublabel { font-size: 0.82rem; color: var(--text-soft); text-align: center; margin-top: -6px; }
-
     .combo-options { display: flex; flex-direction: column; gap: 8px; }
     .combo-option-row {
       display: flex;
@@ -192,24 +168,6 @@
       font-size: 0.95rem;
       font-weight: 600;
     }
-    .combo-option-btn {
-      border: 2px solid #e0e0e0;
-      border-radius: 10px;
-      padding: 10px 14px;
-      background: #fafafa;
-      cursor: pointer;
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      font-size: 0.95rem;
-      font-weight: 600;
-      transition: border-color 0.15s, background 0.15s;
-    }
-    .combo-option-btn:hover { border-color: var(--accent); background: #e6f3f6; }
-    .combo-option-btn.selected { border-color: var(--accent); background: #e6f3f6; color: var(--accent); }
-    .combo-option-btn .combo-price { font-size: 0.85rem; color: var(--text-soft); font-weight: 500; }
-    .combo-option-btn.selected .combo-price { color: var(--accent); }
-
     #notes-input {
       width: 100%; min-height: 100px;
       border-radius: 8px; border: 1px solid #ccc;
@@ -274,16 +232,18 @@
       background: #ffffff; color: var(--accent);
     }
     #accessories-section { padding: 5px 6px !important; }
-    #accessories-section .row { justify-content: flex-start; gap: 14px; margin-top: 0; }
-
-    /* Extras section */
+    #other-card { background: #c8c3b8 !important; }
+    #special-other-card { background: #c8c3b8 !important; }
     #extras-section {
       background: var(--accent-soft);
       border: none;
       box-shadow: 0 2px 6px rgba(0,0,0,0.08);
       padding: 6px;
     }
-
+    .specials-loading {
+      font-size: 0.78rem; color: var(--text-soft);
+      padding: 6px; text-align: center; font-style: italic;
+    }
     @media (max-width: 900px) { .sections { grid-template-columns: 1fr; } }
   </style>
 </head>
@@ -291,8 +251,6 @@
   <div class="modal-overlay" id="modal-overlay"></div>
   <div class="app">
     <div class="sections">
-
-      <!-- LEFT COLUMN -->
       <div>
         <section id="customer-section">
           <h2>Customer Type <span>Adults, kids, online</span></h2>
@@ -346,8 +304,6 @@
           </div>
         </section>
       </div>
-
-      <!-- RIGHT COLUMN -->
       <div>
         <section id="flavour-section">
           <h2>Flavours <span>Tap to add or remove</span></h2>
@@ -357,7 +313,6 @@
           <div class="extras-grid" id="extras-grid"></div>
         </section>
       </div>
-
     </div>
     <div class="bottom-bar">
       <div class="total" id="total-box">Total: $0.00</div>
@@ -454,13 +409,30 @@
     </div>
   </div>
 
+  <!-- SPECIAL OTHER POPUP — rows built dynamically from Specials sheet -->
+  <div id="special-other-popup">
+    <div class="popup-content">
+      <div class="popup-label">Special Other</div>
+      <div class="combo-options" id="special-other-rows">
+        <div class="specials-loading">Loading specials…</div>
+      </div>
+      <div class="popup-actions">
+        <button id="finish-special-other" type="button" class="popup-btn">Done</button>
+      </div>
+    </div>
+  </div>
+
   <div id="success-popup"></div>
 
   <audio id="tap-sound"><source src="https://actions.google.com/sounds/v1/cartoon/pop.ogg" type="audio/ogg"></audio>
   <audio id="cash-sound"><source src="https://actions.google.com/sounds/v1/cartoon/clang_and_wobble.ogg" type="audio/ogg"></audio>
 
 <script>
-  const GOOGLE_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbytcXWnnUt9ZtRyuHCX-8Ec_IVtkx9OBB5rDHmypXsgCtjy5_BSPzlOZnnOp2n-UeAx/exec";
+  const GOOGLE_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbwPrWYFieamj4JCevwfJIKWT1gKrWnSwMJERU5gaDmAtLXxY6daCEmURRtEHukZVR0d/exec";
+
+  // activeSpecials is populated on load from the Specials sheet via doGet
+  // Each entry: { name: "Tim Crunch" }
+  let activeSpecials = [];
 
   const otherItems = [
     { key: "comboClassic", label: "Combo Classic", price: 10 },
@@ -485,10 +457,10 @@
 
   const extrasData = [
     { key: "hotChocolate", label: "Hot Choco", price: 6  },
-    { key: "affogato",     label: "Affogato",      price: 10 },
-    { key: "brownie",      label: "Brownie",        price: 13 },
-    { key: "mClassic",     label: "M Classic",      price: 5  },
-    { key: "mRellen",      label: "M Rellen",       price: 6  },
+    { key: "affogato",     label: "Affogato",  price: 10 },
+    { key: "brownie",      label: "Brownie",   price: 13 },
+    { key: "mClassic",     label: "M Classic", price: 5  },
+    { key: "mRellen",      label: "M Rellen",  price: 6  },
   ];
 
   const flavourData = [
@@ -515,7 +487,7 @@
     { name: "Salted White",          image: "images/salted-white.png",       bg: "#cde4ea" },
     { name: "Simply Coconut",        image: "images/simply-coconut.png",     bg: "#cde4ea" },
     { name: "Tiramisu",              image: "images/tiramisu.png",           bg: "#cde4ea" },
-    { name: "Other",                 image: "images/other.png",              bg: "#cde4ea" },
+    { name: "Special Other",         image: "images/other.png",              bg: "#cde4ea" },
     { name: "Pup Cup",               image: "images/pup-cup.png",            bg: "#ffffff" }
   ];
 
@@ -526,6 +498,8 @@
     flavours:  {},
     others:    { comboClassic: 0, comboRellen: 0, slices: 0, customOther: 0 },
     customOtherPrice: 0,
+    // specialCounts: keyed by flavour name, e.g. { "Tim Crunch": 2, "Passion Fruit Cheesecake": 1 }
+    specialCounts: {},
     payment: "card", cardAmount: 0,
     cones: 0, cups: 0, notes: "", tip: 0, discount: 0
   };
@@ -551,29 +525,96 @@
     return `${day}/${month}/${year} ${hours}:${minutes} ${ampm}`;
   }
 
+  // ── Fetch active specials from the sheet on load ─────────────────────────
+  async function loadSpecials() {
+    try {
+      const res = await fetch(GOOGLE_SCRIPT_URL + "?action=getSpecials");
+      const data = await res.json();
+      activeSpecials = data.specials || [];
+    } catch (e) {
+      // Fallback: use hardcoded list if fetch fails (e.g. no network)
+      activeSpecials = [
+        { name: "Tim Crunch" },
+        { name: "Passion Fruit Cheesecake" }
+      ];
+    }
+    // Initialise counts for each special
+    activeSpecials.forEach(s => { state.specialCounts[s.name] = 0; });
+    buildSpecialOtherPopup();
+  }
+
+  // ── Build Special Other popup rows dynamically ───────────────────────────
+  function buildSpecialOtherPopup() {
+    const container = document.getElementById("special-other-rows");
+    container.innerHTML = "";
+    if (activeSpecials.length === 0) {
+      container.innerHTML = '<div class="specials-loading">No specials active right now.</div>';
+      return;
+    }
+    activeSpecials.forEach(s => {
+      const safe = cssSafe(s.name);
+      const row = document.createElement("div");
+      row.className = "combo-option-row";
+      row.innerHTML = `
+        <span>${s.name}</span>
+        <div style="display:flex;align-items:center;gap:8px;">
+          <button class="btn btn-minus" data-special="${s.name}" data-delta="-1">−</button>
+          <span class="count" id="special-count-${safe}">0</span>
+          <button class="btn btn-plus" data-special="${s.name}" data-delta="1">+</button>
+        </div>`;
+      container.appendChild(row);
+    });
+  }
+
+  // ── Special Other card total & border ────────────────────────────────────
+  function updateSpecialOtherCard() {
+    const total = Object.values(state.specialCounts).reduce((s, v) => s + v, 0);
+    state.flavours["Special Other"] = total;
+    const el = document.getElementById("flavour-Special_Other");
+    if (el) el.textContent = total;
+    const cards = document.querySelectorAll("#flavour-grid .flavour-card");
+    const idx = flavourData.findIndex(f => f.name === "Special Other");
+    if (idx >= 0 && cards[idx]) {
+      cards[idx].style.borderColor = total > 0 ? "var(--accent)" : "transparent";
+    }
+  }
+
+  // ── Other (extras) card ──────────────────────────────────────────────────
   function openOtherPopup() {
     document.getElementById("other-popup").style.display = "block";
     document.getElementById("modal-overlay").classList.add("show");
   }
-
   function closeOtherPopup() {
     document.getElementById("other-popup").style.display = "none";
     document.getElementById("modal-overlay").classList.remove("show");
   }
-
   function updateOtherCard() {
     const total = otherItems.reduce((sum, o) => sum + state.others[o.key], 0);
     const countEl = document.getElementById("other-count");
     if (countEl) countEl.textContent = total;
     const card = document.getElementById("other-card");
     if (card) card.style.borderColor = total > 0 ? "var(--accent)" : "transparent";
-    // update each counter in popup
     otherItems.forEach(o => {
       const el = document.getElementById(`other-popup-count-${o.key}`);
       if (el) el.textContent = state.others[o.key];
     });
   }
 
+  // ── Special Other popup open/close ───────────────────────────────────────
+  function openSpecialOtherPopup() {
+    activeSpecials.forEach(s => {
+      const el = document.getElementById("special-count-" + cssSafe(s.name));
+      if (el) el.textContent = state.specialCounts[s.name] || 0;
+    });
+    document.getElementById("special-other-popup").style.display = "block";
+    document.getElementById("modal-overlay").classList.add("show");
+  }
+  function closeSpecialOtherPopup() {
+    document.getElementById("special-other-popup").style.display = "none";
+    document.getElementById("modal-overlay").classList.remove("show");
+  }
+
+  // ── Render sections ───────────────────────────────────────────────────────
   function renderCustomerSection() {
     const container = document.getElementById("customer-section");
     customerTypes.forEach(ct => {
@@ -608,7 +649,6 @@
 
   function renderExtrasSection() {
     const container = document.getElementById("extras-grid");
-
     extrasData.forEach(ex => {
       const card = document.createElement("div");
       card.className = "flavour-card";
@@ -624,7 +664,6 @@
       container.appendChild(card);
     });
 
-    // Other card — opens popup
     const otherCard = document.createElement("div");
     otherCard.className = "flavour-card";
     otherCard.id = "other-card";
@@ -637,15 +676,11 @@
         <button class="btn btn-minus" id="other-minus">−</button>
         <span class="count" id="other-count">0</span>
         <button class="btn btn-plus" id="other-plus">+</button>
-      </div>
-    `;
+      </div>`;
     container.appendChild(otherCard);
-
     document.getElementById("other-plus").addEventListener("click", openOtherPopup);
     document.getElementById("other-minus").addEventListener("click", openOtherPopup);
-    otherCard.addEventListener("click", e => {
-      if (!e.target.closest("button")) openOtherPopup();
-    });
+    otherCard.addEventListener("click", e => { if (!e.target.closest("button")) openOtherPopup(); });
   }
 
   function renderFlavours() {
@@ -655,16 +690,35 @@
       const card = document.createElement("div");
       card.className = "flavour-card";
       if (f.bg) card.style.background = f.bg;
-      card.innerHTML = `
-        <div class="flavour-top">
-          <img src="${f.image}" alt="${f.name}" class="flavour-image"/>
-          <div class="flavour-name">${f.name}</div>
-        </div>
-        <div class="flavour-controls">
-          <button class="btn btn-minus" data-type="flavour" data-key="${f.name}" data-delta="-1">−</button>
-          <span class="count" id="flavour-${safeId}">0</span>
-          <button class="btn btn-plus" data-type="flavour" data-key="${f.name}" data-delta="1">+</button>
-        </div>`;
+
+      if (f.name === "Special Other") {
+        card.id = "special-other-card";
+        card.style.cursor = "pointer";
+        card.innerHTML = `
+          <div class="flavour-top">
+            <img src="${f.image}" alt="${f.name}" class="flavour-image" style="width:30px;height:30px;border-radius:50%;object-fit:cover;flex-shrink:0;background:#eee;"/>
+            <div class="flavour-name">${f.name}</div>
+          </div>
+          <div class="flavour-controls">
+            <button class="btn btn-minus" data-type="special-trigger" data-delta="-1">−</button>
+            <span class="count" id="flavour-${safeId}">0</span>
+            <button class="btn btn-plus" data-type="special-trigger" data-delta="1">+</button>
+          </div>`;
+        card.addEventListener("click", e => { if (!e.target.closest("button")) openSpecialOtherPopup(); });
+        card.querySelector("[data-delta='1']").addEventListener("click", openSpecialOtherPopup);
+        card.querySelector("[data-delta='-1']").addEventListener("click", openSpecialOtherPopup);
+      } else {
+        card.innerHTML = `
+          <div class="flavour-top">
+            <img src="${f.image}" alt="${f.name}" class="flavour-image" style="width:30px;height:30px;border-radius:50%;object-fit:cover;flex-shrink:0;background:#eee;"/>
+            <div class="flavour-name">${f.name}</div>
+          </div>
+          <div class="flavour-controls">
+            <button class="btn btn-minus" data-type="flavour" data-key="${f.name}" data-delta="-1">−</button>
+            <span class="count" id="flavour-${safeId}">0</span>
+            <button class="btn btn-plus" data-type="flavour" data-key="${f.name}" data-delta="1">+</button>
+          </div>`;
+      }
       grid.appendChild(card);
     });
   }
@@ -672,6 +726,7 @@
   function updateFlavourBorders() {
     const cards = document.querySelectorAll("#flavour-grid .flavour-card");
     cards.forEach((card, i) => {
+      if (flavourData[i].name === "Special Other") return; // handled by updateSpecialOtherCard
       card.style.borderColor = state.flavours[flavourData[i].name] > 0 ? "var(--accent)" : "transparent";
     });
   }
@@ -717,14 +772,14 @@
 
   function updateSummary() {
     const parts = [];
-    const custParts   = customerTypes.filter(ct => state.customers[ct.key] > 0).map(ct => `${ct.label}: ${state.customers[ct.key]}`);
-    const sizeParts   = sizes.filter(sz => state.sizes[sz.key] > 0).map(sz => `${sz.label}: ${state.sizes[sz.key]}`);
-    const extrasParts = extrasData.filter(ex => state.extras[ex.key] > 0).map(ex => `${ex.label}: ${state.extras[ex.key]}`);
-    const otherParts  = otherItems.filter(o => state.others[o.key] > 0).map(o => `${o.label}: ${state.others[o.key]}`);
+    const custParts    = customerTypes.filter(ct => state.customers[ct.key] > 0).map(ct => `${ct.label}: ${state.customers[ct.key]}`);
+    const sizeParts    = sizes.filter(sz => state.sizes[sz.key] > 0).map(sz => `${sz.label}: ${state.sizes[sz.key]}`);
+    const extrasParts  = extrasData.filter(ex => state.extras[ex.key] > 0).map(ex => `${ex.label}: ${state.extras[ex.key]}`);
+    const otherParts   = otherItems.filter(o => state.others[o.key] > 0).map(o => `${o.label}: ${state.others[o.key]}`);
     const flavourParts = flavourData.filter(f => state.flavours[f.name] > 0).map(f => `${f.name}: ${state.flavours[f.name]}`);
     const accessoryParts = [];
     if (state.cones > 0) accessoryParts.push(`Cones: ${state.cones}`);
-    if (state.cups > 0)  accessoryParts.push(`Cups: ${state.cups}`);
+    if (state.cups  > 0) accessoryParts.push(`Cups: ${state.cups}`);
     if (custParts.length)      parts.push("Customers – "   + custParts.join(", "));
     if (sizeParts.length)      parts.push("Sizes – "       + sizeParts.join(", "));
     if (extrasParts.length)    parts.push("Extras – "      + extrasParts.join(", "));
@@ -746,6 +801,9 @@
     const customPriceEl = document.getElementById("other-custom-price");
     if (customPriceEl) customPriceEl.value = "";
     updateOtherCard();
+    // Reset specials
+    activeSpecials.forEach(s => { state.specialCounts[s.name] = 0; });
+    updateSpecialOtherCard();
     state.cones = 0; state.cups = 0;
     const conesEl = document.getElementById("accessory-cones");
     const cupsEl  = document.getElementById("accessory-cups");
@@ -766,6 +824,17 @@
     updateTotal(); updateSummary(); updateAdjustmentPreview();
   }
 
+  function showPopup() {
+    const popup = document.getElementById("success-popup");
+    popup.innerHTML = `<span>Order Saved!</span><button id="edit-last-btn" type="button">Edit Last Order</button>`;
+    popup.classList.add("show");
+    document.getElementById("edit-last-btn").addEventListener("click", () => {
+      if (lastSavedOrder) { loadOrderForEditing(lastSavedOrder); editMode = true; }
+      popup.classList.remove("show");
+    });
+    setTimeout(() => popup.classList.remove("show"), 9000);
+  }
+
   function loadOrderForEditing(order) {
     resetAll();
     customerTypes.forEach(ct => { const v = (order.customers && order.customers[ct.key]) || 0; state.customers[ct.key] = v; const el = document.getElementById(`customer-${ct.key}`); if (el) el.textContent = v; });
@@ -774,6 +843,12 @@
     flavourData.forEach(f => { const v = (order.flavours && order.flavours[f.name]) || 0; state.flavours[f.name] = v; const el = document.getElementById(`flavour-${cssSafe(f.name)}`); if (el) el.textContent = v; });
     if (order.others) { otherItems.forEach(o => { state.others[o.key] = order.others[o.key] || 0; }); }
     updateOtherCard();
+    if (order.specialCounts) {
+      Object.keys(order.specialCounts).forEach(name => {
+        state.specialCounts[name] = order.specialCounts[name] || 0;
+      });
+      updateSpecialOtherCard();
+    }
     updateFlavourBorders(); updateExtrasBorders();
     state.cones = order.cones || 0; state.cups = order.cups || 0;
     const conesEl = document.getElementById("accessory-cones");
@@ -792,8 +867,6 @@
     } else {
       state.cardAmount = 0;
       document.getElementById("mixed-fields").style.display = "none";
-      document.getElementById("card-input").value = "";
-      document.getElementById("cash-output").textContent = "$0.00";
     }
     state.notes = order.notes || "";
     const notesInputEl = document.getElementById("notes-input");
@@ -802,17 +875,6 @@
     document.getElementById("tip-input").value = state.tip > 0 ? state.tip.toFixed(2) : "";
     document.getElementById("discount-input").value = state.discount > 0 ? state.discount.toFixed(2) : "";
     updateTotal(); updateSummary(); updateAdjustmentPreview();
-  }
-
-  function showPopup() {
-    const popup = document.getElementById("success-popup");
-    popup.innerHTML = `<span>Order Saved!</span><button id="edit-last-btn" type="button">Edit Last Order</button>`;
-    popup.classList.add("show");
-    document.getElementById("edit-last-btn").addEventListener("click", () => {
-      if (lastSavedOrder) { loadOrderForEditing(lastSavedOrder); editMode = true; }
-      popup.classList.remove("show");
-    });
-    setTimeout(() => popup.classList.remove("show"), 9000);
   }
 
   async function submitOrder() {
@@ -829,6 +891,7 @@
       extras: state.extras,
       others: state.others,
       flavours: state.flavours,
+      specialCounts: state.specialCounts,   // e.g. { "Tim Crunch": 2, "Passion Fruit Cheesecake": 1 }
       cones: state.cones, cups: state.cups,
       adjustment: state.tip - state.discount,
       payment: state.payment, cardAmount: state.cardAmount,
@@ -911,7 +974,6 @@
     });
 
     document.getElementById("cancel-btn").addEventListener("click", resetAll);
-
     document.getElementById("done-btn").addEventListener("click", async () => {
       const btn = document.getElementById("done-btn");
       if (btn.disabled) return;
@@ -965,7 +1027,6 @@
     updateSummary();
   });
 
-  // Other popup handlers
   document.getElementById("other-custom-price").addEventListener("input", e => {
     state.customOtherPrice = parseFloat(e.target.value || "0");
     updateTotal(); updateAdjustmentPreview(); updateSummary();
@@ -980,13 +1041,27 @@
     updateOtherCard();
     updateTotal(); updateAdjustmentPreview(); updateSummary();
   });
-
   document.getElementById("finish-other").addEventListener("click", closeOtherPopup);
+
+  document.getElementById("special-other-popup").addEventListener("click", e => {
+    const btn = e.target.closest("button[data-special]");
+    if (!btn) return;
+    const name  = btn.dataset.special;
+    const delta = parseInt(btn.dataset.delta, 10);
+    if (!state.specialCounts[name]) state.specialCounts[name] = 0;
+    state.specialCounts[name] = Math.max(0, state.specialCounts[name] + delta);
+    const el = document.getElementById("special-count-" + cssSafe(name));
+    if (el) el.textContent = state.specialCounts[name];
+    updateSpecialOtherCard();
+    updateSummary();
+  });
+  document.getElementById("finish-special-other").addEventListener("click", closeSpecialOtherPopup);
 
   modalOverlay.addEventListener("click", () => {
     adjustPopup.style.display = "none";
     notesPopup.style.display = "none";
     document.getElementById("other-popup").style.display = "none";
+    document.getElementById("special-other-popup").style.display = "none";
     modalOverlay.classList.remove("show");
   });
 
@@ -1002,6 +1077,9 @@
   updateTotal();
   updateSummary();
   updateAdjustmentPreview();
+
+  // Load specials from sheet on startup
+  loadSpecials();
 </script>
 </body>
 </html>
