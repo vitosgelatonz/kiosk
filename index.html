@@ -160,7 +160,7 @@
       z-index: 99;
     }
     .modal-overlay.show { display: block; }
-    #notes-popup, #adjust-popup, #combo-popup {
+    #notes-popup, #adjust-popup, #other-popup {
       display: none;
       position: fixed;
       top: 20%; left: 50%;
@@ -436,6 +436,17 @@
             <button class="btn btn-plus" data-other="slices" data-delta="1">+</button>
           </div>
         </div>
+        <div class="combo-option-row">
+          <span>Other</span>
+          <div style="display:flex;align-items:center;gap:8px;">
+            <span class="price">$</span>
+            <input type="number" id="other-custom-price" min="0" step="0.50" placeholder="0.00"
+              style="width:70px;padding:4px 6px;border-radius:6px;border:1px solid #ccc;font-size:0.9rem;text-align:center;">
+            <button class="btn btn-minus" data-other="customOther" data-delta="-1">−</button>
+            <span class="count" id="other-popup-count-customOther">0</span>
+            <button class="btn btn-plus" data-other="customOther" data-delta="1">+</button>
+          </div>
+        </div>
       </div>
       <div class="popup-actions">
         <button id="finish-other" type="button" class="popup-btn">Done</button>
@@ -455,6 +466,7 @@
     { key: "comboClassic", label: "Combo Classic", price: 10 },
     { key: "comboRellen",  label: "Combo Rellen",  price: 11 },
     { key: "slices",       label: "Slices",         price: 4  },
+    { key: "customOther",  label: "Other",          price: 0  },
   ];
 
   const customerTypes = [
@@ -512,7 +524,8 @@
     sizes:     { kiddie: 0, single: 0, double: 0, triple: 0, tub: 0 },
     extras:    { hotChocolate: 0, affogato: 0, brownie: 0, mClassic: 0, mRellen: 0 },
     flavours:  {},
-    others:    { comboClassic: 0, comboRellen: 0, slices: 0 },
+    others:    { comboClassic: 0, comboRellen: 0, slices: 0, customOther: 0 },
+    customOtherPrice: 0,
     payment: "card", cardAmount: 0,
     cones: 0, cups: 0, notes: "", tip: 0, discount: 0
   };
@@ -675,7 +688,10 @@
   function calcBaseTotal() {
     const sizesTotal  = sizes.reduce((sum, sz) => sum + state.sizes[sz.key] * sz.price, 0);
     const extrasTotal = extrasData.reduce((sum, ex) => sum + state.extras[ex.key] * ex.price, 0);
-    const othersTotal = otherItems.reduce((sum, o) => sum + state.others[o.key] * o.price, 0);
+    const othersTotal = otherItems.reduce((sum, o) => {
+      const price = o.key === "customOther" ? state.customOtherPrice : o.price;
+      return sum + state.others[o.key] * price;
+    }, 0);
     return sizesTotal + extrasTotal + othersTotal;
   }
 
@@ -726,6 +742,9 @@
     extrasData.forEach(ex => { state.extras[ex.key] = 0; const el = document.getElementById(`extra-${ex.key}`); if (el) el.textContent = "0"; });
     flavourData.forEach(f => { state.flavours[f.name] = 0; const el = document.getElementById(`flavour-${cssSafe(f.name)}`); if (el) el.textContent = "0"; });
     otherItems.forEach(o => { state.others[o.key] = 0; });
+    state.customOtherPrice = 0;
+    const customPriceEl = document.getElementById("other-custom-price");
+    if (customPriceEl) customPriceEl.value = "";
     updateOtherCard();
     state.cones = 0; state.cups = 0;
     const conesEl = document.getElementById("accessory-cones");
@@ -947,6 +966,11 @@
   });
 
   // Other popup handlers
+  document.getElementById("other-custom-price").addEventListener("input", e => {
+    state.customOtherPrice = parseFloat(e.target.value || "0");
+    updateTotal(); updateAdjustmentPreview(); updateSummary();
+  });
+
   document.getElementById("other-popup").addEventListener("click", e => {
     const btn = e.target.closest("button[data-other]");
     if (!btn) return;
