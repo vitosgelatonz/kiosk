@@ -352,6 +352,25 @@
           <div class="summary" id="summary-box"></div>
         </section>
 
+        <section id="accessories-section" style="margin-top:6px">
+          <h2>Accessories <span>Cones &amp; cups</span></h2>
+          <div class="row">
+            <div class="label">🍦 Cones</div>
+            <div class="controls">
+              <button class="btn btn-minus" data-type="accessory" data-key="cones" data-delta="-1">−</button>
+              <span class="count" id="accessory-cones">0</span>
+              <button class="btn btn-plus"  data-type="accessory" data-key="cones" data-delta="1">+</button>
+            </div>
+          </div>
+          <div class="row">
+            <div class="label">🥤 Cups</div>
+            <div class="controls">
+              <button class="btn btn-minus" data-type="accessory" data-key="cups" data-delta="-1">−</button>
+              <span class="count" id="accessory-cups">0</span>
+              <button class="btn btn-plus"  data-type="accessory" data-key="cups" data-delta="1">+</button>
+            </div>
+          </div>
+        </section>
       </div>
 
       <!-- RIGHT COLUMN -->
@@ -506,7 +525,7 @@
   <audio id="cash-sound"><source src="https://actions.google.com/sounds/v1/cartoon/clang_and_wobble.ogg" type="audio/ogg"></audio>
 
 <script>
-const GOOGLE_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbzr6fUy2S7y671k95iZZwGm8rZldvWoWyT2fTCgCB97IiOiiEakkMi8cyks317mqoI/exec";
+const GOOGLE_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbzoUv3jjDt3r65Gyl5HbyxzFTBsG08Yy85PqRp9_7oOluJ3MCMBKioftEvGuhiL-mUR/exec";
 
 let activeSpecials = [];
 
@@ -526,11 +545,11 @@ const sizes = [
 ];
 
 const extrasData = [
-  { key: "hotChocolate", label: "Hot Choco", price: 6    },
-  { key: "affogato",     label: "Affogato",  price: 10   },
-  { key: "brownie",      label: "Brownie",   price: 13   },
-  { key: "mClassic",     label: "M Classic", price: 5.50 },
-  { key: "mRellen",      label: "M Rellen",  price: 6.50 },
+  { key: "hotChocolate", label: "Hot Choco",  price: 6    },
+  { key: "affogato",     label: "Affogato",   price: 10   },
+  { key: "brownie",      label: "Brownie",    price: 13   },
+  { key: "mClassic",     label: "M Classic",  price: 5.50 },
+  { key: "mRellen",      label: "M Rellen",   price: 6.50 },
 ];
 
 const otherItems = [
@@ -541,30 +560,29 @@ const otherItems = [
 ];
 
 const flavourData = [
-  { name: "Biscoff",               image: "images/biscoff.png" },
-  { name: "Black Sand Piha",       image: "images/black-sand-piha.png" },
-  { name: "Dark Choco Brownie",    image: "images/dark-choco-brownie.png" },
-  { name: "Dulce de Leche",        image: "images/dulce-de-leche.png" },
-  { name: "Hazelnut Crunch",       image: "images/hazelnut-crunch.png" },
-  { name: "Mango Bliss",           image: "images/mango-bliss.png" },
-  { name: "Menta Cioccolato",      image: "images/menta-cioccolato.png" },
-  { name: "Reese's Peanut Butter", image: "images/reeses-peanut-butter.png" },
-  { name: "Strawberry Dream",      image: "images/strawberry-dream.png" },
-  { name: "Vanilla Oreo",          image: "images/vanilla-oreo.png" },
-  { name: "Amarena",               image: "images/amarena.png",            bg: "#cde4ea" },
-  { name: "Banana Caramel",        image: "images/banana-caramel.png",     bg: "#cde4ea" },
-  { name: "Chocolate Velvet",      image: "images/chocolate-velvet.png",   bg: "#cde4ea" },
-  { name: "Classic Lemon",         image: "images/classic-lemon.png",      bg: "#cde4ea" },
-  { name: "Cookie Crumble",        image: "images/cookie-crumble.png",     bg: "#cde4ea" },
-  { name: "DDL Deluxe",            image: "images/ddl-deluxe.png",         bg: "#cde4ea" },
-  { name: "Just Vanilla",          image: "images/just-vanilla.png",       bg: "#cde4ea" },
-  { name: "Lemon Cake Delight",    image: "images/lemon-cake-delight.png", bg: "#cde4ea" },
-  { name: "Moka",                  image: "images/moka.png",               bg: "#cde4ea" },
-  { name: "Pineapple Paradise",    image: "images/pineapple-paradise.png", bg: "#cde4ea" },
-  { name: "Salted White",          image: "images/salted-white.png",       bg: "#cde4ea" },
-  { name: "Simply Coconut",        image: "images/simply-coconut.png",     bg: "#cde4ea" },
-  { name: "Tiramisu",              image: "images/tiramisu.png",           bg: "#cde4ea" },
-  { name: "Pup Cup",               image: "images/pup-cup.png",            bg: "#ffffff" },
+  { name: "Biscoff",               image: "images/biscoff.png",              bg: "#cde4ea" },
+  { name: "Black Sand Piha",       image: "images/black-sand-piha.png",      bg: "#cde4ea" },
+  { name: "Dark Choco Brownie",    image: "images/dark-choco-brownie.png",   bg: "#cde4ea" },
+  { name: "Dulce de Leche",        image: "images/dulce-de-leche.png",       bg: "#cde4ea" },
+  { name: "Hazelnut Crunch",       image: "images/hazelnut-crunch.png",      bg: "#cde4ea" },
+  { name: "Mango Bliss",           image: "images/mango-bliss.png",          bg: "#cde4ea" },
+  { name: "Menta Cioccolato",      image: "images/menta-cioccolato.png",     bg: "#cde4ea" },
+  { name: "Reese's Peanut Butter", image: "images/reeses-peanut-butter.png", bg: "#cde4ea" },
+  { name: "Strawberry Dream",      image: "images/strawberry-dream.png",     bg: "#cde4ea" },
+  { name: "Vanilla Oreo",          image: "images/vanilla-oreo.png",         bg: "#cde4ea" },
+  { name: "Amarena",               image: "images/amarena.png"            },
+  { name: "Banana Caramel",        image: "images/banana-caramel.png"     },
+  { name: "Chocolate Velvet",      image: "images/chocolate-velvet.png"   },
+  { name: "Classic Lemon",         image: "images/classic-lemon.png"      },
+  { name: "Cookie Crumble",        image: "images/cookie-crumble.png"     },
+  { name: "DDL Deluxe",            image: "images/ddl-deluxe.png"         },
+  { name: "Just Vanilla",          image: "images/just-vanilla.png"       },
+  { name: "Lemon Cake Delight",    image: "images/lemon-cake-delight.png" },
+  { name: "Moka",                  image: "images/moka.png"               },
+  { name: "Pineapple Paradise",    image: "images/pineapple-paradise.png" },
+  { name: "Salted White",          image: "images/salted-white.png"       },
+  { name: "Simply Coconut",        image: "images/simply-coconut.png"     },
+  { name: "Tiramisu",              image: "images/tiramisu.png"           },
 ];
 
 // ── STATE ─────────────────────────────────────────────────────────────────
@@ -573,6 +591,7 @@ const state = {
   argentinian:      false,
   gelatoQueue:      [],
   extras:           { hotChocolate: 0, affogato: 0, brownie: 0, mClassic: 0, mRellen: 0 },
+  pupCup:           0,
   others:           { comboClassic: 0, comboRellen: 0, slices: 0, customOther: 0 },
   customOtherPrice: 0,
   specialCounts:    {},
@@ -945,6 +964,7 @@ function updateSummary(){
   const accessParts = [];
   if (state.cones > 0) accessParts.push(`Cones: ${state.cones}`);
   if (state.cups  > 0) accessParts.push(`Cups: ${state.cups}`);
+  if (state.pupCup > 0) accessParts.push(`Pup Cup: ${state.pupCup}`);
   if (state.argentinian)  custParts.push("🇦🇷 Argentinian");
   if (custParts.length)   parts.push("Customers – "   + custParts.join(", "));
   if (gelatoParts.length) parts.push("Gelatos – "     + gelatoParts.join(" | "));
@@ -983,6 +1003,8 @@ function resetAll(){
   const cpe = document.getElementById("other-custom-price"); if (cpe) cpe.value = "";
   updateOtherCard();
   activeSpecials.forEach(s => { state.specialCounts[s.name] = 0; });
+  state.pupCup = 0;
+  const pcEl = document.getElementById("pupCup-count"); if (pcEl) pcEl.textContent = "0";
   state.cones = 0; state.cups = 0;
   const coEl = document.getElementById("accessory-cones"); if (coEl) coEl.textContent = "0";
   const cuEl = document.getElementById("accessory-cups");  if (cuEl) cuEl.textContent  = "0";
@@ -1020,6 +1042,7 @@ async function submitOrder(){
     others:           state.others,
     flavours:         flavourCounts,
     specialCounts:    state.specialCounts,
+    pupCup:           state.pupCup,
     cones:            coneCount,
     cups:             cupCount,
     adjustment:       state.tip - state.discount,
@@ -1079,6 +1102,8 @@ function loadOrderForEditing(order){
   updateOtherCard();
   if (order.specialCounts){ Object.keys(order.specialCounts).forEach(name => { state.specialCounts[name] = order.specialCounts[name] || 0; }); }
   updateExtrasBorders();
+  state.pupCup = order.pupCup || 0;
+  const pcEl = document.getElementById("pupCup-count"); if (pcEl) pcEl.textContent = state.pupCup;
   state.cones = order.cones || 0; state.cups = order.cups || 0;
   const coEl = document.getElementById("accessory-cones"); if (coEl) coEl.textContent = state.cones;
   const cuEl = document.getElementById("accessory-cups");  if (cuEl) cuEl.textContent  = state.cups;
@@ -1128,6 +1153,18 @@ function renderCustomerSection(){
     btn.className = "vessel-btn" + (state.argentinian ? " selected" : "");
     updateSummary();
   });
+  // Pup Cup counter
+  const pupRow = document.createElement("div");
+  pupRow.className = "row";
+  pupRow.style.marginTop = "4px";
+  pupRow.innerHTML = `
+    <div class="label">🐾 Pup Cup</div>
+    <div class="controls">
+      <button class="btn btn-minus" data-type="pupCup" data-delta="-1">−</button>
+      <span class="count" id="pupCup-count">0</span>
+      <button class="btn btn-plus"  data-type="pupCup" data-delta="1">+</button>
+    </div>`;
+  container.appendChild(pupRow);
 }
 
 function updateExtrasBorders(){
@@ -1180,6 +1217,7 @@ function attachHandlers(){
     const key   = btn.dataset.key;
     const delta = parseInt(btn.dataset.delta || "0", 10);
     if (type === "customer"){ state.customers[key] = Math.max(0, state.customers[key] + delta); document.getElementById(`customer-${key}`).textContent = state.customers[key]; }
+    if (type === "pupCup"){ state.pupCup = Math.max(0, state.pupCup + parseInt(btn.dataset.delta)); document.getElementById("pupCup-count").textContent = state.pupCup; }
     if (type === "extra"){ state.extras[key] = Math.max(0, state.extras[key] + delta); document.getElementById(`extra-${key}`).textContent = state.extras[key]; updateTotal(); updateAdjustmentPreview(); updateExtrasBorders(); }
     if (type === "accessory"){ state[key] = Math.max(0, state[key] + delta); document.getElementById(`accessory-${key}`).textContent = state[key]; }
     updateSummary();
