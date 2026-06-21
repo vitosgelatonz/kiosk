@@ -71,19 +71,19 @@
     .count { min-width: 24px; text-align: center; font-weight: 700; font-size: 1rem; }
 
     /* ── QUEUE ── */
-    .queue-list { display: flex; flex-wrap: wrap; gap: 8px; min-height: 44px; }
+    .queue-list { display: flex; flex-wrap: wrap; gap: 10px; min-height: 44px; }
     .queue-empty { font-size: 0.82rem; color: var(--text-soft); padding: 10px 0; font-style: italic; width: 100%; }
     .queue-card {
-      background: #fff; border-radius: 10px; padding: 8px 10px;
-      display: flex; align-items: center; gap: 8px;
+      background: #fff; border-radius: 12px; padding: 14px 16px;
+      display: flex; align-items: center; gap: 12px;
       border: 2px solid #e0e0e0; box-shadow: 0 1px 4px rgba(0,0,0,0.07);
-      min-width: 160px; flex: 1 1 160px; max-width: 260px;
+      min-width: 240px; flex: 1 1 240px; max-width: 360px;
     }
     .queue-card-info { flex: 1; min-width: 0; }
-    .queue-card-title { font-size: 0.88rem; font-weight: 700; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
-    .queue-card-sub   { font-size: 0.75rem; color: var(--text-soft); white-space: normal; line-height: 1.3; }
-    .queue-card-actions { display: flex; gap: 4px; flex-shrink: 0; flex-direction: column; }
-    .queue-btn { border: none; border-radius: 6px; padding: 3px 8px; font-size: 0.72rem; font-weight: 600; cursor: pointer; }
+    .queue-card-title { font-size: 0.85rem; font-weight: 700; white-space: normal; line-height: 1.25; }
+    .queue-card-sub   { font-size: 1rem; color: var(--text-soft); white-space: normal; line-height: 1.35; margin-top: 4px; }
+    .queue-card-actions { display: flex; gap: 6px; flex-shrink: 0; flex-direction: column; }
+    .queue-btn { border: none; border-radius: 8px; padding: 6px 12px; font-size: 0.85rem; font-weight: 600; cursor: pointer; }
     .queue-btn-edit   { background: var(--accent); color: #fff; }
     .queue-btn-delete { background: var(--danger);  color: #fff; }
     #add-gelato-btn {
@@ -102,6 +102,13 @@
     .flavour-top { display: flex; align-items: center; gap: 6px; margin-bottom: 3px; }
     .flavour-name { font-size: 0.8rem; font-weight: 600; }
     .flavour-controls { display: flex; align-items: center; justify-content: flex-end; gap: 5px; }
+    .other-price-input {
+      width: 34px; padding: 0 2px; border-radius: 4px; border: 1px solid #ccc;
+      font-size: 0.82rem; text-align: center; line-height: 1.4;
+      -moz-appearance: textfield;
+    }
+    .other-price-input::-webkit-outer-spin-button,
+    .other-price-input::-webkit-inner-spin-button { -webkit-appearance: none; margin: 0; }
     .summary { margin-top: 4px; font-size: 0.75rem; line-height: 1.3; color: var(--text-soft); min-height: 30px; }
 
     /* ── PAYMENT ── */
@@ -130,7 +137,7 @@
     .modal-overlay.show { display: block; }
 
     /* ── POPUPS ── */
-    #notes-popup, #adjust-popup, #other-popup, #special-other-popup {
+    #notes-popup, #adjust-popup, #special-other-popup {
       display: none; position: fixed; top: 20%; left: 50%;
       transform: translate(-50%, -50%);
       background: #fff; border-radius: 12px;
@@ -139,7 +146,6 @@
     }
     #notes-popup  { width: 400px; }
     #adjust-popup { width: 480px; }
-    #other-popup  { width: 380px; }
     #special-other-popup { width: 360px; }
     .popup-content { display: flex; flex-direction: column; gap: 10px; }
     .popup-label { font-size: 1.1rem; font-weight: 600; color: var(--text-main); text-align: center; margin-bottom: 4px; }
@@ -274,9 +280,7 @@
     .builder-footer-cancel { flex: 1; border: 2px solid #ddd; background: #fff; border-radius: 999px; padding: 9px; font-size: 0.9rem; font-weight: 600; cursor: pointer; }
     .builder-footer-add    { flex: 2; border: none; background: var(--accent); color: #fff; border-radius: 999px; padding: 9px; font-size: 0.9rem; font-weight: 600; cursor: pointer; }
 
-    /* ── ACCESSORIES ── */
-    #accessories-section { padding: 5px 6px !important; }
-    #extras-section { background: var(--accent-soft); border: none; box-shadow: 0 2px 6px rgba(0,0,0,0.08); padding: 6px; }
+    /* ── EXTRAS ── */
 
     /* ── BOTTOM BAR ── */
     .bottom-bar {
@@ -352,25 +356,6 @@
           <div class="summary" id="summary-box"></div>
         </section>
 
-        <section id="accessories-section" style="margin-top:6px">
-          <h2>Accessories <span>Cones &amp; cups</span></h2>
-          <div class="row">
-            <div class="label">🍦 Cones</div>
-            <div class="controls">
-              <button class="btn btn-minus" data-type="accessory" data-key="cones" data-delta="-1">−</button>
-              <span class="count" id="accessory-cones">0</span>
-              <button class="btn btn-plus"  data-type="accessory" data-key="cones" data-delta="1">+</button>
-            </div>
-          </div>
-          <div class="row">
-            <div class="label">🥤 Cups</div>
-            <div class="controls">
-              <button class="btn btn-minus" data-type="accessory" data-key="cups" data-delta="-1">−</button>
-              <span class="count" id="accessory-cups">0</span>
-              <button class="btn btn-plus"  data-type="accessory" data-key="cups" data-delta="1">+</button>
-            </div>
-          </div>
-        </section>
       </div>
 
       <!-- RIGHT COLUMN -->
@@ -383,6 +368,7 @@
           <button id="add-gelato-btn" type="button">🍦 Add Gelato</button>
         </section>
         <section id="extras-section" style="margin-top:6px">
+          <h2>Winter Treats <span>Hot drinks &amp; specials</span></h2>
           <div class="extras-grid" id="extras-grid"></div>
         </section>
       </div>
@@ -458,54 +444,6 @@
       <div class="popup-label">Notes for this order</div>
       <textarea id="notes-input"></textarea>
       <div class="popup-actions"><button id="finish-notes" type="button" class="popup-btn">Done</button></div>
-    </div>
-  </div>
-
-  <!-- OTHER POPUP -->
-  <div id="other-popup">
-    <div class="popup-content">
-      <div class="popup-label">Other Items</div>
-      <div class="combo-options">
-        <div class="combo-option-row">
-          <span>Combo Classic</span>
-          <div style="display:flex;align-items:center;gap:8px;">
-            <span class="price">$10.00</span>
-            <button class="btn btn-minus" data-other="comboClassic" data-delta="-1">−</button>
-            <span class="count" id="other-popup-count-comboClassic">0</span>
-            <button class="btn btn-plus"  data-other="comboClassic" data-delta="1">+</button>
-          </div>
-        </div>
-        <div class="combo-option-row">
-          <span>Combo Rellen</span>
-          <div style="display:flex;align-items:center;gap:8px;">
-            <span class="price">$11.00</span>
-            <button class="btn btn-minus" data-other="comboRellen" data-delta="-1">−</button>
-            <span class="count" id="other-popup-count-comboRellen">0</span>
-            <button class="btn btn-plus"  data-other="comboRellen" data-delta="1">+</button>
-          </div>
-        </div>
-        <div class="combo-option-row">
-          <span>Slices</span>
-          <div style="display:flex;align-items:center;gap:8px;">
-            <span class="price">$4.00</span>
-            <button class="btn btn-minus" data-other="slices" data-delta="-1">−</button>
-            <span class="count" id="other-popup-count-slices">0</span>
-            <button class="btn btn-plus"  data-other="slices" data-delta="1">+</button>
-          </div>
-        </div>
-        <div class="combo-option-row">
-          <span>Other</span>
-          <div style="display:flex;align-items:center;gap:8px;">
-            <span class="price">$</span>
-            <input type="number" id="other-custom-price" min="0" step="0.50" placeholder="0.00"
-              style="width:70px;padding:4px 6px;border-radius:6px;border:1px solid #ccc;font-size:0.9rem;text-align:center;">
-            <button class="btn btn-minus" data-other="customOther" data-delta="-1">−</button>
-            <span class="count" id="other-popup-count-customOther">0</span>
-            <button class="btn btn-plus"  data-other="customOther" data-delta="1">+</button>
-          </div>
-        </div>
-      </div>
-      <div class="popup-actions"><button id="finish-other" type="button" class="popup-btn">Done</button></div>
     </div>
   </div>
 
@@ -596,7 +534,6 @@ const state = {
   customOtherPrice: 0,
   specialCounts:    {},
   payment: "card",  cardAmount: 0,
-  cones: 0, cups: 0,
   notes: "", tip: 0, discount: 0
 };
 
@@ -637,6 +574,7 @@ async function loadSpecials(){
     activeSpecials = [{ name: "Tim Crunch" },{ name: "Passion Fruit Cheesecake" }];
   }
   activeSpecials.forEach(s => { state.specialCounts[s.name] = 0; });
+  flavourGridBuilt = false;
   buildSpecialOtherPopup();
 }
 
@@ -663,55 +601,68 @@ function buildSpecialOtherPopup(){
 }
 
 // ── INLINE FLAVOUR GRID ───────────────────────────────────────────────────
+let flavourGridBuilt = false;
+
 function renderFlavourPickGrid(){
   const grid  = document.getElementById("flavour-pick-grid");
   const label = document.getElementById("flavour-pick-label");
-  grid.innerHTML = "";
 
   if (builder.activeScoopIdx === null){
     label.textContent = "← Tap a scoop slot to choose its flavour";
+    updateFlavourGridSelection();
     return;
   }
 
   label.textContent = `Scoop ${builder.activeScoopIdx + 1} — tap a flavour`;
 
-  const currentFlavour = builder.scoops[builder.activeScoopIdx] || null;
+  if (!flavourGridBuilt){
+    grid.innerHTML = "";
 
-  // Standard flavours
-  const firstSecondTier = flavourData.findIndex(f => f.bg === "#cde4ea");
-  flavourData.forEach((f, i) => {
-    // Insert section divider before second-tier
-    if (i === firstSecondTier){
-      const div = document.createElement("div");
-      div.className = "flavour-section-divider";
-      div.textContent = "More Flavours";
-      grid.appendChild(div);
-    }
-    grid.appendChild(makeFlavourPickCard(f.name, f.image, f.bg || null, currentFlavour));
-  });
+    // Permanent Collection (the 10 flavours with the blue background)
+    const permanentCollection = flavourData.filter(f => f.bg === "#cde4ea");
+    const otherFlavours       = flavourData.filter(f => f.bg !== "#cde4ea");
 
-  // Specials
-  if (activeSpecials.length){
-    const div = document.createElement("div");
-    div.className = "flavour-section-divider";
-    div.textContent = "✨ Specials";
-    grid.appendChild(div);
-    activeSpecials.forEach(s => {
-      grid.appendChild(makeFlavourPickCard(s.name, "images/other.png", "#cde4ea", currentFlavour));
+    const permDiv = document.createElement("div");
+    permDiv.className = "flavour-section-divider";
+    permDiv.textContent = "Permanent Collection";
+    grid.appendChild(permDiv);
+    permanentCollection.forEach(f => {
+      grid.appendChild(makeFlavourPickCard(f.name, f.image, f.bg || null));
     });
+
+    // Specials — remaining flavours, then live/loaded specials (e.g. Tim Crunch), then Special Other
+    const specialsDiv = document.createElement("div");
+    specialsDiv.className = "flavour-section-divider";
+    specialsDiv.textContent = "✨ Specials";
+    grid.appendChild(specialsDiv);
+    otherFlavours.forEach(f => {
+      grid.appendChild(makeFlavourPickCard(f.name, f.image, "#cde4ea"));
+    });
+    if (activeSpecials.length){
+      activeSpecials.forEach(s => {
+        grid.appendChild(makeFlavourPickCard(s.name, "images/other.png", "#cde4ea"));
+      });
+    }
+    grid.appendChild(makeFlavourPickCard("Special Other", "images/other.png", "#cde4ea"));
+
+    flavourGridBuilt = true;
   }
 
-  // Special Other
-  const soDiv = document.createElement("div");
-  soDiv.className = "flavour-section-divider";
-  soDiv.textContent = "Other";
-  grid.appendChild(soDiv);
-  grid.appendChild(makeFlavourPickCard("Special Other", "images/other.png", "#cde4ea", currentFlavour));
+  updateFlavourGridSelection();
 }
 
-function makeFlavourPickCard(name, image, bg, currentFlavour){
+function updateFlavourGridSelection(){
+  const grid = document.getElementById("flavour-pick-grid");
+  const currentFlavour = builder.activeScoopIdx !== null ? (builder.scoops[builder.activeScoopIdx] || null) : null;
+  grid.querySelectorAll(".flavour-pick-card").forEach(card => {
+    card.classList.toggle("selected", card.dataset.flavourName === currentFlavour);
+  });
+}
+
+function makeFlavourPickCard(name, image, bg){
   const card = document.createElement("div");
-  card.className = "flavour-pick-card" + (currentFlavour === name ? " selected" : "");
+  card.className = "flavour-pick-card";
+  card.dataset.flavourName = name;
   if (bg) card.style.background = bg;
   card.innerHTML = `
     <img src="${image}" alt="${name}" onerror="this.style.display='none'">
@@ -907,6 +858,12 @@ function renderQueue(){
 }
 
 // ── TALLY ─────────────────────────────────────────────────────────────────
+function countVessels(){
+  let coneCount = 0, cupCount = 0;
+  state.gelatoQueue.forEach(item => { if (item.vessel === "cone") coneCount++; else cupCount++; });
+  return { coneCount, cupCount };
+}
+
 function tallyQueue(){
   const sizeCounts    = {};
   const flavourCounts = {};
@@ -962,8 +919,9 @@ function updateSummary(){
   const extrasParts = extrasData.filter(ex => state.extras[ex.key] > 0).map(ex => `${ex.label}: ${state.extras[ex.key]}`);
   const otherParts  = otherItems.filter(o => state.others[o.key] > 0).map(o => `${o.label}: ${state.others[o.key]}`);
   const accessParts = [];
-  if (state.cones > 0) accessParts.push(`Cones: ${state.cones}`);
-  if (state.cups  > 0) accessParts.push(`Cups: ${state.cups}`);
+  const { coneCount, cupCount } = countVessels();
+  if (coneCount > 0) accessParts.push(`Cones: ${coneCount}`);
+  if (cupCount  > 0) accessParts.push(`Cups: ${cupCount}`);
   if (state.pupCup > 0) accessParts.push(`Pup Cup: ${state.pupCup}`);
   if (state.argentinian)  custParts.push("🇦🇷 Argentinian");
   if (custParts.length)   parts.push("Customers – "   + custParts.join(", "));
@@ -976,14 +934,12 @@ function updateSummary(){
   document.getElementById("summary-box").textContent = parts.join(" | ");
 }
 
-// ── OTHER POPUPS ──────────────────────────────────────────────────────────
-function openOtherPopup(){ document.getElementById("other-popup").style.display = "block"; document.getElementById("modal-overlay").classList.add("show"); }
-function closeOtherPopup(){ document.getElementById("other-popup").style.display = "none"; document.getElementById("modal-overlay").classList.remove("show"); }
+// ── OTHER CARD SYNC ───────────────────────────────────────────────────────
 function updateOtherCard(){
-  const total = otherItems.reduce((sum, o) => sum + state.others[o.key], 0);
-  const countEl = document.getElementById("other-count"); if (countEl) countEl.textContent = total;
-  const card = document.getElementById("other-card"); if (card) card.style.borderColor = total > 0 ? "var(--accent)" : "transparent";
-  otherItems.forEach(o => { const el = document.getElementById(`other-popup-count-${o.key}`); if (el) el.textContent = state.others[o.key]; });
+  otherItems.forEach(o => { const el = document.getElementById(`other-${o.key}`); if (el) el.textContent = state.others[o.key]; });
+  const priceEl = document.getElementById("other-custom-price");
+  if (priceEl) priceEl.value = state.customOtherPrice ? state.customOtherPrice.toFixed(2) : "";
+  updateOtherBorders();
 }
 function openSpecialOtherPopup(){
   activeSpecials.forEach(s => { const el = document.getElementById("special-count-" + cssSafe(s.name)); if (el) el.textContent = state.specialCounts[s.name] || 0; });
@@ -1005,9 +961,6 @@ function resetAll(){
   activeSpecials.forEach(s => { state.specialCounts[s.name] = 0; });
   state.pupCup = 0;
   const pcEl = document.getElementById("pupCup-count"); if (pcEl) pcEl.textContent = "0";
-  state.cones = 0; state.cups = 0;
-  const coEl = document.getElementById("accessory-cones"); if (coEl) coEl.textContent = "0";
-  const cuEl = document.getElementById("accessory-cups");  if (cuEl) cuEl.textContent  = "0";
   updateExtrasBorders();
   state.payment = "card"; state.cardAmount = 0; state.tip = 0; state.discount = 0;
   const cardRadio = document.querySelector('input[name="payment"][value="card"]'); if (cardRadio) cardRadio.checked = true;
@@ -1104,9 +1057,6 @@ function loadOrderForEditing(order){
   updateExtrasBorders();
   state.pupCup = order.pupCup || 0;
   const pcEl = document.getElementById("pupCup-count"); if (pcEl) pcEl.textContent = state.pupCup;
-  state.cones = order.cones || 0; state.cups = order.cups || 0;
-  const coEl = document.getElementById("accessory-cones"); if (coEl) coEl.textContent = state.cones;
-  const cuEl = document.getElementById("accessory-cups");  if (cuEl) cuEl.textContent  = state.cups;
   state.payment = order.payment || "card";
   const payRadio = document.querySelector(`input[name="payment"][value="${state.payment}"]`); if (payRadio) payRadio.checked = true;
   if (state.payment === "mixed"){
@@ -1175,6 +1125,14 @@ function updateExtrasBorders(){
   });
 }
 
+function updateOtherBorders(){
+  otherItems.forEach(o => {
+    const el = document.getElementById(`other-${o.key}`); if (!el) return;
+    const card = el.closest(".flavour-card");
+    if (card) card.style.borderColor = state.others[o.key] > 0 ? "var(--accent)" : "transparent";
+  });
+}
+
 function renderExtrasSection(){
   const container = document.getElementById("extras-grid");
   extrasData.forEach(ex => {
@@ -1191,21 +1149,37 @@ function renderExtrasSection(){
       </div>`;
     container.appendChild(card);
   });
-  const otherCard = document.createElement("div");
-  otherCard.className = "flavour-card";
-  otherCard.id = "other-card";
-  otherCard.style.cssText = "background:#c8c3b8!important;cursor:pointer;";
-  otherCard.innerHTML = `
-    <div class="flavour-top"><div class="flavour-name">Other</div></div>
-    <div class="flavour-controls">
-      <button class="btn btn-minus" id="other-minus">−</button>
-      <span class="count" id="other-count">0</span>
-      <button class="btn btn-plus"  id="other-plus">+</button>
-    </div>`;
-  container.appendChild(otherCard);
-  document.getElementById("other-plus").addEventListener("click", openOtherPopup);
-  document.getElementById("other-minus").addEventListener("click", openOtherPopup);
-  otherCard.addEventListener("click", e => { if (!e.target.closest("button")) openOtherPopup(); });
+  otherItems.forEach(o => {
+    const card = document.createElement("div");
+    card.className = "flavour-card";
+    card.id = `other-card-${o.key}`;
+    if (o.key === "customOther"){
+      card.innerHTML = `
+        <div class="flavour-top">
+          <div class="flavour-name" style="white-space:nowrap;">${o.label} <span class="price">$<input type="number" id="other-custom-price" min="0" step="0.50" placeholder="0.00" class="other-price-input"></span></div>
+        </div>
+        <div class="flavour-controls">
+          <button class="btn btn-minus" data-type="other" data-key="${o.key}" data-delta="-1">−</button>
+          <span class="count" id="other-${o.key}">0</span>
+          <button class="btn btn-plus"  data-type="other" data-key="${o.key}" data-delta="1">+</button>
+        </div>`;
+    } else {
+      card.innerHTML = `
+        <div class="flavour-top">
+          <div class="flavour-name" style="white-space:nowrap;">${o.label} <span class="price">$${o.price.toFixed(2)}</span></div>
+        </div>
+        <div class="flavour-controls">
+          <button class="btn btn-minus" data-type="other" data-key="${o.key}" data-delta="-1">−</button>
+          <span class="count" id="other-${o.key}">0</span>
+          <button class="btn btn-plus"  data-type="other" data-key="${o.key}" data-delta="1">+</button>
+        </div>`;
+    }
+    container.appendChild(card);
+  });
+  document.getElementById("other-custom-price").addEventListener("input", e => {
+    state.customOtherPrice = parseFloat(e.target.value || "0");
+    updateTotal(); updateAdjustmentPreview(); updateSummary();
+  });
 }
 
 // ── EVENT HANDLERS ────────────────────────────────────────────────────────
@@ -1219,7 +1193,7 @@ function attachHandlers(){
     if (type === "customer"){ state.customers[key] = Math.max(0, state.customers[key] + delta); document.getElementById(`customer-${key}`).textContent = state.customers[key]; }
     if (type === "pupCup"){ state.pupCup = Math.max(0, state.pupCup + parseInt(btn.dataset.delta)); document.getElementById("pupCup-count").textContent = state.pupCup; }
     if (type === "extra"){ state.extras[key] = Math.max(0, state.extras[key] + delta); document.getElementById(`extra-${key}`).textContent = state.extras[key]; updateTotal(); updateAdjustmentPreview(); updateExtrasBorders(); }
-    if (type === "accessory"){ state[key] = Math.max(0, state[key] + delta); document.getElementById(`accessory-${key}`).textContent = state[key]; }
+    if (type === "other"){ state.others[key] = Math.max(0, state.others[key] + delta); document.getElementById(`other-${key}`).textContent = state.others[key]; updateTotal(); updateAdjustmentPreview(); updateOtherBorders(); }
     updateSummary();
   });
 
@@ -1282,15 +1256,6 @@ function attachHandlers(){
   document.getElementById("discount-input").addEventListener("input", () => { state.discount = parseFloat(document.getElementById("discount-input").value || "0"); updateAdjustmentPreview(); updateTotal(); });
   document.getElementById("finish-adjust").addEventListener("click",  () => { document.getElementById("adjust-popup").style.display = "none"; document.getElementById("modal-overlay").classList.remove("show"); updateSummary(); });
 
-  document.getElementById("other-custom-price").addEventListener("input", e => { state.customOtherPrice = parseFloat(e.target.value || "0"); updateTotal(); updateAdjustmentPreview(); updateSummary(); });
-  document.getElementById("other-popup").addEventListener("click", e => {
-    const btn = e.target.closest("button[data-other]"); if (!btn) return;
-    const key = btn.dataset.other, delta = parseInt(btn.dataset.delta, 10);
-    state.others[key] = Math.max(0, state.others[key] + delta);
-    updateOtherCard(); updateTotal(); updateAdjustmentPreview(); updateSummary();
-  });
-  document.getElementById("finish-other").addEventListener("click", closeOtherPopup);
-
   document.getElementById("special-other-popup").addEventListener("click", e => {
     const btn = e.target.closest("button[data-special]"); if (!btn) return;
     const name = btn.dataset.special, delta = parseInt(btn.dataset.delta, 10);
@@ -1306,7 +1271,6 @@ function attachHandlers(){
   document.getElementById("modal-overlay").addEventListener("click", () => {
     document.getElementById("adjust-popup").style.display = "none";
     document.getElementById("notes-popup").style.display  = "none";
-    document.getElementById("other-popup").style.display  = "none";
     document.getElementById("special-other-popup").style.display = "none";
     document.getElementById("modal-overlay").classList.remove("show");
   });
