@@ -115,8 +115,8 @@
     .other-price-input::-webkit-inner-spin-button { -webkit-appearance: none; margin: 0; }
     .summary { margin-top: 4px; font-size: 0.75rem; line-height: 1.3; color: var(--text-soft); min-height: 30px; }
 
-    /* AFFOGATO FLAVOUR ROW */
-    .affogato-flavour-row {
+    /* SHARED flavour-row for Affogato & Brownie */
+    .item-flavour-row {
       display: none;
       align-items: center;
       justify-content: center;
@@ -124,8 +124,8 @@
       margin-top: 5px;
       flex-wrap: wrap;
     }
-    .affogato-flavour-row.visible { display: flex; }
-    .affogato-flavour-label {
+    .item-flavour-row.visible { display: flex; }
+    .item-flavour-label {
       font-size: 0.65rem;
       color: var(--text-soft);
       font-style: italic;
@@ -134,7 +134,7 @@
       white-space: normal;
       word-break: break-word;
     }
-    .affogato-change-btn {
+    .item-change-btn {
       border: none;
       border-radius: 999px;
       padding: 3px 7px;
@@ -205,8 +205,8 @@
     .popup-actions { display: flex; justify-content: center; margin-top: 4px; }
     .popup-btn { border: none; border-radius: 999px; padding: 8px 28px; font-size: 1rem; font-weight: 600; cursor: pointer; background: var(--accent); color: #fff; }
 
-    /* AFFOGATO FLAVOUR PICKER POPUP — two-column like builder */
-    #affogato-flavour-popup {
+    /* SHARED FLAVOUR PICKER POPUP */
+    .flavour-picker-popup {
       display: none; position: fixed;
       top: 50%; left: 50%; transform: translate(-50%, -50%);
       background: #fff; border-radius: 16px;
@@ -216,44 +216,42 @@
       max-height: 88vh; overflow: hidden;
       flex-direction: column;
     }
-    #affogato-flavour-popup.show { display: flex; }
-    .affogato-popup-header {
+    .flavour-picker-popup.show { display: flex; }
+    .flavour-picker-header {
       background: var(--accent); color: #fff;
       padding: 12px 16px; border-radius: 16px 16px 0 0;
       display: flex; align-items: center; justify-content: space-between; flex-shrink: 0;
     }
-    .affogato-popup-header h3 { margin: 0; font-size: 1rem; }
-    .affogato-popup-close { background: none; border: none; color: #fff; font-size: 1.4rem; cursor: pointer; padding: 0 4px; }
-    .affogato-popup-body {
+    .flavour-picker-header h3 { margin: 0; font-size: 1rem; }
+    .flavour-picker-close { background: none; border: none; color: #fff; font-size: 1.4rem; cursor: pointer; padding: 0 4px; }
+    .flavour-picker-body {
       overflow-y: auto; padding: 14px 16px; flex: 1;
       display: grid;
       grid-template-columns: 200px 1fr;
       gap: 16px;
       align-items: start;
     }
-    .affogato-popup-footer {
+    .flavour-picker-footer {
       padding: 12px 16px; border-top: 1px solid #eee; flex-shrink: 0; display: flex; gap: 8px;
     }
-    .affogato-popup-footer button {
+    .flavour-picker-footer button {
       flex: 1; border: none; background: var(--accent); color: #fff;
       border-radius: 999px; padding: 9px; font-size: 0.9rem; font-weight: 600; cursor: pointer;
     }
-
-    /* Affogato slot list (left column) */
-    .affogato-slots { display: flex; flex-direction: column; gap: 8px; }
-    .affogato-slot {
+    .picker-slots { display: flex; flex-direction: column; gap: 8px; }
+    .picker-slot {
       border: 2px solid #e0e0e0; border-radius: 10px; padding: 8px 12px;
       display: flex; align-items: center; gap: 8px; background: #fafafa; cursor: pointer;
     }
-    .affogato-slot-label { font-size: 0.78rem; font-weight: 700; color: var(--text-soft); min-width: 40px; flex-shrink: 0; }
-    .affogato-slot-value { flex: 1; font-size: 0.85rem; font-weight: 600; color: var(--text-soft); font-style: italic; }
-    .affogato-slot.filled { border-color: var(--accent); background: #e6f3f6; }
-    .affogato-slot.filled .affogato-slot-label { color: var(--accent); }
-    .affogato-slot.filled .affogato-slot-value { color: var(--text-main); font-style: normal; }
-    .affogato-slot.active-pick { border-color: #f0a500; background: #fffbe6; }
-    .affogato-slot.active-pick .affogato-slot-label { color: #b07800; }
-    .affogato-slot-clear { background: none; border: none; font-size: 1rem; cursor: pointer; color: var(--danger); padding: 2px 4px; flex-shrink: 0; }
-    .affogato-pick-label { font-size: 0.78rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.05em; color: var(--accent); margin-bottom: 6px; }
+    .picker-slot-label { font-size: 0.78rem; font-weight: 700; color: var(--text-soft); min-width: 40px; flex-shrink: 0; }
+    .picker-slot-value { flex: 1; font-size: 0.85rem; font-weight: 600; color: var(--text-soft); font-style: italic; }
+    .picker-slot.filled { border-color: var(--accent); background: #e6f3f6; }
+    .picker-slot.filled .picker-slot-label { color: var(--accent); }
+    .picker-slot.filled .picker-slot-value { color: var(--text-main); font-style: normal; }
+    .picker-slot.active-pick { border-color: #f0a500; background: #fffbe6; }
+    .picker-slot.active-pick .picker-slot-label { color: #b07800; }
+    .picker-slot-clear { background: none; border: none; font-size: 1rem; cursor: pointer; color: var(--danger); padding: 2px 4px; flex-shrink: 0; }
+    .picker-col-label { font-size: 0.78rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.05em; color: var(--accent); margin-bottom: 6px; }
 
     /* SHARED FLAVOUR PICK GRID */
     .flavour-pick-grid {
@@ -273,7 +271,6 @@
     }
     .flavour-pick-card:hover { border-color: #bbb; background: #f0f0f0; }
     .flavour-pick-card.selected { border-color: var(--accent); background: #e6f3f6; }
-    /* Vanilla highlight */
     .flavour-pick-card.vanilla-card { background: #fff8dc; border-color: #d4a800; }
     .flavour-pick-card.vanilla-card:hover { background: #fff0a0; }
     .flavour-pick-card img { width: 44px; height: 44px; border-radius: 50%; object-fit: cover; background: #eee; }
@@ -387,8 +384,8 @@
     .specials-loading { font-size: 0.78rem; color: var(--text-soft); padding: 6px; text-align: center; font-style: italic; }
 
     @media (max-width: 900px) {
-      #builder-popup, #affogato-flavour-popup { width: 96vw; }
-      .builder-body, .affogato-popup-body { grid-template-columns: 1fr; }
+      #builder-popup, .flavour-picker-popup { width: 96vw; }
+      .builder-body, .flavour-picker-body { grid-template-columns: 1fr; }
       .flavour-pick-grid { grid-template-columns: repeat(auto-fill, minmax(80px, 1fr)); }
     }
     @media (max-width: 700px) {
@@ -495,25 +492,44 @@
   </div>
 
   <!-- AFFOGATO FLAVOUR PICKER POPUP -->
-  <div id="affogato-flavour-popup">
-    <div class="affogato-popup-header">
+  <div id="affogato-flavour-popup" class="flavour-picker-popup">
+    <div class="flavour-picker-header">
       <h3 id="affogato-popup-title">☕ Affogato — Choose Flavours</h3>
-      <button class="affogato-popup-close" id="affogato-popup-close-btn" type="button">✕</button>
+      <button class="flavour-picker-close" id="affogato-popup-close-btn" type="button">✕</button>
     </div>
-    <div class="affogato-popup-body">
-      <!-- Left: slot list -->
+    <div class="flavour-picker-body">
       <div>
-        <div class="affogato-pick-label" id="affogato-slot-label">Affogato 1 — tap a flavour</div>
-        <div class="affogato-slots" id="affogato-slots"></div>
+        <div class="picker-col-label" id="affogato-slot-label">Affogato 1 — tap a flavour</div>
+        <div class="picker-slots" id="affogato-slots"></div>
       </div>
-      <!-- Right: flavour grid -->
       <div>
-        <div class="affogato-pick-label" id="affogato-flavour-pick-label">Choose flavour →</div>
+        <div class="picker-col-label">Choose flavour →</div>
         <div class="flavour-pick-grid" id="affogato-flavour-pick-grid"></div>
       </div>
     </div>
-    <div class="affogato-popup-footer">
+    <div class="flavour-picker-footer">
       <button id="affogato-flavour-done-btn" type="button">Done</button>
+    </div>
+  </div>
+
+  <!-- BROWNIE FLAVOUR PICKER POPUP -->
+  <div id="brownie-flavour-popup" class="flavour-picker-popup">
+    <div class="flavour-picker-header">
+      <h3 id="brownie-popup-title">🍫 Brownie — Choose Flavours</h3>
+      <button class="flavour-picker-close" id="brownie-popup-close-btn" type="button">✕</button>
+    </div>
+    <div class="flavour-picker-body">
+      <div>
+        <div class="picker-col-label" id="brownie-slot-label">Brownie 1 — tap a flavour</div>
+        <div class="picker-slots" id="brownie-slots"></div>
+      </div>
+      <div>
+        <div class="picker-col-label">Choose flavour →</div>
+        <div class="flavour-pick-grid" id="brownie-flavour-pick-grid"></div>
+      </div>
+    </div>
+    <div class="flavour-picker-footer">
+      <button id="brownie-flavour-done-btn" type="button">Done</button>
     </div>
   </div>
 
@@ -625,7 +641,8 @@ const state = {
   argentinian:      false,
   gelatoQueue:      [],
   extras:           { hotChocolate: 0, affogato: 0, brownie: 0, mClassic: 0, mRellen: 0 },
-  affogatoFlavours: [],   // array, one entry per affogato ordered
+  affogatoFlavours: [],
+  brownieFlavours:  [],
   pupCup:           0,
   others:           { comboClassic: 0, comboRellen: 0, slices: 0, customOther: 0 },
   customOtherPrice: 0,
@@ -646,9 +663,11 @@ const builder = {
   activeScoopIdx: null,
 };
 
-// AFFOGATO PICKER STATE
-let affogatoActiveIdx  = 0;
-let affogatoGridBuilt  = false;
+// Per-picker active index & grid-built flag
+let affogatoActiveIdx = 0;
+let affogatoGridBuilt = false;
+let brownieActiveIdx  = 0;
+let brownieGridBuilt  = false;
 
 function cssSafe(str){ return str.replace(/\s+/g,"_").replace(/[^a-zA-Z0-9_]/g,""); }
 
@@ -674,8 +693,9 @@ async function loadSpecials(){
     activeSpecials = [{ name: "Tim Crunch" },{ name: "Passion Fruit Cheesecake" }];
   }
   activeSpecials.forEach(s => { state.specialCounts[s.name] = 0; });
-  flavourGridBuilt      = false;
-  affogatoGridBuilt     = false;
+  flavourGridBuilt  = false;
+  affogatoGridBuilt = false;
+  brownieGridBuilt  = false;
   buildSpecialOtherPopup();
 }
 
@@ -704,7 +724,6 @@ function buildSpecialOtherPopup(){
 // ── SHARED FLAVOUR GRID BUILDER ───────────────────────────────────────────
 function buildFlavourGrid(gridEl, mode) {
   gridEl.innerHTML = "";
-
   const permanentCollection = flavourData.filter(f => f.bg === "#cde4ea");
   const otherFlavours       = flavourData.filter(f => f.bg !== "#cde4ea");
 
@@ -752,79 +771,117 @@ function makeFlavourPickCard(name, image, bg, mode){
       }
       renderBuilderScoops();
       renderFlavourPickGrid();
-    } else if (mode === "affogato") {
-      // Set the flavour for the active slot and auto-advance
-      state.affogatoFlavours[affogatoActiveIdx] = name;
-      const qty = state.extras.affogato;
-      // advance to next unfilled slot within qty
-      let next = -1;
-      for (let i = affogatoActiveIdx + 1; i < qty; i++){
-        if (!state.affogatoFlavours[i]){ next = i; break; }
-      }
-      if (next >= 0){
-        affogatoActiveIdx = next;
-      } else {
-        // wrap to first unfilled, else stay
-        let wrap = -1;
-        for (let i = 0; i < qty; i++){
-          if (!state.affogatoFlavours[i]){ wrap = i; break; }
-        }
-        affogatoActiveIdx = wrap >= 0 ? wrap : affogatoActiveIdx;
-      }
-      renderAffogatoSlots();
-      updateAffogatoGridSelection();
+    } else if (mode === "affogato" || mode === "brownie") {
+      pickerSelectFlavour(mode, name);
     }
   });
   return card;
 }
 
-// ── AFFOGATO PICKER ───────────────────────────────────────────────────────
-function openAffogatoFlavourPopup(){
-  const qty = state.extras.affogato;
-  // Ensure flavours array matches qty, defaulting to Just Vanilla
-  while (state.affogatoFlavours.length < qty) state.affogatoFlavours.push(VANILLA_FLAVOUR);
-  state.affogatoFlavours.length = qty;
+// ── GENERIC ITEM FLAVOUR PICKER ───────────────────────────────────────────
 
-  // Start on first slot
-  affogatoActiveIdx = 0;
+function pickerCfg(type) {
+  if (type === "affogato") return {
+    flavours:     state.affogatoFlavours,
+    qty:          () => state.extras.affogato,
+    activeIdx:    () => affogatoActiveIdx,
+    setActive:    v  => { affogatoActiveIdx = v; },
+    gridBuilt:    () => affogatoGridBuilt,
+    setGridBuilt: v  => { affogatoGridBuilt = v; },
+    popupId:      "affogato-flavour-popup",
+    titleId:      "affogato-popup-title",
+    titleFn:      n  => `☕ Affogato ×${n} — Choose Flavours`,
+    slotLabelId:  "affogato-slot-label",
+    slotLabelFn:  i  => `Affogato ${i + 1} — tap a flavour →`,
+    slotsId:      "affogato-slots",
+    gridId:       "affogato-flavour-pick-grid",
+    rowId:        "affogato-flavour-row",
+    currentLblId: "affogato-flavour-current",
+  };
+  return { // brownie
+    flavours:     state.brownieFlavours,
+    qty:          () => state.extras.brownie,
+    activeIdx:    () => brownieActiveIdx,
+    setActive:    v  => { brownieActiveIdx = v; },
+    gridBuilt:    () => brownieGridBuilt,
+    setGridBuilt: v  => { brownieGridBuilt = v; },
+    popupId:      "brownie-flavour-popup",
+    titleId:      "brownie-popup-title",
+    titleFn:      n  => `🍫 Brownie ×${n} — Choose Flavours`,
+    slotLabelId:  "brownie-slot-label",
+    slotLabelFn:  i  => `Brownie ${i + 1} — tap a flavour →`,
+    slotsId:      "brownie-slots",
+    gridId:       "brownie-flavour-pick-grid",
+    rowId:        "brownie-flavour-row",
+    currentLblId: "brownie-flavour-current",
+  };
+}
 
-  document.getElementById("affogato-popup-title").textContent = `☕ Affogato ×${qty} — Choose Flavours`;
-
-  if (!affogatoGridBuilt){
-    buildFlavourGrid(document.getElementById("affogato-flavour-pick-grid"), "affogato");
-    affogatoGridBuilt = true;
+function openFlavourPicker(type) {
+  const c = pickerCfg(type);
+  const qty = c.qty();
+  while (c.flavours.length < qty) c.flavours.push(VANILLA_FLAVOUR);
+  c.flavours.length = qty;
+  c.setActive(0);
+  document.getElementById(c.titleId).textContent = c.titleFn(qty);
+  if (!c.gridBuilt()){
+    buildFlavourGrid(document.getElementById(c.gridId), type);
+    c.setGridBuilt(true);
   }
-
-  renderAffogatoSlots();
-  updateAffogatoGridSelection();
-  document.getElementById("affogato-flavour-popup").classList.add("show");
+  renderPickerSlots(type);
+  updatePickerGridSelection(type);
+  document.getElementById(c.popupId).classList.add("show");
   document.getElementById("modal-overlay").classList.add("show");
 }
 
-function closeAffogatoFlavourPopup(){
-  document.getElementById("affogato-flavour-popup").classList.remove("show");
+function closeFlavourPicker(type) {
+  const c = pickerCfg(type);
+  document.getElementById(c.popupId).classList.remove("show");
   document.getElementById("modal-overlay").classList.remove("show");
-  updateAffogatoFlavourUI();
+  updateItemFlavourUI(type);
   updateSummary();
 }
 
-function renderAffogatoSlots(){
-  const qty       = state.extras.affogato;
-  const container = document.getElementById("affogato-slots");
+function pickerSelectFlavour(type, name) {
+  const c = pickerCfg(type);
+  const qty = c.qty();
+  c.flavours[c.activeIdx()] = name;
+  // Auto-advance to next unfilled slot
+  let next = -1;
+  for (let i = c.activeIdx() + 1; i < qty; i++){
+    if (!c.flavours[i]){ next = i; break; }
+  }
+  if (next >= 0) {
+    c.setActive(next);
+  } else {
+    let wrap = -1;
+    for (let i = 0; i < qty; i++){
+      if (!c.flavours[i]){ wrap = i; break; }
+    }
+    if (wrap >= 0) c.setActive(wrap);
+  }
+  renderPickerSlots(type);
+  updatePickerGridSelection(type);
+}
+
+function renderPickerSlots(type) {
+  const c         = pickerCfg(type);
+  const qty       = c.qty();
+  const container = document.getElementById(c.slotsId);
   container.innerHTML = "";
 
   for (let i = 0; i < qty; i++){
-    const flavour  = state.affogatoFlavours[i] || null;
-    const isActive = affogatoActiveIdx === i;
+    const flavour  = c.flavours[i] || null;
+    const isActive = c.activeIdx() === i;
     const slot = document.createElement("div");
-    slot.className = "affogato-slot" + (flavour ? " filled" : "") + (isActive ? " active-pick" : "");
+    slot.className = "picker-slot" + (flavour ? " filled" : "") + (isActive ? " active-pick" : "");
 
     const lbl = document.createElement("span");
-    lbl.className = "affogato-slot-label";
+    lbl.className = "picker-slot-label";
     lbl.textContent = `#${i+1}`;
 
     const val = document.createElement("span");
-    val.className = "affogato-slot-value";
+    val.className = "picker-slot-value";
     val.textContent = isActive && !flavour ? "Choosing…" : (flavour || "Tap to choose…");
 
     slot.appendChild(lbl);
@@ -832,49 +889,48 @@ function renderAffogatoSlots(){
 
     if (flavour){
       const clr = document.createElement("button");
-      clr.className = "affogato-slot-clear";
+      clr.className = "picker-slot-clear";
       clr.textContent = "✕";
       clr.addEventListener("click", e => {
         e.stopPropagation();
-        state.affogatoFlavours[i] = null;
-        affogatoActiveIdx = i;
-        renderAffogatoSlots();
-        updateAffogatoGridSelection();
+        c.flavours[i] = null;
+        c.setActive(i);
+        renderPickerSlots(type);
+        updatePickerGridSelection(type);
       });
       slot.appendChild(clr);
     }
 
     slot.addEventListener("click", () => {
-      affogatoActiveIdx = i;
-      renderAffogatoSlots();
-      updateAffogatoGridSelection();
+      c.setActive(i);
+      renderPickerSlots(type);
+      updatePickerGridSelection(type);
     });
 
     container.appendChild(slot);
   }
-
-  // Update left-column label
-  const lbl = document.getElementById("affogato-slot-label");
-  lbl.textContent = `Affogato ${affogatoActiveIdx + 1} — tap a flavour →`;
+  document.getElementById(c.slotLabelId).textContent = c.slotLabelFn(c.activeIdx());
 }
 
-function updateAffogatoGridSelection(){
-  const current = state.affogatoFlavours[affogatoActiveIdx] || null;
-  document.getElementById("affogato-flavour-pick-grid")
+function updatePickerGridSelection(type) {
+  const c       = pickerCfg(type);
+  const current = c.flavours[c.activeIdx()] || null;
+  document.getElementById(c.gridId)
     .querySelectorAll(".flavour-pick-card")
     .forEach(card => card.classList.toggle("selected", card.dataset.flavourName === current));
 }
 
-function updateAffogatoFlavourUI(){
-  const qty = state.extras.affogato;
-  const row = document.getElementById("affogato-flavour-row");
+function updateItemFlavourUI(type) {
+  const c   = pickerCfg(type);
+  const qty = c.qty();
+  const row = document.getElementById(c.rowId);
   if (!row) return;
   if (qty >= 1){
     row.classList.add("visible");
-    const lbl = document.getElementById("affogato-flavour-current");
+    const lbl = document.getElementById(c.currentLblId);
     if (lbl){
-      const filled = state.affogatoFlavours.filter(Boolean);
-      if (filled.length === 0){
+      const filled = c.flavours.filter(Boolean);
+      if (!filled.length){
         lbl.textContent = "No flavour chosen";
       } else {
         const counts = {};
@@ -884,8 +940,8 @@ function updateAffogatoFlavourUI(){
     }
   } else {
     row.classList.remove("visible");
-    state.affogatoFlavours = [];
-    affogatoGridBuilt = false;
+    c.flavours.length = 0;
+    c.setGridBuilt(false);
   }
 }
 
@@ -895,7 +951,6 @@ let flavourGridBuilt = false;
 function renderFlavourPickGrid(){
   const grid  = document.getElementById("flavour-pick-grid");
   const label = document.getElementById("flavour-pick-label");
-
   if (builder.activeScoopIdx === null){
     label.textContent = "← Tap a scoop slot to choose its flavour";
     updateFlavourGridSelection();
@@ -1097,8 +1152,8 @@ function tallyQueue(){
       }
     });
   });
-  // Also count affogato flavours
-  state.affogatoFlavours.forEach(f => {
+  // Count affogato & brownie flavours toward the flavour tally
+  [...state.affogatoFlavours, ...state.brownieFlavours].forEach(f => {
     if (!f) return;
     const isSpecial = activeSpecials.find(s => s.name === f);
     if (f === "Special Other" || isSpecial){
@@ -1127,19 +1182,26 @@ function updateAdjustmentPreview(){
   document.getElementById("final-total-preview").textContent = `$${final.toFixed(2)}`;
 }
 
+function flavourSummaryStr(arr){
+  const filled = arr.filter(Boolean);
+  if (!filled.length) return "";
+  const counts = {};
+  filled.forEach(f => { counts[f]=(counts[f]||0)+1; });
+  return Object.entries(counts).map(([f,n]) => n > 1 ? `${n}×${f}` : f).join(", ");
+}
+
 function updateSummary(){
   const parts = [];
   const custParts   = customerTypes.filter(ct=>state.customers[ct.key]>0).map(ct=>`${ct.label}: ${state.customers[ct.key]}`);
   const gelatoParts = state.gelatoQueue.map((g,i)=>{ const sz=sizes.find(s=>s.key===g.sizeKey); return `#${i+1} ${sz?sz.label:g.sizeKey} ${g.vessel} (${g.scoops.join(", ")})`; });
   const extrasParts = extrasData.filter(ex=>state.extras[ex.key]>0).map(ex => {
     if (ex.key === "affogato"){
-      const filled = state.affogatoFlavours.filter(Boolean);
-      if (filled.length){
-        const counts = {};
-        filled.forEach(f => { counts[f]=(counts[f]||0)+1; });
-        const summary = Object.entries(counts).map(([f,n])=>n>1?`${n}×${f}`:f).join(", ");
-        return `${ex.label}: ${state.extras[ex.key]} [${summary}]`;
-      }
+      const s = flavourSummaryStr(state.affogatoFlavours);
+      return `${ex.label}: ${state.extras[ex.key]}` + (s ? ` [${s}]` : "");
+    }
+    if (ex.key === "brownie"){
+      const s = flavourSummaryStr(state.brownieFlavours);
+      return `${ex.label}: ${state.extras[ex.key]}` + (s ? ` [${s}]` : "");
     }
     return `${ex.label}: ${state.extras[ex.key]}`;
   });
@@ -1180,9 +1242,8 @@ function resetAll(){
   if(argBtn){ argBtn.textContent="No"; argBtn.className="vessel-btn"; }
   state.gelatoQueue=[]; renderQueue();
   extrasData.forEach(ex=>{ state.extras[ex.key]=0; const el=document.getElementById(`extra-${ex.key}`); if(el) el.textContent="0"; });
-  state.affogatoFlavours=[];
-  affogatoGridBuilt=false;
-  updateAffogatoFlavourUI();
+  state.affogatoFlavours=[]; affogatoGridBuilt=false; updateItemFlavourUI("affogato");
+  state.brownieFlavours=[];  brownieGridBuilt=false;  updateItemFlavourUI("brownie");
   otherItems.forEach(o=>{ state.others[o.key]=0; });
   state.customOtherPrice=0;
   const cpe=document.getElementById("other-custom-price"); if(cpe) cpe.value="";
@@ -1211,16 +1272,14 @@ async function submitOrder(){
   const finalTotal=getFinalTotal();
   document.getElementById("saving-indicator").style.display="inline";
   const isEditing=editMode;
-  const affogatoSummary = state.affogatoFlavours.filter(Boolean).length
-    ? (() => { const c={}; state.affogatoFlavours.filter(Boolean).forEach(f=>{c[f]=(c[f]||0)+1;}); return Object.entries(c).map(([f,n])=>n>1?`${n}×${f}`:f).join(", "); })()
-    : "";
   const payload={
     timestamp: getLocalTimestamp(),
     customers: state.customers,
     argentinian: state.argentinian?"Yes":"No",
     sizes: sizeCounts,
     extras: state.extras,
-    affogatoFlavours: affogatoSummary,
+    affogatoFlavours: flavourSummaryStr(state.affogatoFlavours),
+    brownieFlavours:  flavourSummaryStr(state.brownieFlavours),
     others: state.others,
     flavours: flavourCounts,
     specialCounts: state.specialCounts,
@@ -1237,7 +1296,12 @@ async function submitOrder(){
     customOtherPrice: state.customOtherPrice,
     gelatoDetail: state.gelatoQueue.map(g=>{ const sz=sizes.find(s=>s.key===g.sizeKey); return `${sz?sz.label:g.sizeKey} ${g.vessel}: ${g.scoops.join("+")}`; }).join(" | ")
   };
-  lastSavedOrder=JSON.parse(JSON.stringify({...payload, gelatoQueue:state.gelatoQueue, affogatoFlavoursArr:state.affogatoFlavours}));
+  lastSavedOrder=JSON.parse(JSON.stringify({
+    ...payload,
+    gelatoQueue:          state.gelatoQueue,
+    affogatoFlavoursArr:  state.affogatoFlavours,
+    brownieFlavoursArr:   state.brownieFlavours,
+  }));
   try {
     await fetch(GOOGLE_SCRIPT_URL,{ method:"POST", mode:"no-cors", headers:{"Content-Type":"application/json"}, body:JSON.stringify({row:payload, mode:isEditing?"overwrite":"append"}) });
     document.getElementById("saving-indicator").style.display="none";
@@ -1266,10 +1330,10 @@ function loadOrderForEditing(order){
   if(argBtn){ argBtn.textContent=state.argentinian?"Yes":"No"; argBtn.className="vessel-btn"+(state.argentinian?" selected":""); }
   if(order.gelatoQueue){ state.gelatoQueue=order.gelatoQueue.map(g=>({...g,id:Date.now().toString()+Math.random()})); renderQueue(); }
   extrasData.forEach(ex=>{ const v=(order.extras&&order.extras[ex.key])||0; state.extras[ex.key]=v; const el=document.getElementById(`extra-${ex.key}`); if(el) el.textContent=v; });
-  if(order.affogatoFlavoursArr) state.affogatoFlavours=[...order.affogatoFlavoursArr];
-  else state.affogatoFlavours=[];
-  affogatoGridBuilt=false;
-  updateAffogatoFlavourUI();
+  if(order.affogatoFlavoursArr){ state.affogatoFlavours=[...order.affogatoFlavoursArr]; } else { state.affogatoFlavours=[]; }
+  affogatoGridBuilt=false; updateItemFlavourUI("affogato");
+  if(order.brownieFlavoursArr){  state.brownieFlavours=[...order.brownieFlavoursArr];  } else { state.brownieFlavours=[];  }
+  brownieGridBuilt=false;  updateItemFlavourUI("brownie");
   if(order.others){ otherItems.forEach(o=>{ state.others[o.key]=order.others[o.key]||0; }); }
   updateOtherCard();
   if(order.specialCounts){ Object.keys(order.specialCounts).forEach(name=>{ state.specialCounts[name]=order.specialCounts[name]||0; }); }
@@ -1323,10 +1387,15 @@ function updateOtherBorders(){
 
 function renderExtrasSection(){
   const container=document.getElementById("extras-grid");
+
   extrasData.forEach(ex=>{
     const card=document.createElement("div");
     card.className="flavour-card";
-    if(ex.key==="affogato"){
+
+    const hasPicker = ex.key === "affogato" || ex.key === "brownie";
+    const emoji = ex.key === "affogato" ? "☕" : "🍫";
+
+    if(hasPicker){
       card.innerHTML=`
         <div class="flavour-top"><div class="flavour-name">${ex.label} <span class="price">$${ex.price.toFixed(2)}</span></div></div>
         <div class="flavour-controls">
@@ -1334,9 +1403,9 @@ function renderExtrasSection(){
           <span class="count" id="extra-${ex.key}">0</span>
           <button class="btn btn-plus"  data-type="extra" data-key="${ex.key}" data-delta="1">+</button>
         </div>
-        <div class="affogato-flavour-row" id="affogato-flavour-row">
-          <span class="affogato-flavour-label" id="affogato-flavour-current">No flavour chosen</span>
-          <button class="affogato-change-btn" id="affogato-change-btn" type="button">☕ Choose</button>
+        <div class="item-flavour-row" id="${ex.key}-flavour-row">
+          <span class="item-flavour-label" id="${ex.key}-flavour-current">No flavour chosen</span>
+          <button class="item-change-btn" id="${ex.key}-change-btn" type="button">${emoji} Choose</button>
         </div>`;
     } else {
       card.innerHTML=`
@@ -1349,7 +1418,9 @@ function renderExtrasSection(){
     }
     container.appendChild(card);
   });
-  document.getElementById("affogato-change-btn").addEventListener("click", openAffogatoFlavourPopup);
+
+  document.getElementById("affogato-change-btn").addEventListener("click", () => openFlavourPicker("affogato"));
+  document.getElementById("brownie-change-btn").addEventListener("click",  () => openFlavourPicker("brownie"));
 
   otherItems.forEach(o=>{
     const card=document.createElement("div");
@@ -1375,12 +1446,18 @@ function attachHandlers(){
       state.extras[key]=Math.max(0,state.extras[key]+delta);
       document.getElementById(`extra-${key}`).textContent=state.extras[key];
       if(key==="affogato"){
-        // Trim or extend affogatoFlavours to match new qty
         const qty=state.extras.affogato;
         while(state.affogatoFlavours.length<qty) state.affogatoFlavours.push(VANILLA_FLAVOUR);
         state.affogatoFlavours.length=qty;
-        if(qty===0){ affogatoGridBuilt=false; }
-        updateAffogatoFlavourUI();
+        if(qty===0) affogatoGridBuilt=false;
+        updateItemFlavourUI("affogato");
+      }
+      if(key==="brownie"){
+        const qty=state.extras.brownie;
+        while(state.brownieFlavours.length<qty) state.brownieFlavours.push(VANILLA_FLAVOUR);
+        state.brownieFlavours.length=qty;
+        if(qty===0) brownieGridBuilt=false;
+        updateItemFlavourUI("brownie");
       }
       updateTotal(); updateAdjustmentPreview(); updateExtrasBorders();
     }
@@ -1399,8 +1476,13 @@ function attachHandlers(){
   document.getElementById("builder-cancel-btn").addEventListener("click",closeBuilder);
   document.getElementById("builder-close-btn").addEventListener("click",closeBuilder);
 
-  document.getElementById("affogato-popup-close-btn").addEventListener("click",closeAffogatoFlavourPopup);
-  document.getElementById("affogato-flavour-done-btn").addEventListener("click",closeAffogatoFlavourPopup);
+  // Affogato picker buttons
+  document.getElementById("affogato-popup-close-btn").addEventListener("click", ()=>closeFlavourPicker("affogato"));
+  document.getElementById("affogato-flavour-done-btn").addEventListener("click", ()=>closeFlavourPicker("affogato"));
+
+  // Brownie picker buttons
+  document.getElementById("brownie-popup-close-btn").addEventListener("click", ()=>closeFlavourPicker("brownie"));
+  document.getElementById("brownie-flavour-done-btn").addEventListener("click", ()=>closeFlavourPicker("brownie"));
 
   document.querySelectorAll('input[name="payment"]').forEach(radio=>radio.addEventListener("change",()=>{
     state.payment=document.querySelector('input[name="payment"]:checked').value;
@@ -1426,6 +1508,7 @@ function attachHandlers(){
   document.getElementById("modal-overlay").addEventListener("click",()=>{
     if(document.getElementById("builder-popup").classList.contains("show")) return;
     if(document.getElementById("affogato-flavour-popup").classList.contains("show")) return;
+    if(document.getElementById("brownie-flavour-popup").classList.contains("show")) return;
     document.getElementById("adjust-popup").style.display="none";
     document.getElementById("notes-popup").style.display="none";
     document.getElementById("special-other-popup").style.display="none";
