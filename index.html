@@ -71,7 +71,7 @@
     .btn-minus { background: var(--danger);  color: #fff; }
     .count { min-width: 24px; text-align: center; font-weight: 700; font-size: 1rem; }
 
-    /* ── QUEUE ── */
+    /* QUEUE */
     .queue-list { display: flex; flex-wrap: wrap; gap: 10px; min-height: 44px; }
     .queue-empty { font-size: 0.82rem; color: var(--text-soft); padding: 10px 0; font-style: italic; width: 100%; }
     .queue-card {
@@ -94,7 +94,7 @@
     }
     #add-gelato-btn:active { background: #e6f3f6; }
 
-    /* ── EXTRAS GRID ── */
+    /* EXTRAS GRID */
     .extras-grid { display: grid; grid-template-columns: repeat(5, 1fr); gap: 6px; }
     .flavour-card {
       background: #ffffff; border: 2px solid transparent; border-radius: 14px; padding: 6px;
@@ -115,7 +115,40 @@
     .other-price-input::-webkit-inner-spin-button { -webkit-appearance: none; margin: 0; }
     .summary { margin-top: 4px; font-size: 0.75rem; line-height: 1.3; color: var(--text-soft); min-height: 30px; }
 
-    /* ── PAYMENT ── */
+    /* AFFOGATO FLAVOUR ROW */
+    .affogato-flavour-row {
+      display: none;
+      align-items: center;
+      justify-content: center;
+      gap: 5px;
+      margin-top: 5px;
+      flex-wrap: wrap;
+    }
+    .affogato-flavour-row.visible { display: flex; }
+    .affogato-flavour-label {
+      font-size: 0.65rem;
+      color: var(--text-soft);
+      font-style: italic;
+      line-height: 1.3;
+      text-align: center;
+      white-space: normal;
+      word-break: break-word;
+    }
+    .affogato-change-btn {
+      border: none;
+      border-radius: 999px;
+      padding: 3px 7px;
+      font-size: 0.62rem;
+      font-weight: 700;
+      cursor: pointer;
+      background: var(--accent);
+      color: #fff;
+      white-space: nowrap;
+      touch-action: manipulation;
+      flex-shrink: 0;
+    }
+
+    /* PAYMENT */
     .payment-options { display: flex; gap: 6px; flex-wrap: wrap; }
     .payment-options label {
       background: #f3f3f3; padding: 7px 14px; border-radius: 999px;
@@ -136,11 +169,11 @@
     }
     #mixed-fields input { width: 100%; padding: 5px; border-radius: 6px; border: 1px solid #ccc; font-size: 0.9rem; }
 
-    /* ── MODAL OVERLAY ── */
+    /* MODAL OVERLAY */
     .modal-overlay { display: none; position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: rgba(0,0,0,0.5); z-index: 99; }
     .modal-overlay.show { display: block; }
 
-    /* ── POPUPS ── */
+    /* POPUPS */
     #notes-popup, #adjust-popup, #special-other-popup {
       display: none; position: fixed; top: 20%; left: 50%;
       transform: translate(-50%, -50%);
@@ -172,7 +205,88 @@
     .popup-actions { display: flex; justify-content: center; margin-top: 4px; }
     .popup-btn { border: none; border-radius: 999px; padding: 8px 28px; font-size: 1rem; font-weight: 600; cursor: pointer; background: var(--accent); color: #fff; }
 
-    /* ── GELATO BUILDER POPUP (merged, 70vw) ── */
+    /* AFFOGATO FLAVOUR PICKER POPUP — two-column like builder */
+    #affogato-flavour-popup {
+      display: none; position: fixed;
+      top: 50%; left: 50%; transform: translate(-50%, -50%);
+      background: #fff; border-radius: 16px;
+      box-shadow: 0 8px 32px rgba(0,0,0,0.28);
+      padding: 0; z-index: 200;
+      width: min(96vw, 78vw);
+      max-height: 88vh; overflow: hidden;
+      flex-direction: column;
+    }
+    #affogato-flavour-popup.show { display: flex; }
+    .affogato-popup-header {
+      background: var(--accent); color: #fff;
+      padding: 12px 16px; border-radius: 16px 16px 0 0;
+      display: flex; align-items: center; justify-content: space-between; flex-shrink: 0;
+    }
+    .affogato-popup-header h3 { margin: 0; font-size: 1rem; }
+    .affogato-popup-close { background: none; border: none; color: #fff; font-size: 1.4rem; cursor: pointer; padding: 0 4px; }
+    .affogato-popup-body {
+      overflow-y: auto; padding: 14px 16px; flex: 1;
+      display: grid;
+      grid-template-columns: 200px 1fr;
+      gap: 16px;
+      align-items: start;
+    }
+    .affogato-popup-footer {
+      padding: 12px 16px; border-top: 1px solid #eee; flex-shrink: 0; display: flex; gap: 8px;
+    }
+    .affogato-popup-footer button {
+      flex: 1; border: none; background: var(--accent); color: #fff;
+      border-radius: 999px; padding: 9px; font-size: 0.9rem; font-weight: 600; cursor: pointer;
+    }
+
+    /* Affogato slot list (left column) */
+    .affogato-slots { display: flex; flex-direction: column; gap: 8px; }
+    .affogato-slot {
+      border: 2px solid #e0e0e0; border-radius: 10px; padding: 8px 12px;
+      display: flex; align-items: center; gap: 8px; background: #fafafa; cursor: pointer;
+    }
+    .affogato-slot-label { font-size: 0.78rem; font-weight: 700; color: var(--text-soft); min-width: 40px; flex-shrink: 0; }
+    .affogato-slot-value { flex: 1; font-size: 0.85rem; font-weight: 600; color: var(--text-soft); font-style: italic; }
+    .affogato-slot.filled { border-color: var(--accent); background: #e6f3f6; }
+    .affogato-slot.filled .affogato-slot-label { color: var(--accent); }
+    .affogato-slot.filled .affogato-slot-value { color: var(--text-main); font-style: normal; }
+    .affogato-slot.active-pick { border-color: #f0a500; background: #fffbe6; }
+    .affogato-slot.active-pick .affogato-slot-label { color: #b07800; }
+    .affogato-slot-clear { background: none; border: none; font-size: 1rem; cursor: pointer; color: var(--danger); padding: 2px 4px; flex-shrink: 0; }
+    .affogato-pick-label { font-size: 0.78rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.05em; color: var(--accent); margin-bottom: 6px; }
+
+    /* SHARED FLAVOUR PICK GRID */
+    .flavour-pick-grid {
+      display: grid;
+      grid-template-columns: repeat(6, 1fr);
+      gap: 6px;
+    }
+    .flavour-pick-card {
+      background: #f9f9f9;
+      border: 2px solid transparent;
+      border-radius: 10px;
+      padding: 6px 4px;
+      display: flex; flex-direction: column; align-items: center; gap: 4px;
+      cursor: pointer; text-align: center;
+      transition: border-color 0.1s, background 0.1s;
+      user-select: none;
+    }
+    .flavour-pick-card:hover { border-color: #bbb; background: #f0f0f0; }
+    .flavour-pick-card.selected { border-color: var(--accent); background: #e6f3f6; }
+    /* Vanilla highlight */
+    .flavour-pick-card.vanilla-card { background: #fff8dc; border-color: #d4a800; }
+    .flavour-pick-card.vanilla-card:hover { background: #fff0a0; }
+    .flavour-pick-card img { width: 44px; height: 44px; border-radius: 50%; object-fit: cover; background: #eee; }
+    .flavour-pick-card-name { font-size: 0.7rem; font-weight: 600; line-height: 1.2; }
+    .flavour-section-divider {
+      grid-column: 1 / -1;
+      font-size: 0.68rem; font-weight: 700; text-transform: uppercase;
+      letter-spacing: 0.06em; color: var(--text-soft);
+      padding: 6px 2px 2px; margin-top: 2px;
+      border-top: 1px solid #ddd;
+    }
+
+    /* GELATO BUILDER POPUP */
     #builder-popup {
       display: none; position: fixed;
       top: 50%; left: 50%; transform: translate(-50%, -50%);
@@ -191,45 +305,16 @@
     }
     .builder-header h3 { margin: 0; font-size: 1rem; }
     .builder-close { background: none; border: none; color: #fff; font-size: 1.4rem; cursor: pointer; padding: 0 4px; }
-
-    /* Three-column body layout */
     .builder-body {
       overflow-y: auto; padding: 14px 16px; flex: 1;
       display: grid;
-      grid-template-columns: 200px 1fr 110px;
+      grid-template-columns: 220px 1fr;
       gap: 16px;
-      align-items: stretch;
+      align-items: start;
     }
-
     .builder-left { display: flex; flex-direction: column; gap: 14px; }
     .builder-right { display: flex; flex-direction: column; gap: 10px; }
-
-    /* ── UPDATED: Action buttons fill full height ── */
-    .builder-actions {
-      display: flex;
-      flex-direction: column;
-      gap: 10px;
-      height: 100%;
-    }
-    .builder-actions-add {
-      border: none; background: var(--accent); color: #fff;
-      border-radius: 12px;
-      font-size: 0.9rem; font-weight: 700; cursor: pointer;
-      text-align: center; line-height: 1.3;
-      flex: 3;
-      display: flex; align-items: center; justify-content: center;
-    }
-    .builder-actions-cancel {
-      border: 2px solid #ddd; background: #fff;
-      border-radius: 12px;
-      font-size: 0.85rem; font-weight: 600; cursor: pointer;
-      text-align: center;
-      flex: 1;
-      display: flex; align-items: center; justify-content: center;
-    }
-
     .builder-step-label { font-size: 0.78rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.05em; color: var(--accent); margin-bottom: 6px; }
-
     .size-pills { display: grid; grid-template-columns: repeat(3, 1fr); gap: 6px; }
     .size-pill {
       border: 2px solid #ddd; background: #f9f9f9; border-radius: 12px;
@@ -238,7 +323,6 @@
     }
     .size-pill .pill-price { font-size: 0.7rem; color: var(--text-soft); font-weight: 400; }
     .size-pill.selected { border-color: var(--accent); background: #e6f3f6; color: var(--accent); }
-
     .vessel-toggle { display: flex; gap: 8px; }
     .vessel-btn {
       flex: 1; border: 2px solid #ddd; background: #f9f9f9;
@@ -246,7 +330,6 @@
       cursor: pointer; text-align: center;
     }
     .vessel-btn.selected { border-color: var(--accent); background: #e6f3f6; color: var(--accent); }
-
     .scoop-slots { display: flex; flex-direction: column; gap: 8px; }
     .scoop-slot {
       border: 2px solid #e0e0e0; border-radius: 10px; padding: 8px 12px;
@@ -263,46 +346,15 @@
       padding: 8px; font-size: 0.82rem; color: var(--text-soft); cursor: pointer; width: 100%;
     }
     .add-scoop-btn:hover { border-color: var(--accent); color: var(--accent); }
-
-    /* ── INLINE FLAVOUR GRID (right side of builder) ── */
-    .flavour-pick-grid {
-      display: grid;
-      grid-template-columns: repeat(6, 1fr);
-      gap: 6px;
-    }
-    .flavour-pick-card {
-      background: #f9f9f9;
-      border: 2px solid transparent;
-      border-radius: 10px;
-      padding: 6px 4px;
-      display: flex; flex-direction: column; align-items: center; gap: 4px;
-      cursor: pointer; text-align: center;
-      transition: border-color 0.1s, background 0.1s;
-      user-select: none;
-    }
-    .flavour-pick-card:hover { border-color: #bbb; background: #f0f0f0; }
-    .flavour-pick-card.selected {
-      border-color: var(--accent);
-      background: #e6f3f6;
-    }
-    .flavour-pick-card img {
-      width: 44px; height: 44px;
-      border-radius: 50%; object-fit: cover; background: #eee;
-    }
-    .flavour-pick-card-name { font-size: 0.7rem; font-weight: 600; line-height: 1.2; }
-    .flavour-section-divider {
-      grid-column: 1 / -1;
-      font-size: 0.68rem; font-weight: 700; text-transform: uppercase;
-      letter-spacing: 0.06em; color: var(--text-soft);
-      padding: 6px 2px 2px; margin-top: 2px;
-      border-top: 1px solid #ddd;
-    }
-
-    /* highlight which scoop slot is active */
     .scoop-slot.active-pick { border-color: #f0a500; background: #fffbe6; }
     .scoop-slot.active-pick .scoop-slot-label { color: #b07800; }
+    .builder-footer {
+      padding: 12px 16px; border-top: 1px solid #eee; flex-shrink: 0; display: flex; gap: 8px;
+    }
+    .builder-footer-cancel { flex: 1; border: 2px solid #ddd; background: #fff; border-radius: 999px; padding: 9px; font-size: 0.9rem; font-weight: 600; cursor: pointer; }
+    .builder-footer-add    { flex: 2; border: none; background: var(--accent); color: #fff; border-radius: 999px; padding: 9px; font-size: 0.9rem; font-weight: 600; cursor: pointer; }
 
-    /* ── BOTTOM BAR ── */
+    /* BOTTOM BAR */
     .bottom-bar {
       position: sticky; bottom: 0;
       background: rgba(244,239,234,0.98); backdrop-filter: blur(6px);
@@ -335,9 +387,8 @@
     .specials-loading { font-size: 0.78rem; color: var(--text-soft); padding: 6px; text-align: center; font-style: italic; }
 
     @media (max-width: 900px) {
-      #builder-popup { width: min(96vw, 96vw); }
-      .builder-body { grid-template-columns: 1fr; }
-      .builder-actions { flex-direction: row; height: auto; }
+      #builder-popup, #affogato-flavour-popup { width: 96vw; }
+      .builder-body, .affogato-popup-body { grid-template-columns: 1fr; }
       .flavour-pick-grid { grid-template-columns: repeat(auto-fill, minmax(80px, 1fr)); }
     }
     @media (max-width: 700px) {
@@ -379,7 +430,6 @@
           </div>
           <div class="summary" id="summary-box"></div>
         </section>
-
       </div>
 
       <!-- RIGHT COLUMN -->
@@ -408,14 +458,13 @@
     </div>
   </div>
 
-  <!-- ── GELATO BUILDER POPUP (merged) ── -->
+  <!-- GELATO BUILDER POPUP -->
   <div id="builder-popup">
     <div class="builder-header">
       <h3 id="builder-title">Add Gelato</h3>
       <button class="builder-close" id="builder-close-btn">✕</button>
     </div>
     <div class="builder-body">
-      <!-- LEFT: size / vessel / scoops -->
       <div class="builder-left">
         <div>
           <div class="builder-step-label">Size</div>
@@ -434,16 +483,37 @@
           <button class="add-scoop-btn" id="add-scoop-btn" type="button" style="margin-top:6px;">+ Add extra scoop</button>
         </div>
       </div>
-      <!-- MIDDLE: flavour picker -->
       <div class="builder-right">
         <div class="builder-step-label" id="flavour-pick-label">← Choose a size, then tap a scoop to pick flavour</div>
         <div class="flavour-pick-grid" id="flavour-pick-grid"></div>
       </div>
-      <!-- RIGHT: action buttons -->
-      <div class="builder-actions">
-        <button class="builder-actions-add"    id="builder-add-btn"    type="button">Add to Order</button>
-        <button class="builder-actions-cancel" id="builder-cancel-btn" type="button">Cancel</button>
+    </div>
+    <div class="builder-footer">
+      <button class="builder-footer-cancel" id="builder-cancel-btn" type="button">Cancel</button>
+      <button class="builder-footer-add"    id="builder-add-btn"    type="button">Add to Order</button>
+    </div>
+  </div>
+
+  <!-- AFFOGATO FLAVOUR PICKER POPUP -->
+  <div id="affogato-flavour-popup">
+    <div class="affogato-popup-header">
+      <h3 id="affogato-popup-title">☕ Affogato — Choose Flavours</h3>
+      <button class="affogato-popup-close" id="affogato-popup-close-btn" type="button">✕</button>
+    </div>
+    <div class="affogato-popup-body">
+      <!-- Left: slot list -->
+      <div>
+        <div class="affogato-pick-label" id="affogato-slot-label">Affogato 1 — tap a flavour</div>
+        <div class="affogato-slots" id="affogato-slots"></div>
       </div>
+      <!-- Right: flavour grid -->
+      <div>
+        <div class="affogato-pick-label" id="affogato-flavour-pick-label">Choose flavour →</div>
+        <div class="flavour-pick-grid" id="affogato-flavour-pick-grid"></div>
+      </div>
+    </div>
+    <div class="affogato-popup-footer">
+      <button id="affogato-flavour-done-btn" type="button">Done</button>
     </div>
   </div>
 
@@ -492,7 +562,6 @@ const GOOGLE_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbzoUv3jjDt3r6
 
 let activeSpecials = [];
 
-// ── DATA ──────────────────────────────────────────────────────────────────
 const customerTypes = [
   { key: "adult",  label: "Adult"  },
   { key: "child",  label: "Child"  },
@@ -548,12 +617,15 @@ const flavourData = [
   { name: "Tiramisu",              image: "images/tiramisu.png"           },
 ];
 
-// ── STATE ─────────────────────────────────────────────────────────────────
+const VANILLA_FLAVOUR = "Just Vanilla";
+
+// STATE
 const state = {
   customers:        { adult: 0, child: 0, online: 0 },
   argentinian:      false,
   gelatoQueue:      [],
   extras:           { hotChocolate: 0, affogato: 0, brownie: 0, mClassic: 0, mRellen: 0 },
+  affogatoFlavours: [],   // array, one entry per affogato ordered
   pupCup:           0,
   others:           { comboClassic: 0, comboRellen: 0, slices: 0, customOther: 0 },
   customOtherPrice: 0,
@@ -565,7 +637,7 @@ const state = {
 let lastSavedOrder = null;
 let editMode       = false;
 
-// ── BUILDER STATE ─────────────────────────────────────────────────────────
+// BUILDER STATE
 const builder = {
   editingId:      null,
   sizeKey:        null,
@@ -574,7 +646,10 @@ const builder = {
   activeScoopIdx: null,
 };
 
-// ── HELPERS ───────────────────────────────────────────────────────────────
+// AFFOGATO PICKER STATE
+let affogatoActiveIdx  = 0;
+let affogatoGridBuilt  = false;
+
 function cssSafe(str){ return str.replace(/\s+/g,"_").replace(/[^a-zA-Z0-9_]/g,""); }
 
 function getLocalTimestamp(){
@@ -589,7 +664,7 @@ function getLocalTimestamp(){
   return `${day}/${month}/${year} ${hours}:${mins} ${ampm}`;
 }
 
-// ── SPECIALS ──────────────────────────────────────────────────────────────
+// SPECIALS
 async function loadSpecials(){
   try {
     const res  = await fetch(GOOGLE_SCRIPT_URL + "?action=getSpecials");
@@ -599,7 +674,8 @@ async function loadSpecials(){
     activeSpecials = [{ name: "Tim Crunch" },{ name: "Passion Fruit Cheesecake" }];
   }
   activeSpecials.forEach(s => { state.specialCounts[s.name] = 0; });
-  flavourGridBuilt = false;
+  flavourGridBuilt      = false;
+  affogatoGridBuilt     = false;
   buildSpecialOtherPopup();
 }
 
@@ -625,7 +701,195 @@ function buildSpecialOtherPopup(){
   });
 }
 
-// ── INLINE FLAVOUR GRID ───────────────────────────────────────────────────
+// ── SHARED FLAVOUR GRID BUILDER ───────────────────────────────────────────
+function buildFlavourGrid(gridEl, mode) {
+  gridEl.innerHTML = "";
+
+  const permanentCollection = flavourData.filter(f => f.bg === "#cde4ea");
+  const otherFlavours       = flavourData.filter(f => f.bg !== "#cde4ea");
+
+  const permDiv = document.createElement("div");
+  permDiv.className = "flavour-section-divider";
+  permDiv.textContent = "Permanent Collection";
+  gridEl.appendChild(permDiv);
+  permanentCollection.forEach(f => gridEl.appendChild(makeFlavourPickCard(f.name, f.image, f.bg, mode)));
+
+  const specialsDiv = document.createElement("div");
+  specialsDiv.className = "flavour-section-divider";
+  specialsDiv.textContent = "✨ Specials";
+  gridEl.appendChild(specialsDiv);
+  otherFlavours.forEach(f => gridEl.appendChild(makeFlavourPickCard(f.name, f.image, "#cde4ea", mode)));
+  activeSpecials.forEach(s => gridEl.appendChild(makeFlavourPickCard(s.name, "images/other.png", "#cde4ea", mode)));
+  gridEl.appendChild(makeFlavourPickCard("Special Other", "images/other.png", "#cde4ea", mode));
+}
+
+function makeFlavourPickCard(name, image, bg, mode){
+  const card = document.createElement("div");
+  const isVanilla = name === VANILLA_FLAVOUR;
+  card.className = "flavour-pick-card" + (isVanilla ? " vanilla-card" : "");
+  card.dataset.flavourName = name;
+  if (bg && !isVanilla) card.style.background = bg;
+  card.innerHTML = `
+    <img src="${image}" alt="${name}" onerror="this.style.display='none'">
+    <div class="flavour-pick-card-name">${name}</div>`;
+
+  card.addEventListener("click", () => {
+    if (mode === "builder") {
+      if (builder.activeScoopIdx === null) return;
+      builder.scoops[builder.activeScoopIdx] = name;
+      const nextEmpty = builder.scoops.findIndex((s, i) => i > builder.activeScoopIdx && !s);
+      if (nextEmpty >= 0){
+        builder.activeScoopIdx = nextEmpty;
+      } else {
+        const sizeObj = sizes.find(s => s.key === builder.sizeKey);
+        const max = sizeObj ? sizeObj.maxScoops : 4;
+        if (builder.scoops.length < max){
+          builder.scoops.push(null);
+          builder.activeScoopIdx = builder.scoops.length - 1;
+        } else {
+          builder.activeScoopIdx = null;
+        }
+      }
+      renderBuilderScoops();
+      renderFlavourPickGrid();
+    } else if (mode === "affogato") {
+      // Set the flavour for the active slot and auto-advance
+      state.affogatoFlavours[affogatoActiveIdx] = name;
+      const qty = state.extras.affogato;
+      // advance to next unfilled slot within qty
+      let next = -1;
+      for (let i = affogatoActiveIdx + 1; i < qty; i++){
+        if (!state.affogatoFlavours[i]){ next = i; break; }
+      }
+      if (next >= 0){
+        affogatoActiveIdx = next;
+      } else {
+        // wrap to first unfilled, else stay
+        let wrap = -1;
+        for (let i = 0; i < qty; i++){
+          if (!state.affogatoFlavours[i]){ wrap = i; break; }
+        }
+        affogatoActiveIdx = wrap >= 0 ? wrap : affogatoActiveIdx;
+      }
+      renderAffogatoSlots();
+      updateAffogatoGridSelection();
+    }
+  });
+  return card;
+}
+
+// ── AFFOGATO PICKER ───────────────────────────────────────────────────────
+function openAffogatoFlavourPopup(){
+  const qty = state.extras.affogato;
+  // Ensure flavours array matches qty, defaulting to Just Vanilla
+  while (state.affogatoFlavours.length < qty) state.affogatoFlavours.push(VANILLA_FLAVOUR);
+  state.affogatoFlavours.length = qty;
+
+  // Start on first slot
+  affogatoActiveIdx = 0;
+
+  document.getElementById("affogato-popup-title").textContent = `☕ Affogato ×${qty} — Choose Flavours`;
+
+  if (!affogatoGridBuilt){
+    buildFlavourGrid(document.getElementById("affogato-flavour-pick-grid"), "affogato");
+    affogatoGridBuilt = true;
+  }
+
+  renderAffogatoSlots();
+  updateAffogatoGridSelection();
+  document.getElementById("affogato-flavour-popup").classList.add("show");
+  document.getElementById("modal-overlay").classList.add("show");
+}
+
+function closeAffogatoFlavourPopup(){
+  document.getElementById("affogato-flavour-popup").classList.remove("show");
+  document.getElementById("modal-overlay").classList.remove("show");
+  updateAffogatoFlavourUI();
+  updateSummary();
+}
+
+function renderAffogatoSlots(){
+  const qty       = state.extras.affogato;
+  const container = document.getElementById("affogato-slots");
+  container.innerHTML = "";
+
+  for (let i = 0; i < qty; i++){
+    const flavour  = state.affogatoFlavours[i] || null;
+    const isActive = affogatoActiveIdx === i;
+    const slot = document.createElement("div");
+    slot.className = "affogato-slot" + (flavour ? " filled" : "") + (isActive ? " active-pick" : "");
+
+    const lbl = document.createElement("span");
+    lbl.className = "affogato-slot-label";
+    lbl.textContent = `#${i+1}`;
+
+    const val = document.createElement("span");
+    val.className = "affogato-slot-value";
+    val.textContent = isActive && !flavour ? "Choosing…" : (flavour || "Tap to choose…");
+
+    slot.appendChild(lbl);
+    slot.appendChild(val);
+
+    if (flavour){
+      const clr = document.createElement("button");
+      clr.className = "affogato-slot-clear";
+      clr.textContent = "✕";
+      clr.addEventListener("click", e => {
+        e.stopPropagation();
+        state.affogatoFlavours[i] = null;
+        affogatoActiveIdx = i;
+        renderAffogatoSlots();
+        updateAffogatoGridSelection();
+      });
+      slot.appendChild(clr);
+    }
+
+    slot.addEventListener("click", () => {
+      affogatoActiveIdx = i;
+      renderAffogatoSlots();
+      updateAffogatoGridSelection();
+    });
+
+    container.appendChild(slot);
+  }
+
+  // Update left-column label
+  const lbl = document.getElementById("affogato-slot-label");
+  lbl.textContent = `Affogato ${affogatoActiveIdx + 1} — tap a flavour →`;
+}
+
+function updateAffogatoGridSelection(){
+  const current = state.affogatoFlavours[affogatoActiveIdx] || null;
+  document.getElementById("affogato-flavour-pick-grid")
+    .querySelectorAll(".flavour-pick-card")
+    .forEach(card => card.classList.toggle("selected", card.dataset.flavourName === current));
+}
+
+function updateAffogatoFlavourUI(){
+  const qty = state.extras.affogato;
+  const row = document.getElementById("affogato-flavour-row");
+  if (!row) return;
+  if (qty >= 1){
+    row.classList.add("visible");
+    const lbl = document.getElementById("affogato-flavour-current");
+    if (lbl){
+      const filled = state.affogatoFlavours.filter(Boolean);
+      if (filled.length === 0){
+        lbl.textContent = "No flavour chosen";
+      } else {
+        const counts = {};
+        filled.forEach(f => { counts[f] = (counts[f]||0)+1; });
+        lbl.textContent = Object.entries(counts).map(([f,n]) => n > 1 ? `${n}× ${f}` : f).join(", ");
+      }
+    }
+  } else {
+    row.classList.remove("visible");
+    state.affogatoFlavours = [];
+    affogatoGridBuilt = false;
+  }
+}
+
+// ── GELATO BUILDER ────────────────────────────────────────────────────────
 let flavourGridBuilt = false;
 
 function renderFlavourPickGrid(){
@@ -637,82 +901,20 @@ function renderFlavourPickGrid(){
     updateFlavourGridSelection();
     return;
   }
-
   label.textContent = `Scoop ${builder.activeScoopIdx + 1} — tap a flavour`;
-
   if (!flavourGridBuilt){
-    grid.innerHTML = "";
-
-    const permanentCollection = flavourData.filter(f => f.bg === "#cde4ea");
-    const otherFlavours       = flavourData.filter(f => f.bg !== "#cde4ea");
-
-    const permDiv = document.createElement("div");
-    permDiv.className = "flavour-section-divider";
-    permDiv.textContent = "Permanent Collection";
-    grid.appendChild(permDiv);
-    permanentCollection.forEach(f => {
-      grid.appendChild(makeFlavourPickCard(f.name, f.image, f.bg || null));
-    });
-
-    const specialsDiv = document.createElement("div");
-    specialsDiv.className = "flavour-section-divider";
-    specialsDiv.textContent = "✨ Specials";
-    grid.appendChild(specialsDiv);
-    otherFlavours.forEach(f => {
-      grid.appendChild(makeFlavourPickCard(f.name, f.image, "#cde4ea"));
-    });
-    if (activeSpecials.length){
-      activeSpecials.forEach(s => {
-        grid.appendChild(makeFlavourPickCard(s.name, "images/other.png", "#cde4ea"));
-      });
-    }
-    grid.appendChild(makeFlavourPickCard("Special Other", "images/other.png", "#cde4ea"));
-
+    buildFlavourGrid(grid, "builder");
     flavourGridBuilt = true;
   }
-
   updateFlavourGridSelection();
 }
 
 function updateFlavourGridSelection(){
-  const grid = document.getElementById("flavour-pick-grid");
-  const currentFlavour = builder.activeScoopIdx !== null ? (builder.scoops[builder.activeScoopIdx] || null) : null;
-  grid.querySelectorAll(".flavour-pick-card").forEach(card => {
-    card.classList.toggle("selected", card.dataset.flavourName === currentFlavour);
-  });
+  const current = builder.activeScoopIdx !== null ? (builder.scoops[builder.activeScoopIdx] || null) : null;
+  document.getElementById("flavour-pick-grid").querySelectorAll(".flavour-pick-card")
+    .forEach(card => card.classList.toggle("selected", card.dataset.flavourName === current));
 }
 
-function makeFlavourPickCard(name, image, bg){
-  const card = document.createElement("div");
-  card.className = "flavour-pick-card";
-  card.dataset.flavourName = name;
-  if (bg) card.style.background = bg;
-  card.innerHTML = `
-    <img src="${image}" alt="${name}" onerror="this.style.display='none'">
-    <div class="flavour-pick-card-name">${name}</div>`;
-  card.addEventListener("click", () => {
-    if (builder.activeScoopIdx === null) return;
-    builder.scoops[builder.activeScoopIdx] = name;
-    const nextEmpty = builder.scoops.findIndex((s, i) => i > builder.activeScoopIdx && !s);
-    if (nextEmpty >= 0){
-      builder.activeScoopIdx = nextEmpty;
-    } else {
-      const sizeObj = sizes.find(s => s.key === builder.sizeKey);
-      const max = sizeObj ? sizeObj.maxScoops : 4;
-      if (builder.scoops.length < max){
-        builder.scoops.push(null);
-        builder.activeScoopIdx = builder.scoops.length - 1;
-      } else {
-        builder.activeScoopIdx = null;
-      }
-    }
-    renderBuilderScoops();
-    renderFlavourPickGrid();
-  });
-  return card;
-}
-
-// ── GELATO BUILDER ────────────────────────────────────────────────────────
 function openBuilder(editId = null){
   builder.editingId      = editId;
   builder.activeScoopIdx = null;
@@ -780,23 +982,18 @@ function renderBuilderVessel(){
 function renderBuilderScoops(){
   const container = document.getElementById("scoop-slots");
   container.innerHTML = "";
-
   builder.scoops.forEach((flavour, idx) => {
     const isActive = builder.activeScoopIdx === idx;
     const slot = document.createElement("div");
     slot.className = "scoop-slot" + (flavour ? " filled" : "") + (isActive ? " active-pick" : "");
-
     const label = document.createElement("span");
     label.className = "scoop-slot-label";
     label.textContent = `Scoop ${idx + 1}`;
-
     const value = document.createElement("span");
     value.className = "scoop-slot-value";
     value.textContent = isActive && !flavour ? "Choosing…" : (flavour || "Tap to choose…");
-
     slot.appendChild(label);
     slot.appendChild(value);
-
     if (flavour){
       const clearBtn = document.createElement("button");
       clearBtn.className = "scoop-clear";
@@ -810,7 +1007,6 @@ function renderBuilderScoops(){
       });
       slot.appendChild(clearBtn);
     }
-
     slot.addEventListener("click", () => {
       builder.activeScoopIdx = idx;
       renderBuilderScoops();
@@ -818,7 +1014,6 @@ function renderBuilderScoops(){
     });
     container.appendChild(slot);
   });
-
   const addBtn  = document.getElementById("add-scoop-btn");
   const sizeObj = sizes.find(s => s.key === builder.sizeKey);
   const max     = sizeObj ? sizeObj.maxScoops : 4;
@@ -829,7 +1024,6 @@ function commitBuilder(){
   if (!builder.sizeKey){ alert("Please choose a size."); return; }
   const filledScoops = builder.scoops.filter(Boolean);
   if (!filledScoops.length){ alert("Please choose at least one flavour."); return; }
-
   if (builder.editingId !== null){
     const item = state.gelatoQueue.find(g => g.id === builder.editingId);
     if (item){ item.sizeKey = builder.sizeKey; item.vessel = builder.vessel; item.scoops = filledScoops; }
@@ -843,7 +1037,7 @@ function commitBuilder(){
   updateAdjustmentPreview();
 }
 
-// ── QUEUE ─────────────────────────────────────────────────────────────────
+// QUEUE
 function renderQueue(){
   const list = document.getElementById("queue-list");
   list.innerHTML = "";
@@ -878,7 +1072,6 @@ function renderQueue(){
   );
 }
 
-// ── TALLY ─────────────────────────────────────────────────────────────────
 function countVessels(){
   let coneCount = 0, cupCount = 0;
   state.gelatoQueue.forEach(item => { if (item.vessel === "cone") coneCount++; else cupCount++; });
@@ -886,433 +1079,362 @@ function countVessels(){
 }
 
 function tallyQueue(){
-  const sizeCounts    = {};
-  const flavourCounts = {};
-  let   coneCount     = 0, cupCount = 0;
-
+  const sizeCounts = {}, flavourCounts = {};
+  let coneCount = 0, cupCount = 0;
   sizes.forEach(s => { sizeCounts[s.key] = 0; });
   flavourData.forEach(f => { flavourCounts[f.name] = 0; });
   flavourCounts["Special Other"] = 0;
-
   state.gelatoQueue.forEach(item => {
-    sizeCounts[item.sizeKey] = (sizeCounts[item.sizeKey] || 0) + 1;
+    sizeCounts[item.sizeKey] = (sizeCounts[item.sizeKey]||0)+1;
     if (item.vessel === "cone") coneCount++; else cupCount++;
     item.scoops.forEach(f => {
       const isSpecial = activeSpecials.find(s => s.name === f);
       if (f === "Special Other" || isSpecial){
-        flavourCounts["Special Other"] = (flavourCounts["Special Other"] || 0) + 1;
-        if (isSpecial) state.specialCounts[f] = (state.specialCounts[f] || 0) + 1;
+        flavourCounts["Special Other"] = (flavourCounts["Special Other"]||0)+1;
+        if (isSpecial) state.specialCounts[f] = (state.specialCounts[f]||0)+1;
       } else {
-        flavourCounts[f] = (flavourCounts[f] || 0) + 1;
+        flavourCounts[f] = (flavourCounts[f]||0)+1;
       }
     });
   });
   return { sizeCounts, flavourCounts, coneCount, cupCount };
 }
 
-// ── TOTALS ────────────────────────────────────────────────────────────────
 function calcBaseTotal(){
-  const gelatoTotal = state.gelatoQueue.reduce((sum, item) => {
-    const sz = sizes.find(s => s.key === item.sizeKey);
-    return sum + (sz ? sz.price : 0);
-  }, 0);
-  const extrasTotal = extrasData.reduce((sum, ex) => sum + state.extras[ex.key] * ex.price, 0);
-  const othersTotal = otherItems.reduce((sum, o) => {
-    const price = o.key === "customOther" ? state.customOtherPrice : o.price;
-    return sum + state.others[o.key] * price;
-  }, 0);
-  return gelatoTotal + extrasTotal + othersTotal;
+  const gelatoTotal = state.gelatoQueue.reduce((sum, item) => { const sz = sizes.find(s => s.key === item.sizeKey); return sum+(sz?sz.price:0); }, 0);
+  const extrasTotal = extrasData.reduce((sum, ex) => sum+state.extras[ex.key]*ex.price, 0);
+  const othersTotal = otherItems.reduce((sum, o) => { const price = o.key==="customOther"?state.customOtherPrice:o.price; return sum+state.others[o.key]*price; }, 0);
+  return gelatoTotal+extrasTotal+othersTotal;
 }
-function getFinalTotal(){ return Math.max(0, calcBaseTotal() + state.tip - state.discount); }
+function getFinalTotal(){ return Math.max(0, calcBaseTotal()+state.tip-state.discount); }
 function updateTotal(){ document.getElementById("total-box").textContent = `Total: $${getFinalTotal().toFixed(2)}`; }
 
 function updateAdjustmentPreview(){
-  const base = calcBaseTotal(), adj = state.tip - state.discount, final = getFinalTotal();
+  const base=calcBaseTotal(), adj=state.tip-state.discount, final=getFinalTotal();
   document.getElementById("base-total-preview").textContent  = `$${base.toFixed(2)}`;
-  document.getElementById("adjustment-preview").textContent  = adj === 0 ? "$0.00" : adj > 0 ? `+$${adj.toFixed(2)}` : `-$${Math.abs(adj).toFixed(2)}`;
+  document.getElementById("adjustment-preview").textContent  = adj===0?"$0.00":adj>0?`+$${adj.toFixed(2)}`:`-$${Math.abs(adj).toFixed(2)}`;
   document.getElementById("final-total-preview").textContent = `$${final.toFixed(2)}`;
 }
 
 function updateSummary(){
   const parts = [];
-  const custParts   = customerTypes.filter(ct => state.customers[ct.key] > 0).map(ct => `${ct.label}: ${state.customers[ct.key]}`);
-  const gelatoParts = state.gelatoQueue.map((g, i) => { const sz = sizes.find(s => s.key === g.sizeKey); return `#${i+1} ${sz ? sz.label : g.sizeKey} ${g.vessel} (${g.scoops.join(", ")})`; });
-  const extrasParts = extrasData.filter(ex => state.extras[ex.key] > 0).map(ex => `${ex.label}: ${state.extras[ex.key]}`);
-  const otherParts  = otherItems.filter(o => state.others[o.key] > 0).map(o => `${o.label}: ${state.others[o.key]}`);
+  const custParts   = customerTypes.filter(ct=>state.customers[ct.key]>0).map(ct=>`${ct.label}: ${state.customers[ct.key]}`);
+  const gelatoParts = state.gelatoQueue.map((g,i)=>{ const sz=sizes.find(s=>s.key===g.sizeKey); return `#${i+1} ${sz?sz.label:g.sizeKey} ${g.vessel} (${g.scoops.join(", ")})`; });
+  const extrasParts = extrasData.filter(ex=>state.extras[ex.key]>0).map(ex => {
+    if (ex.key === "affogato"){
+      const filled = state.affogatoFlavours.filter(Boolean);
+      if (filled.length){
+        const counts = {};
+        filled.forEach(f => { counts[f]=(counts[f]||0)+1; });
+        const summary = Object.entries(counts).map(([f,n])=>n>1?`${n}×${f}`:f).join(", ");
+        return `${ex.label}: ${state.extras[ex.key]} [${summary}]`;
+      }
+    }
+    return `${ex.label}: ${state.extras[ex.key]}`;
+  });
+  const otherParts  = otherItems.filter(o=>state.others[o.key]>0).map(o=>`${o.label}: ${state.others[o.key]}`);
   const accessParts = [];
   const { coneCount, cupCount } = countVessels();
-  if (coneCount > 0) accessParts.push(`Cones: ${coneCount}`);
-  if (cupCount  > 0) accessParts.push(`Cups: ${cupCount}`);
-  if (state.pupCup > 0) accessParts.push(`Pup Cup: ${state.pupCup}`);
-  if (state.argentinian)  custParts.push("🇦🇷 Argentinian");
-  if (custParts.length)   parts.push("Customers – "   + custParts.join(", "));
-  if (gelatoParts.length) parts.push("Gelatos – "     + gelatoParts.join(" | "));
-  if (extrasParts.length) parts.push("Extras – "      + extrasParts.join(", "));
-  if (otherParts.length)  parts.push("Other – "       + otherParts.join(", "));
-  if (accessParts.length) parts.push("Accessories – " + accessParts.join(", "));
-  parts.push("Payment: " + state.payment.toUpperCase());
-  parts.push("Total: $" + getFinalTotal().toFixed(2));
+  if (coneCount>0) accessParts.push(`Cones: ${coneCount}`);
+  if (cupCount>0)  accessParts.push(`Cups: ${cupCount}`);
+  if (state.pupCup>0) accessParts.push(`Pup Cup: ${state.pupCup}`);
+  if (state.argentinian) custParts.push("🇦🇷 Argentinian");
+  if (custParts.length)   parts.push("Customers – "+custParts.join(", "));
+  if (gelatoParts.length) parts.push("Gelatos – "+gelatoParts.join(" | "));
+  if (extrasParts.length) parts.push("Extras – "+extrasParts.join(", "));
+  if (otherParts.length)  parts.push("Other – "+otherParts.join(", "));
+  if (accessParts.length) parts.push("Accessories – "+accessParts.join(", "));
+  parts.push("Payment: "+state.payment.toUpperCase());
+  parts.push("Total: $"+getFinalTotal().toFixed(2));
   document.getElementById("summary-box").textContent = parts.join(" | ");
 }
 
-// ── OTHER CARD SYNC ───────────────────────────────────────────────────────
 function updateOtherCard(){
-  otherItems.forEach(o => { const el = document.getElementById(`other-${o.key}`); if (el) el.textContent = state.others[o.key]; });
-  const priceEl = document.getElementById("other-custom-price");
-  if (priceEl) priceEl.value = state.customOtherPrice ? state.customOtherPrice.toFixed(2) : "";
+  otherItems.forEach(o => { const el=document.getElementById(`other-${o.key}`); if(el) el.textContent=state.others[o.key]; });
+  const priceEl=document.getElementById("other-custom-price");
+  if(priceEl) priceEl.value=state.customOtherPrice?state.customOtherPrice.toFixed(2):"";
   updateOtherBorders();
 }
 function openSpecialOtherPopup(){
-  activeSpecials.forEach(s => { const el = document.getElementById("special-count-" + cssSafe(s.name)); if (el) el.textContent = state.specialCounts[s.name] || 0; });
-  document.getElementById("special-other-popup").style.display = "block";
+  activeSpecials.forEach(s=>{ const el=document.getElementById("special-count-"+cssSafe(s.name)); if(el) el.textContent=state.specialCounts[s.name]||0; });
+  document.getElementById("special-other-popup").style.display="block";
   document.getElementById("modal-overlay").classList.add("show");
 }
-function closeSpecialOtherPopup(){ document.getElementById("special-other-popup").style.display = "none"; document.getElementById("modal-overlay").classList.remove("show"); }
+function closeSpecialOtherPopup(){ document.getElementById("special-other-popup").style.display="none"; document.getElementById("modal-overlay").classList.remove("show"); }
 
-// ── RESET ─────────────────────────────────────────────────────────────────
 function resetAll(){
-  customerTypes.forEach(ct => { state.customers[ct.key] = 0; const el = document.getElementById(`customer-${ct.key}`); if (el) el.textContent = "0"; });
-  state.argentinian = false; const argBtn = document.getElementById("arg-toggle"); if (argBtn) { argBtn.textContent = "No"; argBtn.className = "vessel-btn"; }
-  state.gelatoQueue = []; renderQueue();
-  extrasData.forEach(ex => { state.extras[ex.key] = 0; const el = document.getElementById(`extra-${ex.key}`); if (el) el.textContent = "0"; });
-  otherItems.forEach(o => { state.others[o.key] = 0; });
-  state.customOtherPrice = 0;
-  const cpe = document.getElementById("other-custom-price"); if (cpe) cpe.value = "";
+  customerTypes.forEach(ct=>{ state.customers[ct.key]=0; const el=document.getElementById(`customer-${ct.key}`); if(el) el.textContent="0"; });
+  state.argentinian=false;
+  const argBtn=document.getElementById("arg-toggle");
+  if(argBtn){ argBtn.textContent="No"; argBtn.className="vessel-btn"; }
+  state.gelatoQueue=[]; renderQueue();
+  extrasData.forEach(ex=>{ state.extras[ex.key]=0; const el=document.getElementById(`extra-${ex.key}`); if(el) el.textContent="0"; });
+  state.affogatoFlavours=[];
+  affogatoGridBuilt=false;
+  updateAffogatoFlavourUI();
+  otherItems.forEach(o=>{ state.others[o.key]=0; });
+  state.customOtherPrice=0;
+  const cpe=document.getElementById("other-custom-price"); if(cpe) cpe.value="";
   updateOtherCard();
-  activeSpecials.forEach(s => { state.specialCounts[s.name] = 0; });
-  state.pupCup = 0;
-  const pcEl = document.getElementById("pupCup-count"); if (pcEl) pcEl.textContent = "0";
+  activeSpecials.forEach(s=>{ state.specialCounts[s.name]=0; });
+  state.pupCup=0;
+  const pcEl=document.getElementById("pupCup-count"); if(pcEl) pcEl.textContent="0";
   updateExtrasBorders();
-  state.payment = "card"; state.cardAmount = 0; state.tip = 0; state.discount = 0;
-  const cardRadio = document.querySelector('input[name="payment"][value="card"]'); if (cardRadio) cardRadio.checked = true;
-  document.getElementById("mixed-fields").style.display = "none";
-  document.getElementById("card-input").value = "";
-  document.getElementById("cash-output").textContent = "$0.00";
-  state.notes = "";
-  const ni = document.getElementById("notes-input"); if (ni) ni.value = "";
-  document.getElementById("tip-input").value = "";
-  document.getElementById("discount-input").value = "";
+  state.payment="card"; state.cardAmount=0; state.tip=0; state.discount=0;
+  const cardRadio=document.querySelector('input[name="payment"][value="card"]'); if(cardRadio) cardRadio.checked=true;
+  document.getElementById("mixed-fields").style.display="none";
+  document.getElementById("card-input").value="";
+  document.getElementById("cash-output").textContent="$0.00";
+  state.notes="";
+  const ni=document.getElementById("notes-input"); if(ni) ni.value="";
+  document.getElementById("tip-input").value="";
+  document.getElementById("discount-input").value="";
   updateTotal(); updateSummary(); updateAdjustmentPreview();
 }
 
-// ── SUBMIT ────────────────────────────────────────────────────────────────
 async function submitOrder(){
-  if (!state.gelatoQueue.length && getFinalTotal() === 0){ alert("No items in order."); return; }
-  if (state.payment === "mixed" && state.cardAmount > getFinalTotal()){ alert("Card amount cannot exceed total."); return; }
-
-  activeSpecials.forEach(s => { state.specialCounts[s.name] = 0; });
+  if(!state.gelatoQueue.length && getFinalTotal()===0){ alert("No items in order."); return; }
+  if(state.payment==="mixed" && state.cardAmount>getFinalTotal()){ alert("Card amount cannot exceed total."); return; }
+  activeSpecials.forEach(s=>{ state.specialCounts[s.name]=0; });
   const { sizeCounts, flavourCounts, coneCount, cupCount } = tallyQueue();
-  const finalTotal = getFinalTotal();
-
-  document.getElementById("saving-indicator").style.display = "inline";
-  const isEditing = editMode;
-
-  const payload = {
-    timestamp:        getLocalTimestamp(),
-    customers:        state.customers,
-    argentinian:      state.argentinian ? "Yes" : "No",
-    sizes:            sizeCounts,
-    extras:           state.extras,
-    others:           state.others,
-    flavours:         flavourCounts,
-    specialCounts:    state.specialCounts,
-    pupCup:           state.pupCup,
-    cones:            coneCount,
-    cups:             cupCount,
-    adjustment:       state.tip - state.discount,
-    payment:          state.payment,
-    cardAmount:       state.cardAmount,
-    notes:            state.notes,
-    tip:              state.tip,
-    discount:         state.discount,
-    total:            finalTotal,
+  const finalTotal=getFinalTotal();
+  document.getElementById("saving-indicator").style.display="inline";
+  const isEditing=editMode;
+  const affogatoSummary = state.affogatoFlavours.filter(Boolean).length
+    ? (() => { const c={}; state.affogatoFlavours.filter(Boolean).forEach(f=>{c[f]=(c[f]||0)+1;}); return Object.entries(c).map(([f,n])=>n>1?`${n}×${f}`:f).join(", "); })()
+    : "";
+  const payload={
+    timestamp: getLocalTimestamp(),
+    customers: state.customers,
+    argentinian: state.argentinian?"Yes":"No",
+    sizes: sizeCounts,
+    extras: state.extras,
+    affogatoFlavours: affogatoSummary,
+    others: state.others,
+    flavours: flavourCounts,
+    specialCounts: state.specialCounts,
+    pupCup: state.pupCup,
+    cones: coneCount,
+    cups: cupCount,
+    adjustment: state.tip-state.discount,
+    payment: state.payment,
+    cardAmount: state.cardAmount,
+    notes: state.notes,
+    tip: state.tip,
+    discount: state.discount,
+    total: finalTotal,
     customOtherPrice: state.customOtherPrice,
-    gelatoDetail:     state.gelatoQueue.map(g => {
-      const sz = sizes.find(s => s.key === g.sizeKey);
-      return `${sz ? sz.label : g.sizeKey} ${g.vessel}: ${g.scoops.join("+")}`;
-    }).join(" | ")
+    gelatoDetail: state.gelatoQueue.map(g=>{ const sz=sizes.find(s=>s.key===g.sizeKey); return `${sz?sz.label:g.sizeKey} ${g.vessel}: ${g.scoops.join("+")}`; }).join(" | ")
   };
-
-  lastSavedOrder = JSON.parse(JSON.stringify({ ...payload, gelatoQueue: state.gelatoQueue }));
-
+  lastSavedOrder=JSON.parse(JSON.stringify({...payload, gelatoQueue:state.gelatoQueue, affogatoFlavoursArr:state.affogatoFlavours}));
   try {
-    await fetch(GOOGLE_SCRIPT_URL, {
-      method: "POST", mode: "no-cors",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ row: payload, mode: isEditing ? "overwrite" : "append" })
-    });
-    document.getElementById("saving-indicator").style.display = "none";
+    await fetch(GOOGLE_SCRIPT_URL,{ method:"POST", mode:"no-cors", headers:{"Content-Type":"application/json"}, body:JSON.stringify({row:payload, mode:isEditing?"overwrite":"append"}) });
+    document.getElementById("saving-indicator").style.display="none";
     document.getElementById("cash-sound").play();
-    showPopup(); editMode = false; resetAll();
+    showPopup(); editMode=false; resetAll();
   } catch {
-    document.getElementById("saving-indicator").style.display = "none";
-    editMode = false;
+    document.getElementById("saving-indicator").style.display="none";
+    editMode=false;
     alert("Error sending order.");
   }
 }
 
-// ── SUCCESS POPUP ─────────────────────────────────────────────────────────
 function showPopup(){
-  const popup = document.getElementById("success-popup");
-  popup.innerHTML = `<span>Order Saved!</span><button id="edit-last-btn" type="button">Edit Last Order</button>`;
+  const popup=document.getElementById("success-popup");
+  popup.innerHTML=`<span>Order Saved!</span><button id="edit-last-btn" type="button">Edit Last Order</button>`;
   popup.classList.add("show");
-  document.getElementById("edit-last-btn").addEventListener("click", () => {
-    if (lastSavedOrder){ loadOrderForEditing(lastSavedOrder); editMode = true; }
-    popup.classList.remove("show");
-  });
-  setTimeout(() => popup.classList.remove("show"), 9000);
+  document.getElementById("edit-last-btn").addEventListener("click",()=>{ if(lastSavedOrder){loadOrderForEditing(lastSavedOrder);editMode=true;} popup.classList.remove("show"); });
+  setTimeout(()=>popup.classList.remove("show"),9000);
 }
 
 function loadOrderForEditing(order){
   resetAll();
-  customerTypes.forEach(ct => { const v = (order.customers && order.customers[ct.key]) || 0; state.customers[ct.key] = v; const el = document.getElementById(`customer-${ct.key}`); if (el) el.textContent = v; });
-  state.argentinian = order.argentinian === "Yes"; const argBtn = document.getElementById("arg-toggle"); if (argBtn) { argBtn.textContent = state.argentinian ? "Yes" : "No"; argBtn.className = "vessel-btn" + (state.argentinian ? " selected" : ""); }
-  if (order.gelatoQueue){
-    state.gelatoQueue = order.gelatoQueue.map(g => ({ ...g, id: Date.now().toString() + Math.random() }));
-    renderQueue();
-  }
-  extrasData.forEach(ex => { const v = (order.extras && order.extras[ex.key]) || 0; state.extras[ex.key] = v; const el = document.getElementById(`extra-${ex.key}`); if (el) el.textContent = v; });
-  if (order.others){ otherItems.forEach(o => { state.others[o.key] = order.others[o.key] || 0; }); }
+  customerTypes.forEach(ct=>{ const v=(order.customers&&order.customers[ct.key])||0; state.customers[ct.key]=v; const el=document.getElementById(`customer-${ct.key}`); if(el) el.textContent=v; });
+  state.argentinian=order.argentinian==="Yes";
+  const argBtn=document.getElementById("arg-toggle");
+  if(argBtn){ argBtn.textContent=state.argentinian?"Yes":"No"; argBtn.className="vessel-btn"+(state.argentinian?" selected":""); }
+  if(order.gelatoQueue){ state.gelatoQueue=order.gelatoQueue.map(g=>({...g,id:Date.now().toString()+Math.random()})); renderQueue(); }
+  extrasData.forEach(ex=>{ const v=(order.extras&&order.extras[ex.key])||0; state.extras[ex.key]=v; const el=document.getElementById(`extra-${ex.key}`); if(el) el.textContent=v; });
+  if(order.affogatoFlavoursArr) state.affogatoFlavours=[...order.affogatoFlavoursArr];
+  else state.affogatoFlavours=[];
+  affogatoGridBuilt=false;
+  updateAffogatoFlavourUI();
+  if(order.others){ otherItems.forEach(o=>{ state.others[o.key]=order.others[o.key]||0; }); }
   updateOtherCard();
-  if (order.specialCounts){ Object.keys(order.specialCounts).forEach(name => { state.specialCounts[name] = order.specialCounts[name] || 0; }); }
+  if(order.specialCounts){ Object.keys(order.specialCounts).forEach(name=>{ state.specialCounts[name]=order.specialCounts[name]||0; }); }
   updateExtrasBorders();
-  state.pupCup = order.pupCup || 0;
-  const pcEl = document.getElementById("pupCup-count"); if (pcEl) pcEl.textContent = state.pupCup;
-  state.payment = order.payment || "card";
-  const payRadio = document.querySelector(`input[name="payment"][value="${state.payment}"]`); if (payRadio) payRadio.checked = true;
-  if (state.payment === "mixed"){
-    state.cardAmount = order.cardAmount || 0;
-    document.getElementById("mixed-fields").style.display = "grid";
-    document.getElementById("card-input").value = state.cardAmount ? state.cardAmount.toFixed(2) : "";
-    document.getElementById("cash-output").textContent = `$${((order.total || getFinalTotal()) - state.cardAmount).toFixed(2)}`;
+  state.pupCup=order.pupCup||0;
+  const pcEl=document.getElementById("pupCup-count"); if(pcEl) pcEl.textContent=state.pupCup;
+  state.payment=order.payment||"card";
+  const payRadio=document.querySelector(`input[name="payment"][value="${state.payment}"]`); if(payRadio) payRadio.checked=true;
+  if(state.payment==="mixed"){
+    state.cardAmount=order.cardAmount||0;
+    document.getElementById("mixed-fields").style.display="grid";
+    document.getElementById("card-input").value=state.cardAmount?state.cardAmount.toFixed(2):"";
+    document.getElementById("cash-output").textContent=`$${((order.total||getFinalTotal())-state.cardAmount).toFixed(2)}`;
   } else {
-    state.cardAmount = 0;
-    document.getElementById("mixed-fields").style.display = "none";
+    state.cardAmount=0;
+    document.getElementById("mixed-fields").style.display="none";
   }
-  state.notes = order.notes || "";
-  const ni = document.getElementById("notes-input"); if (ni) ni.value = state.notes;
-  state.tip = order.tip || 0; state.discount = order.discount || 0;
-  document.getElementById("tip-input").value = state.tip > 0 ? state.tip.toFixed(2) : "";
-  document.getElementById("discount-input").value = state.discount > 0 ? state.discount.toFixed(2) : "";
+  state.notes=order.notes||"";
+  const ni=document.getElementById("notes-input"); if(ni) ni.value=state.notes;
+  state.tip=order.tip||0; state.discount=order.discount||0;
+  document.getElementById("tip-input").value=state.tip>0?state.tip.toFixed(2):"";
+  document.getElementById("discount-input").value=state.discount>0?state.discount.toFixed(2):"";
   updateTotal(); updateSummary(); updateAdjustmentPreview();
 }
 
-// ── RENDER SECTIONS ───────────────────────────────────────────────────────
 function renderCustomerSection(){
-  const container = document.getElementById("customer-section");
-  customerTypes.forEach(ct => {
-    const row = document.createElement("div");
-    row.className = "row";
-    row.innerHTML = `
-      <div class="label">${ct.label}</div>
-      <div class="controls">
-        <button class="btn btn-minus" data-type="customer" data-key="${ct.key}" data-delta="-1">−</button>
-        <span class="count" id="customer-${ct.key}">0</span>
-        <button class="btn btn-plus"  data-type="customer" data-key="${ct.key}" data-delta="1">+</button>
-      </div>`;
+  const container=document.getElementById("customer-section");
+  customerTypes.forEach(ct=>{
+    const row=document.createElement("div");
+    row.className="row";
+    row.innerHTML=`<div class="label">${ct.label}</div><div class="controls"><button class="btn btn-minus" data-type="customer" data-key="${ct.key}" data-delta="-1">−</button><span class="count" id="customer-${ct.key}">0</span><button class="btn btn-plus" data-type="customer" data-key="${ct.key}" data-delta="1">+</button></div>`;
     container.appendChild(row);
   });
-  const argRow = document.createElement("div");
-  argRow.className = "row";
-  argRow.style.marginTop = "6px";
-  argRow.innerHTML = `<button id="arg-toggle" type="button" class="vessel-btn" style="width:100%;">🇦🇷 Argie</button>`;
+  const argRow=document.createElement("div");
+  argRow.className="row"; argRow.style.marginTop="6px";
+  argRow.innerHTML=`<button id="arg-toggle" type="button" class="vessel-btn" style="width:100%;">🇦🇷 Argie</button>`;
   container.appendChild(argRow);
-  document.getElementById("arg-toggle").addEventListener("click", () => {
-    state.argentinian = !state.argentinian;
-    const btn = document.getElementById("arg-toggle");
-    btn.className = "vessel-btn" + (state.argentinian ? " selected" : "");
-    updateSummary();
-  });
-  const pupRow = document.createElement("div");
-  pupRow.className = "row";
-  pupRow.style.marginTop = "4px";
-  pupRow.innerHTML = `
-    <div class="label">🐾 Pup Cup</div>
-    <div class="controls">
-      <button class="btn btn-minus" data-type="pupCup" data-delta="-1">−</button>
-      <span class="count" id="pupCup-count">0</span>
-      <button class="btn btn-plus"  data-type="pupCup" data-delta="1">+</button>
-    </div>`;
+  document.getElementById("arg-toggle").addEventListener("click",()=>{ state.argentinian=!state.argentinian; const btn=document.getElementById("arg-toggle"); btn.className="vessel-btn"+(state.argentinian?" selected":""); updateSummary(); });
+  const pupRow=document.createElement("div");
+  pupRow.className="row"; pupRow.style.marginTop="4px";
+  pupRow.innerHTML=`<div class="label">🐾 Pup Cup</div><div class="controls"><button class="btn btn-minus" data-type="pupCup" data-delta="-1">−</button><span class="count" id="pupCup-count">0</span><button class="btn btn-plus" data-type="pupCup" data-delta="1">+</button></div>`;
   container.appendChild(pupRow);
 }
 
 function updateExtrasBorders(){
-  extrasData.forEach(ex => {
-    const el = document.getElementById(`extra-${ex.key}`); if (!el) return;
-    const card = el.closest(".flavour-card");
-    if (card) card.style.borderColor = state.extras[ex.key] > 0 ? "var(--accent)" : "transparent";
-  });
+  extrasData.forEach(ex=>{ const el=document.getElementById(`extra-${ex.key}`); if(!el) return; const card=el.closest(".flavour-card"); if(card) card.style.borderColor=state.extras[ex.key]>0?"var(--accent)":"transparent"; });
 }
-
 function updateOtherBorders(){
-  otherItems.forEach(o => {
-    const el = document.getElementById(`other-${o.key}`); if (!el) return;
-    const card = el.closest(".flavour-card");
-    if (card) card.style.borderColor = state.others[o.key] > 0 ? "var(--accent)" : "transparent";
-  });
+  otherItems.forEach(o=>{ const el=document.getElementById(`other-${o.key}`); if(!el) return; const card=el.closest(".flavour-card"); if(card) card.style.borderColor=state.others[o.key]>0?"var(--accent)":"transparent"; });
 }
 
 function renderExtrasSection(){
-  const container = document.getElementById("extras-grid");
-  extrasData.forEach(ex => {
-    const card = document.createElement("div");
-    card.className = "flavour-card";
-    card.innerHTML = `
-      <div class="flavour-top">
-        <div class="flavour-name">${ex.label} <span class="price">$${ex.price.toFixed(2)}</span></div>
-      </div>
-      <div class="flavour-controls">
-        <button class="btn btn-minus" data-type="extra" data-key="${ex.key}" data-delta="-1">−</button>
-        <span class="count" id="extra-${ex.key}">0</span>
-        <button class="btn btn-plus"  data-type="extra" data-key="${ex.key}" data-delta="1">+</button>
-      </div>`;
-    container.appendChild(card);
-  });
-  otherItems.forEach(o => {
-    const card = document.createElement("div");
-    card.className = "flavour-card";
-    card.id = `other-card-${o.key}`;
-    if (o.key === "customOther"){
-      card.innerHTML = `
-        <div class="flavour-top">
-          <div class="flavour-name">${o.label} <span class="price">$<input type="number" id="other-custom-price" min="0" step="0.50" placeholder="0.00" class="other-price-input"></span></div>
-        </div>
+  const container=document.getElementById("extras-grid");
+  extrasData.forEach(ex=>{
+    const card=document.createElement("div");
+    card.className="flavour-card";
+    if(ex.key==="affogato"){
+      card.innerHTML=`
+        <div class="flavour-top"><div class="flavour-name">${ex.label} <span class="price">$${ex.price.toFixed(2)}</span></div></div>
         <div class="flavour-controls">
-          <button class="btn btn-minus" data-type="other" data-key="${o.key}" data-delta="-1">−</button>
-          <span class="count" id="other-${o.key}">0</span>
-          <button class="btn btn-plus"  data-type="other" data-key="${o.key}" data-delta="1">+</button>
+          <button class="btn btn-minus" data-type="extra" data-key="${ex.key}" data-delta="-1">−</button>
+          <span class="count" id="extra-${ex.key}">0</span>
+          <button class="btn btn-plus"  data-type="extra" data-key="${ex.key}" data-delta="1">+</button>
+        </div>
+        <div class="affogato-flavour-row" id="affogato-flavour-row">
+          <span class="affogato-flavour-label" id="affogato-flavour-current">No flavour chosen</span>
+          <button class="affogato-change-btn" id="affogato-change-btn" type="button">☕ Choose</button>
         </div>`;
     } else {
-      card.innerHTML = `
-        <div class="flavour-top">
-          <div class="flavour-name">${o.label} <span class="price">$${o.price.toFixed(2)}</span></div>
-        </div>
+      card.innerHTML=`
+        <div class="flavour-top"><div class="flavour-name">${ex.label} <span class="price">$${ex.price.toFixed(2)}</span></div></div>
         <div class="flavour-controls">
-          <button class="btn btn-minus" data-type="other" data-key="${o.key}" data-delta="-1">−</button>
-          <span class="count" id="other-${o.key}">0</span>
-          <button class="btn btn-plus"  data-type="other" data-key="${o.key}" data-delta="1">+</button>
+          <button class="btn btn-minus" data-type="extra" data-key="${ex.key}" data-delta="-1">−</button>
+          <span class="count" id="extra-${ex.key}">0</span>
+          <button class="btn btn-plus"  data-type="extra" data-key="${ex.key}" data-delta="1">+</button>
         </div>`;
     }
     container.appendChild(card);
   });
-  document.getElementById("other-custom-price").addEventListener("input", e => {
-    state.customOtherPrice = parseFloat(e.target.value || "0");
-    updateTotal(); updateAdjustmentPreview(); updateSummary();
+  document.getElementById("affogato-change-btn").addEventListener("click", openAffogatoFlavourPopup);
+
+  otherItems.forEach(o=>{
+    const card=document.createElement("div");
+    card.className="flavour-card";
+    card.id=`other-card-${o.key}`;
+    if(o.key==="customOther"){
+      card.innerHTML=`<div class="flavour-top"><div class="flavour-name">${o.label} <span class="price">$<input type="number" id="other-custom-price" min="0" step="0.50" placeholder="0.00" class="other-price-input"></span></div></div><div class="flavour-controls"><button class="btn btn-minus" data-type="other" data-key="${o.key}" data-delta="-1">−</button><span class="count" id="other-${o.key}">0</span><button class="btn btn-plus" data-type="other" data-key="${o.key}" data-delta="1">+</button></div>`;
+    } else {
+      card.innerHTML=`<div class="flavour-top"><div class="flavour-name">${o.label} <span class="price">$${o.price.toFixed(2)}</span></div></div><div class="flavour-controls"><button class="btn btn-minus" data-type="other" data-key="${o.key}" data-delta="-1">−</button><span class="count" id="other-${o.key}">0</span><button class="btn btn-plus" data-type="other" data-key="${o.key}" data-delta="1">+</button></div>`;
+    }
+    container.appendChild(card);
   });
+  document.getElementById("other-custom-price").addEventListener("input",e=>{ state.customOtherPrice=parseFloat(e.target.value||"0"); updateTotal(); updateAdjustmentPreview(); updateSummary(); });
 }
 
-// ── EVENT HANDLERS ────────────────────────────────────────────────────────
 function attachHandlers(){
-  document.body.addEventListener("click", e => {
-    const btn = e.target.closest("button[data-type]");
-    if (!btn) return;
-    const type  = btn.dataset.type;
-    const key   = btn.dataset.key;
-    const delta = parseInt(btn.dataset.delta || "0", 10);
-    if (type === "customer"){ state.customers[key] = Math.max(0, state.customers[key] + delta); document.getElementById(`customer-${key}`).textContent = state.customers[key]; }
-    if (type === "pupCup"){ state.pupCup = Math.max(0, state.pupCup + parseInt(btn.dataset.delta)); document.getElementById("pupCup-count").textContent = state.pupCup; }
-    if (type === "extra"){ state.extras[key] = Math.max(0, state.extras[key] + delta); document.getElementById(`extra-${key}`).textContent = state.extras[key]; updateTotal(); updateAdjustmentPreview(); updateExtrasBorders(); }
-    if (type === "other"){ state.others[key] = Math.max(0, state.others[key] + delta); document.getElementById(`other-${key}`).textContent = state.others[key]; updateTotal(); updateAdjustmentPreview(); updateOtherBorders(); }
-    updateSummary();
-  });
-
-  document.getElementById("add-gelato-btn").addEventListener("click", () => openBuilder(null));
-  document.getElementById("vessel-cup").addEventListener("click",  () => { builder.vessel = "cup";  renderBuilderVessel(); });
-  document.getElementById("vessel-cone").addEventListener("click", () => { builder.vessel = "cone"; renderBuilderVessel(); });
-  document.getElementById("add-scoop-btn").addEventListener("click", () => {
-    const sizeObj = sizes.find(s => s.key === builder.sizeKey);
-    if (builder.scoops.length < (sizeObj ? sizeObj.maxScoops : 4)){
-      const newIdx = builder.scoops.length;
-      builder.scoops.push(null);
-      builder.activeScoopIdx = newIdx;
-      renderBuilderScoops();
-      renderFlavourPickGrid();
+  document.body.addEventListener("click",e=>{
+    const btn=e.target.closest("button[data-type]"); if(!btn) return;
+    const type=btn.dataset.type, key=btn.dataset.key, delta=parseInt(btn.dataset.delta||"0",10);
+    if(type==="customer"){ state.customers[key]=Math.max(0,state.customers[key]+delta); document.getElementById(`customer-${key}`).textContent=state.customers[key]; }
+    if(type==="pupCup"){ state.pupCup=Math.max(0,state.pupCup+parseInt(btn.dataset.delta)); document.getElementById("pupCup-count").textContent=state.pupCup; }
+    if(type==="extra"){
+      state.extras[key]=Math.max(0,state.extras[key]+delta);
+      document.getElementById(`extra-${key}`).textContent=state.extras[key];
+      if(key==="affogato"){
+        // Trim or extend affogatoFlavours to match new qty
+        const qty=state.extras.affogato;
+        while(state.affogatoFlavours.length<qty) state.affogatoFlavours.push(VANILLA_FLAVOUR);
+        state.affogatoFlavours.length=qty;
+        if(qty===0){ affogatoGridBuilt=false; }
+        updateAffogatoFlavourUI();
+      }
+      updateTotal(); updateAdjustmentPreview(); updateExtrasBorders();
     }
-  });
-  document.getElementById("builder-add-btn").addEventListener("click", commitBuilder);
-  document.getElementById("builder-cancel-btn").addEventListener("click", closeBuilder);
-  document.getElementById("builder-close-btn").addEventListener("click", closeBuilder);
-
-  document.querySelectorAll('input[name="payment"]').forEach(radio =>
-    radio.addEventListener("change", () => {
-      state.payment = document.querySelector('input[name="payment"]:checked').value;
-      document.getElementById("mixed-fields").style.display = state.payment === "mixed" ? "grid" : "none";
-      if (state.payment !== "mixed"){ document.getElementById("card-input").value = ""; document.getElementById("cash-output").textContent = "$0.00"; state.cardAmount = 0; }
-      else { document.getElementById("card-input").value = ""; document.getElementById("cash-output").textContent = `$${getFinalTotal().toFixed(2)}`; state.cardAmount = 0; }
-      updateSummary();
-    })
-  );
-  document.getElementById("card-input").addEventListener("input", () => {
-    const total = getFinalTotal();
-    let val = parseFloat(document.getElementById("card-input").value || "0");
-    if (val > total){ val = total; document.getElementById("card-input").value = total.toFixed(2); }
-    state.cardAmount = val;
-    document.getElementById("cash-output").textContent = `$${(total - val).toFixed(2)}`;
-  });
-
-  document.getElementById("notes-btn").addEventListener("click", () => {
-    document.getElementById("notes-input").value = state.notes || "";
-    document.getElementById("notes-popup").style.display = "block";
-    document.getElementById("modal-overlay").classList.add("show");
-    document.getElementById("notes-input").focus();
-  });
-  document.getElementById("finish-notes").addEventListener("click", () => {
-    state.notes = document.getElementById("notes-input").value.trim();
-    document.getElementById("notes-popup").style.display = "none";
-    document.getElementById("modal-overlay").classList.remove("show");
-  });
-
-  document.getElementById("adjust-btn").addEventListener("click", () => {
-    document.getElementById("tip-input").value = state.tip > 0 ? state.tip.toFixed(2) : "";
-    document.getElementById("discount-input").value = state.discount > 0 ? state.discount.toFixed(2) : "";
-    updateAdjustmentPreview();
-    document.getElementById("adjust-popup").style.display = "block";
-    document.getElementById("modal-overlay").classList.add("show");
-    document.getElementById("tip-input").focus();
-  });
-  document.getElementById("tip-input").addEventListener("input",      () => { state.tip      = parseFloat(document.getElementById("tip-input").value      || "0"); updateAdjustmentPreview(); updateTotal(); });
-  document.getElementById("discount-input").addEventListener("input", () => { state.discount = parseFloat(document.getElementById("discount-input").value || "0"); updateAdjustmentPreview(); updateTotal(); });
-  document.getElementById("finish-adjust").addEventListener("click",  () => { document.getElementById("adjust-popup").style.display = "none"; document.getElementById("modal-overlay").classList.remove("show"); updateSummary(); });
-
-  document.getElementById("special-other-popup").addEventListener("click", e => {
-    const btn = e.target.closest("button[data-special]"); if (!btn) return;
-    const name = btn.dataset.special, delta = parseInt(btn.dataset.delta, 10);
-    if (!state.specialCounts[name]) state.specialCounts[name] = 0;
-    state.specialCounts[name] = Math.max(0, state.specialCounts[name] + delta);
-    const el = document.getElementById("special-count-" + cssSafe(name));
-    if (el) el.textContent = state.specialCounts[name];
+    if(type==="other"){ state.others[key]=Math.max(0,state.others[key]+delta); document.getElementById(`other-${key}`).textContent=state.others[key]; updateTotal(); updateAdjustmentPreview(); updateOtherBorders(); }
     updateSummary();
   });
-  document.getElementById("finish-special-other").addEventListener("click", closeSpecialOtherPopup);
 
-  document.getElementById("modal-overlay").addEventListener("click", () => {
-    document.getElementById("adjust-popup").style.display = "none";
-    document.getElementById("notes-popup").style.display  = "none";
-    document.getElementById("special-other-popup").style.display = "none";
+  document.getElementById("add-gelato-btn").addEventListener("click",()=>openBuilder(null));
+  document.getElementById("vessel-cup").addEventListener("click",()=>{ builder.vessel="cup"; renderBuilderVessel(); });
+  document.getElementById("vessel-cone").addEventListener("click",()=>{ builder.vessel="cone"; renderBuilderVessel(); });
+  document.getElementById("add-scoop-btn").addEventListener("click",()=>{
+    const sizeObj=sizes.find(s=>s.key===builder.sizeKey);
+    if(builder.scoops.length<(sizeObj?sizeObj.maxScoops:4)){ const newIdx=builder.scoops.length; builder.scoops.push(null); builder.activeScoopIdx=newIdx; renderBuilderScoops(); renderFlavourPickGrid(); }
+  });
+  document.getElementById("builder-add-btn").addEventListener("click",commitBuilder);
+  document.getElementById("builder-cancel-btn").addEventListener("click",closeBuilder);
+  document.getElementById("builder-close-btn").addEventListener("click",closeBuilder);
+
+  document.getElementById("affogato-popup-close-btn").addEventListener("click",closeAffogatoFlavourPopup);
+  document.getElementById("affogato-flavour-done-btn").addEventListener("click",closeAffogatoFlavourPopup);
+
+  document.querySelectorAll('input[name="payment"]').forEach(radio=>radio.addEventListener("change",()=>{
+    state.payment=document.querySelector('input[name="payment"]:checked').value;
+    document.getElementById("mixed-fields").style.display=state.payment==="mixed"?"grid":"none";
+    if(state.payment!=="mixed"){ document.getElementById("card-input").value=""; document.getElementById("cash-output").textContent="$0.00"; state.cardAmount=0; }
+    else { document.getElementById("card-input").value=""; document.getElementById("cash-output").textContent=`$${getFinalTotal().toFixed(2)}`; state.cardAmount=0; }
+    updateSummary();
+  }));
+  document.getElementById("card-input").addEventListener("input",()=>{
+    const total=getFinalTotal(); let val=parseFloat(document.getElementById("card-input").value||"0");
+    if(val>total){ val=total; document.getElementById("card-input").value=total.toFixed(2); }
+    state.cardAmount=val; document.getElementById("cash-output").textContent=`$${(total-val).toFixed(2)}`;
+  });
+  document.getElementById("notes-btn").addEventListener("click",()=>{ document.getElementById("notes-input").value=state.notes||""; document.getElementById("notes-popup").style.display="block"; document.getElementById("modal-overlay").classList.add("show"); document.getElementById("notes-input").focus(); });
+  document.getElementById("finish-notes").addEventListener("click",()=>{ state.notes=document.getElementById("notes-input").value.trim(); document.getElementById("notes-popup").style.display="none"; document.getElementById("modal-overlay").classList.remove("show"); });
+  document.getElementById("adjust-btn").addEventListener("click",()=>{ document.getElementById("tip-input").value=state.tip>0?state.tip.toFixed(2):""; document.getElementById("discount-input").value=state.discount>0?state.discount.toFixed(2):""; updateAdjustmentPreview(); document.getElementById("adjust-popup").style.display="block"; document.getElementById("modal-overlay").classList.add("show"); document.getElementById("tip-input").focus(); });
+  document.getElementById("tip-input").addEventListener("input",()=>{ state.tip=parseFloat(document.getElementById("tip-input").value||"0"); updateAdjustmentPreview(); updateTotal(); });
+  document.getElementById("discount-input").addEventListener("input",()=>{ state.discount=parseFloat(document.getElementById("discount-input").value||"0"); updateAdjustmentPreview(); updateTotal(); });
+  document.getElementById("finish-adjust").addEventListener("click",()=>{ document.getElementById("adjust-popup").style.display="none"; document.getElementById("modal-overlay").classList.remove("show"); updateSummary(); });
+  document.getElementById("special-other-popup").addEventListener("click",e=>{ const btn=e.target.closest("button[data-special]"); if(!btn) return; const name=btn.dataset.special,delta=parseInt(btn.dataset.delta,10); if(!state.specialCounts[name]) state.specialCounts[name]=0; state.specialCounts[name]=Math.max(0,state.specialCounts[name]+delta); const el=document.getElementById("special-count-"+cssSafe(name)); if(el) el.textContent=state.specialCounts[name]; updateSummary(); });
+  document.getElementById("finish-special-other").addEventListener("click",closeSpecialOtherPopup);
+
+  document.getElementById("modal-overlay").addEventListener("click",()=>{
+    if(document.getElementById("builder-popup").classList.contains("show")) return;
+    if(document.getElementById("affogato-flavour-popup").classList.contains("show")) return;
+    document.getElementById("adjust-popup").style.display="none";
+    document.getElementById("notes-popup").style.display="none";
+    document.getElementById("special-other-popup").style.display="none";
     document.getElementById("modal-overlay").classList.remove("show");
   });
 
-  document.getElementById("cancel-btn").addEventListener("click", resetAll);
-  document.getElementById("done-btn").addEventListener("click", async () => {
-    const btn = document.getElementById("done-btn");
-    if (btn.disabled) return;
-    document.getElementById("tap-sound").play();
-    btn.disabled = true;
-    await submitOrder();
-    setTimeout(() => { btn.disabled = false; }, 800);
+  document.getElementById("cancel-btn").addEventListener("click",resetAll);
+  document.getElementById("done-btn").addEventListener("click",async()=>{
+    const btn=document.getElementById("done-btn"); if(btn.disabled) return;
+    document.getElementById("tap-sound").play(); btn.disabled=true;
+    await submitOrder(); setTimeout(()=>{ btn.disabled=false; },800);
   });
 }
 
 function unlockSounds(){
-  ["tap-sound","cash-sound"].forEach(id => {
-    const el = document.getElementById(id);
-    el.play().then(() => { el.pause(); el.currentTime = 0; }).catch(()=>{});
-  });
-  document.removeEventListener("click", unlockSounds);
+  ["tap-sound","cash-sound"].forEach(id=>{ const el=document.getElementById(id); el.play().then(()=>{ el.pause(); el.currentTime=0; }).catch(()=>{}); });
+  document.removeEventListener("click",unlockSounds);
 }
 
-// ── INIT ──────────────────────────────────────────────────────────────────
-document.addEventListener("click", unlockSounds);
+document.addEventListener("click",unlockSounds);
 renderCustomerSection();
 renderExtrasSection();
 renderQueue();
