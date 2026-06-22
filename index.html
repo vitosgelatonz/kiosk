@@ -1097,6 +1097,17 @@ function tallyQueue(){
       }
     });
   });
+  // Also count affogato flavours
+  state.affogatoFlavours.forEach(f => {
+    if (!f) return;
+    const isSpecial = activeSpecials.find(s => s.name === f);
+    if (f === "Special Other" || isSpecial){
+      flavourCounts["Special Other"] = (flavourCounts["Special Other"]||0)+1;
+      if (isSpecial) state.specialCounts[f] = (state.specialCounts[f]||0)+1;
+    } else {
+      flavourCounts[f] = (flavourCounts[f]||0)+1;
+    }
+  });
   return { sizeCounts, flavourCounts, coneCount, cupCount };
 }
 
