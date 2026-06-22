@@ -192,17 +192,41 @@
     .builder-header h3 { margin: 0; font-size: 1rem; }
     .builder-close { background: none; border: none; color: #fff; font-size: 1.4rem; cursor: pointer; padding: 0 4px; }
 
-    /* Two-column body layout */
+    /* Three-column body layout */
     .builder-body {
       overflow-y: auto; padding: 14px 16px; flex: 1;
       display: grid;
-      grid-template-columns: 220px 1fr;
+      grid-template-columns: 200px 1fr 110px;
       gap: 16px;
-      align-items: start;
+      align-items: stretch;
     }
 
     .builder-left { display: flex; flex-direction: column; gap: 14px; }
     .builder-right { display: flex; flex-direction: column; gap: 10px; }
+
+    /* ── UPDATED: Action buttons fill full height ── */
+    .builder-actions {
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+      height: 100%;
+    }
+    .builder-actions-add {
+      border: none; background: var(--accent); color: #fff;
+      border-radius: 12px;
+      font-size: 0.9rem; font-weight: 700; cursor: pointer;
+      text-align: center; line-height: 1.3;
+      flex: 3;
+      display: flex; align-items: center; justify-content: center;
+    }
+    .builder-actions-cancel {
+      border: 2px solid #ddd; background: #fff;
+      border-radius: 12px;
+      font-size: 0.85rem; font-weight: 600; cursor: pointer;
+      text-align: center;
+      flex: 1;
+      display: flex; align-items: center; justify-content: center;
+    }
 
     .builder-step-label { font-size: 0.78rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.05em; color: var(--accent); margin-bottom: 6px; }
 
@@ -278,14 +302,6 @@
     .scoop-slot.active-pick { border-color: #f0a500; background: #fffbe6; }
     .scoop-slot.active-pick .scoop-slot-label { color: #b07800; }
 
-    .builder-footer {
-      padding: 12px 16px; border-top: 1px solid #eee; flex-shrink: 0; display: flex; gap: 8px;
-    }
-    .builder-footer-cancel { flex: 1; border: 2px solid #ddd; background: #fff; border-radius: 999px; padding: 9px; font-size: 0.9rem; font-weight: 600; cursor: pointer; }
-    .builder-footer-add    { flex: 2; border: none; background: var(--accent); color: #fff; border-radius: 999px; padding: 9px; font-size: 0.9rem; font-weight: 600; cursor: pointer; }
-
-    /* ── EXTRAS ── */
-
     /* ── BOTTOM BAR ── */
     .bottom-bar {
       position: sticky; bottom: 0;
@@ -321,6 +337,7 @@
     @media (max-width: 900px) {
       #builder-popup { width: min(96vw, 96vw); }
       .builder-body { grid-template-columns: 1fr; }
+      .builder-actions { flex-direction: row; height: auto; }
       .flavour-pick-grid { grid-template-columns: repeat(auto-fill, minmax(80px, 1fr)); }
     }
     @media (max-width: 700px) {
@@ -417,15 +434,16 @@
           <button class="add-scoop-btn" id="add-scoop-btn" type="button" style="margin-top:6px;">+ Add extra scoop</button>
         </div>
       </div>
-      <!-- RIGHT: flavour picker -->
+      <!-- MIDDLE: flavour picker -->
       <div class="builder-right">
         <div class="builder-step-label" id="flavour-pick-label">← Choose a size, then tap a scoop to pick flavour</div>
         <div class="flavour-pick-grid" id="flavour-pick-grid"></div>
       </div>
-    </div>
-    <div class="builder-footer">
-      <button class="builder-footer-cancel" id="builder-cancel-btn" type="button">Cancel</button>
-      <button class="builder-footer-add"    id="builder-add-btn"    type="button">Add to Order</button>
+      <!-- RIGHT: action buttons -->
+      <div class="builder-actions">
+        <button class="builder-actions-add"    id="builder-add-btn"    type="button">Add to Order</button>
+        <button class="builder-actions-cancel" id="builder-cancel-btn" type="button">Cancel</button>
+      </div>
     </div>
   </div>
 
@@ -553,7 +571,7 @@ const builder = {
   sizeKey:        null,
   vessel:         "cone",
   scoops:         [],
-  activeScoopIdx: null,   // which scoop slot is waiting for a flavour pick
+  activeScoopIdx: null,
 };
 
 // ── HELPERS ───────────────────────────────────────────────────────────────
@@ -625,7 +643,6 @@ function renderFlavourPickGrid(){
   if (!flavourGridBuilt){
     grid.innerHTML = "";
 
-    // Permanent Collection (the 10 flavours with the blue background)
     const permanentCollection = flavourData.filter(f => f.bg === "#cde4ea");
     const otherFlavours       = flavourData.filter(f => f.bg !== "#cde4ea");
 
@@ -637,7 +654,6 @@ function renderFlavourPickGrid(){
       grid.appendChild(makeFlavourPickCard(f.name, f.image, f.bg || null));
     });
 
-    // Specials — remaining flavours, then live/loaded specials (e.g. Tim Crunch), then Special Other
     const specialsDiv = document.createElement("div");
     specialsDiv.className = "flavour-section-divider";
     specialsDiv.textContent = "✨ Specials";
@@ -677,12 +693,10 @@ function makeFlavourPickCard(name, image, bg){
   card.addEventListener("click", () => {
     if (builder.activeScoopIdx === null) return;
     builder.scoops[builder.activeScoopIdx] = name;
-    // Try to advance to next unfilled scoop
     const nextEmpty = builder.scoops.findIndex((s, i) => i > builder.activeScoopIdx && !s);
     if (nextEmpty >= 0){
       builder.activeScoopIdx = nextEmpty;
     } else {
-      // No unfilled scoop ahead — add a new optional slot if under maxScoops
       const sizeObj = sizes.find(s => s.key === builder.sizeKey);
       const max = sizeObj ? sizeObj.maxScoops : 4;
       if (builder.scoops.length < max){
@@ -702,13 +716,12 @@ function makeFlavourPickCard(name, image, bg){
 function openBuilder(editId = null){
   builder.editingId      = editId;
   builder.activeScoopIdx = null;
-  flavourGridBuilt       = false;   // always rebuild grid so live specials are current
+  flavourGridBuilt       = false;
   if (editId !== null){
     const item = state.gelatoQueue.find(g => g.id === editId);
     builder.sizeKey = item.sizeKey;
     builder.vessel  = item.vessel;
     builder.scoops  = [...item.scoops];
-    // Auto-activate first empty scoop, or scoop 0 if all filled
     const firstEmpty = builder.scoops.findIndex(s => !s);
     builder.activeScoopIdx = firstEmpty >= 0 ? firstEmpty : 0;
     document.getElementById("builder-title").textContent = "Edit Gelato";
@@ -746,7 +759,7 @@ function renderBuilderSizes(){
     pill.addEventListener("click", () => {
       builder.sizeKey        = sz.key;
       builder.scoops         = Array(sz.defaultScoops).fill(null);
-      builder.activeScoopIdx = 0;   // auto-select first scoop
+      builder.activeScoopIdx = 0;
       renderBuilderSizes();
       renderBuilderVessel();
       renderBuilderScoops();
@@ -1099,7 +1112,6 @@ function renderCustomerSection(){
       </div>`;
     container.appendChild(row);
   });
-  // Argentinian toggle
   const argRow = document.createElement("div");
   argRow.className = "row";
   argRow.style.marginTop = "6px";
@@ -1111,7 +1123,6 @@ function renderCustomerSection(){
     btn.className = "vessel-btn" + (state.argentinian ? " selected" : "");
     updateSummary();
   });
-  // Pup Cup counter
   const pupRow = document.createElement("div");
   pupRow.className = "row";
   pupRow.style.marginTop = "4px";
@@ -1222,7 +1233,6 @@ function attachHandlers(){
   document.getElementById("builder-cancel-btn").addEventListener("click", closeBuilder);
   document.getElementById("builder-close-btn").addEventListener("click", closeBuilder);
 
-  // Payment
   document.querySelectorAll('input[name="payment"]').forEach(radio =>
     radio.addEventListener("change", () => {
       state.payment = document.querySelector('input[name="payment"]:checked').value;
@@ -1275,7 +1285,6 @@ function attachHandlers(){
   });
   document.getElementById("finish-special-other").addEventListener("click", closeSpecialOtherPopup);
 
-  // Modal overlay closes standard popups only (not builder)
   document.getElementById("modal-overlay").addEventListener("click", () => {
     document.getElementById("adjust-popup").style.display = "none";
     document.getElementById("notes-popup").style.display  = "none";
