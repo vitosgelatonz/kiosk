@@ -714,6 +714,23 @@ async function loadSpecials(){
   affogatoGridBuilt = false;
   brownieGridBuilt  = false;
   buildSpecialOtherPopup();
+
+  // If a flavour grid is already open (e.g. user opened the builder before
+  // specials finished loading on a slow connection), rebuild it right now
+  // instead of waiting for the next render call.
+  if (document.getElementById("builder-popup").classList.contains("show")) {
+    renderFlavourPickGrid();
+  }
+  if (document.getElementById("affogato-flavour-popup").classList.contains("show")) {
+    buildFlavourGrid(document.getElementById("affogato-flavour-pick-grid"), "affogato");
+    affogatoGridBuilt = true;
+    updatePickerGridSelection("affogato");
+  }
+  if (document.getElementById("brownie-flavour-popup").classList.contains("show")) {
+    buildFlavourGrid(document.getElementById("brownie-flavour-pick-grid"), "brownie");
+    brownieGridBuilt = true;
+    updatePickerGridSelection("brownie");
+  }
 }
 
 function buildSpecialOtherPopup(){
@@ -968,16 +985,16 @@ let flavourGridBuilt = false;
 function renderFlavourPickGrid(){
   const grid  = document.getElementById("flavour-pick-grid");
   const label = document.getElementById("flavour-pick-label");
+  if (!flavourGridBuilt){
+    buildFlavourGrid(grid, "builder");
+    flavourGridBuilt = true;
+  }
   if (builder.activeScoopIdx === null){
     label.textContent = "← Tap a scoop slot to choose its flavour";
     updateFlavourGridSelection();
     return;
   }
   label.textContent = `Scoop ${builder.activeScoopIdx + 1} — tap a flavour`;
-  if (!flavourGridBuilt){
-    buildFlavourGrid(grid, "builder");
-    flavourGridBuilt = true;
-  }
   updateFlavourGridSelection();
 }
 
