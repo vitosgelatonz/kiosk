@@ -22,12 +22,13 @@
       background: var(--bg-main);
       color: var(--text-main);
       font-size: 15px;
+      overflow-x: hidden;
     }
-    .app { max-width: 1500px; margin: 0 auto; padding: 6px; }
+    .app { max-width: 1500px; margin: 0 auto; padding: 6px; overflow-x: hidden; }
 
     .sections {
       display: grid;
-      grid-template-columns: 340px 1fr;
+      grid-template-columns: 260px minmax(0, 1fr);
       gap: 8px;
       align-items: start;
     }
@@ -94,7 +95,7 @@
     #add-gelato-btn:active { background: #e6f3f6; }
 
     /* ── EXTRAS GRID ── */
-    .extras-grid { display: grid; grid-template-columns: repeat(6, 1fr); gap: 8px; }
+    .extras-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(130px, 1fr)); gap: 8px; }
     .flavour-card {
       background: #ffffff; border: 2px solid transparent; border-radius: 14px; padding: 6px;
       box-shadow: 0 1px 4px rgba(0,0,0,0.06); display: flex; flex-direction: column; justify-content: space-between;
@@ -315,10 +316,12 @@
     .specials-loading { font-size: 0.78rem; color: var(--text-soft); padding: 6px; text-align: center; font-style: italic; }
 
     @media (max-width: 900px) {
-      .sections { grid-template-columns: 1fr; }
       #builder-popup { width: min(96vw, 96vw); }
       .builder-body { grid-template-columns: 1fr; }
       .flavour-pick-grid { grid-template-columns: repeat(auto-fill, minmax(80px, 1fr)); }
+    }
+    @media (max-width: 700px) {
+      .sections { grid-template-columns: 1fr; }
     }
   </style>
 </head>
