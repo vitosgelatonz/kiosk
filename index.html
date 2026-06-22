@@ -696,6 +696,7 @@ function makeFlavourPickCard(name, image, bg){
 function openBuilder(editId = null){
   builder.editingId      = editId;
   builder.activeScoopIdx = null;
+  flavourGridBuilt       = false;   // always rebuild grid so live specials are current
   if (editId !== null){
     const item = state.gelatoQueue.find(g => g.id === editId);
     builder.sizeKey = item.sizeKey;
