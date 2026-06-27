@@ -157,7 +157,7 @@
     }
     .payment-row { display: flex; justify-content: space-between; align-items: flex-start; gap: 6px; margin-bottom: 3px; margin-top: 3px; }
     .action-buttons { display: flex; gap: 4px; flex-shrink: 0; }
-    #notes-btn, #adjust-btn {
+    #notes-btn, #adjust-btn, #readaloud-btn {
       border: none; border-radius: 50%; width: 30px; height: 30px;
       background: var(--accent); color: #fff;
       display: flex; align-items: center; justify-content: center;
@@ -428,6 +428,7 @@
               <label><input type="radio" name="payment" value="mixed"> Mixed</label>
             </div>
             <div class="action-buttons">
+              <button id="readaloud-btn" type="button" title="Read Aloud Summary">📢</button>
               <button id="adjust-btn" type="button" title="Adjust Total">💰</button>
               <button id="notes-btn"  type="button" title="Add Notes">📝</button>
             </div>
@@ -583,6 +584,16 @@
         <div class="specials-loading">Loading specials…</div>
       </div>
       <div class="popup-actions"><button id="finish-special-other" type="button" class="popup-btn">Done</button></div>
+    </div>
+  </div>
+
+  <!-- READ ALOUD POPUP -->
+  <div id="readaloud-popup" style="display:none; position:fixed; inset:0; background:rgba(0,0,0,0.7); z-index:300; align-items:center; justify-content:center;">
+    <div style="background:#fff; border-radius:20px; padding:36px 40px; max-width:560px; width:90vw; text-align:center; box-shadow:0 8px 40px rgba(0,0,0,0.3);">
+      <div style="font-size:0.78rem; font-weight:700; text-transform:uppercase; letter-spacing:0.08em; color:var(--text-soft); margin-bottom:16px;">Order Summary</div>
+      <div id="readaloud-text" style="font-size:1.8rem; font-weight:700; color:var(--text-main); line-height:1.5;"></div>
+      <div id="readaloud-total" style="font-size:1.4rem; font-weight:700; color:var(--accent); margin-top:20px;"></div>
+      <div style="margin-top:24px; font-size:0.82rem; color:var(--text-soft);">Tap anywhere to close</div>
     </div>
   </div>
 
@@ -1504,6 +1515,32 @@ function attachHandlers(){
     }
     if(type==="other"){ state.others[key]=Math.max(0,state.others[key]+delta); document.getElementById(`other-${key}`).textContent=state.others[key]; updateTotal(); updateAdjustmentPreview(); updateOtherBorders(); }
     updateSummary();
+  });
+
+  document.getElementById("readaloud-btn").addEventListener("click", () => {
+    const parts = [];
+    // Gelatos — group by size label
+    const sizeTally = {};
+    state.gelatoQueue.forEach(g => {
+      const sz = sizes.find(s => s.key === g.sizeKey);
+      const label = sz ? sz.label : g.sizeKey;
+      sizeTally[label] = (sizeTally[label] || 0) + 1;
+    });
+    Object.entries(sizeTally).forEach(([label, qty]) => parts.push(`${qty}× ${label}`));
+    // Extras
+    extrasData.forEach(ex => {
+      if (state.extras[ex.key] > 0) parts.push(`${state.extras[ex.key]}× ${ex.label}`);
+    });
+    // Others
+    otherItems.forEach(o => {
+      if (state.others[o.key] > 0) parts.push(`${state.others[o.key]}× ${o.label}`);
+    });
+    document.getElementById("readaloud-text").textContent = parts.length ? parts.join(",  ") : "Nothing added yet";
+    document.getElementById("readaloud-total").textContent = `$${getFinalTotal().toFixed(2)}`;
+    document.getElementById("readaloud-popup").style.display = "flex";
+  });
+  document.getElementById("readaloud-popup").addEventListener("click", () => {
+    document.getElementById("readaloud-popup").style.display = "none";
   });
 
   document.getElementById("add-gelato-btn").addEventListener("click",()=>openBuilder(null));
