@@ -992,8 +992,16 @@ function renderFlavourPickGrid(){
 
 function updateFlavourGridSelection(){
   const current = builder.activeScoopIdx !== null ? (builder.scoops[builder.activeScoopIdx] || null) : null;
+  const pickedSet = new Set(builder.scoops.filter(Boolean));
   document.getElementById("flavour-pick-grid").querySelectorAll(".flavour-pick-card")
-    .forEach(card => card.classList.toggle("selected", card.dataset.flavourName === current));
+    .forEach(card => {
+      const name = card.dataset.flavourName;
+      const isActive  = name === current;
+      const isPicked  = pickedSet.has(name);
+      card.classList.toggle("selected", isActive);
+      card.style.outline = (!isActive && isPicked) ? "2px solid var(--accent)" : "";
+      card.style.opacity = isPicked ? "1" : "";
+    });
 }
 
 function openBuilder(editId = null){
