@@ -1273,7 +1273,7 @@ function resetAll(){
   customerTypes.forEach(ct=>{ state.customers[ct.key]=0; const el=document.getElementById(`customer-${ct.key}`); if(el) el.textContent="0"; });
   state.argentinian=false;
   const argBtn=document.getElementById("arg-toggle");
-  if(argBtn){ argBtn.textContent="No"; argBtn.className="vessel-btn"; }
+  if(argBtn){ argBtn.className="vessel-btn"; }
   state.gelatoQueue=[]; renderQueue();
   extrasData.forEach(ex=>{ state.extras[ex.key]=0; const el=document.getElementById(`extra-${ex.key}`); if(el) el.textContent="0"; });
   state.affogatoFlavours=[]; affogatoGridBuilt=false; updateItemFlavourUI("affogato");
@@ -1361,7 +1361,7 @@ function loadOrderForEditing(order){
   customerTypes.forEach(ct=>{ const v=(order.customers&&order.customers[ct.key])||0; state.customers[ct.key]=v; const el=document.getElementById(`customer-${ct.key}`); if(el) el.textContent=v; });
   state.argentinian=order.argentinian==="Yes";
   const argBtn=document.getElementById("arg-toggle");
-  if(argBtn){ argBtn.textContent=state.argentinian?"Yes":"No"; argBtn.className="vessel-btn"+(state.argentinian?" selected":""); }
+  if(argBtn){ argBtn.className="vessel-btn"+(state.argentinian?" selected":""); }
   if(order.gelatoQueue){ state.gelatoQueue=order.gelatoQueue.map(g=>({...g,id:Date.now().toString()+Math.random()})); renderQueue(); }
   extrasData.forEach(ex=>{ const v=(order.extras&&order.extras[ex.key])||0; state.extras[ex.key]=v; const el=document.getElementById(`extra-${ex.key}`); if(el) el.textContent=v; });
   if(order.affogatoFlavoursArr){ state.affogatoFlavours=[...order.affogatoFlavoursArr]; } else { state.affogatoFlavours=[]; }
