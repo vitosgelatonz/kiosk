@@ -85,8 +85,9 @@
     .queue-card-sub   { font-size: 1rem; color: var(--text-soft); white-space: normal; line-height: 1.35; margin-top: 4px; }
     .queue-card-actions { display: flex; gap: 6px; flex-shrink: 0; flex-direction: column; }
     .queue-btn { border: none; border-radius: 8px; padding: 6px 12px; font-size: 0.85rem; font-weight: 600; cursor: pointer; }
-    .queue-btn-edit   { background: var(--accent); color: #fff; }
-    .queue-btn-delete { background: var(--danger);  color: #fff; }
+    .queue-btn-edit      { background: var(--accent); color: #fff; }
+    .queue-btn-duplicate { background: #e65c00;       color: #fff; }
+    .queue-btn-delete    { background: var(--danger);  color: #fff; }
     #add-gelato-btn {
       width: 100%; margin-top: 8px;
       border: 2px dashed var(--accent); background: transparent; color: var(--accent);
@@ -362,7 +363,6 @@
     .add-scoop-btn:hover { border-color: var(--accent); color: var(--accent); }
     .scoop-slot.active-pick { border-color: #f0a500; background: #fffbe6; }
     .scoop-slot.active-pick .scoop-slot-label { color: #b07800; }
-    /* builder-footer removed — actions now live in the 3rd body column (see .builder-actions) */
 
     /* BOTTOM BAR */
     .bottom-bar {
@@ -602,11 +602,11 @@ const customerTypes = [
 ];
 
 const sizes = [
-  { key: "kiddie", label: "Kiddie",   price: 5,  defaultScoops: 1, maxScoops: 2 },
-  { key: "single", label: "Single",   price: 8,  defaultScoops: 1, maxScoops: 2 },
-  { key: "double", label: "Double",   price: 11, defaultScoops: 2, maxScoops: 3 },
-  { key: "triple", label: "Triple",   price: 14, defaultScoops: 3, maxScoops: 4 },
-  { key: "tub",    label: "Takeaway", price: 19, defaultScoops: 2, maxScoops: 4 },
+  { key: "kiddie", label: "Kiddie",   price: 5,  defaultScoops: 1 },
+  { key: "single", label: "Single",   price: 8,  defaultScoops: 1 },
+  { key: "double", label: "Double",   price: 11, defaultScoops: 2 },
+  { key: "triple", label: "Triple",   price: 14, defaultScoops: 3 },
+  { key: "tub",    label: "Takeaway", price: 19, defaultScoops: 2 },
 ];
 
 const extrasData = [
@@ -715,9 +715,6 @@ async function loadSpecials(){
   brownieGridBuilt  = false;
   buildSpecialOtherPopup();
 
-  // If a flavour grid is already open (e.g. user opened the builder before
-  // specials finished loading on a slow connection), rebuild it right now
-  // instead of waiting for the next render call.
   if (document.getElementById("builder-popup").classList.contains("show")) {
     renderFlavourPickGrid();
   }
@@ -790,18 +787,14 @@ function makeFlavourPickCard(name, image, bg, mode){
     if (mode === "builder") {
       if (builder.activeScoopIdx === null) return;
       builder.scoops[builder.activeScoopIdx] = name;
+      // Auto-advance to next empty slot
       const nextEmpty = builder.scoops.findIndex((s, i) => i > builder.activeScoopIdx && !s);
       if (nextEmpty >= 0){
         builder.activeScoopIdx = nextEmpty;
       } else {
-        const sizeObj = sizes.find(s => s.key === builder.sizeKey);
-        const max = sizeObj ? sizeObj.maxScoops : 4;
-        if (builder.scoops.length < max){
-          builder.scoops.push(null);
-          builder.activeScoopIdx = builder.scoops.length - 1;
-        } else {
-          builder.activeScoopIdx = null;
-        }
+        // No limit — always add a new slot after picking
+        builder.scoops.push(null);
+        builder.activeScoopIdx = builder.scoops.length - 1;
       }
       renderBuilderScoops();
       renderFlavourPickGrid();
@@ -880,7 +873,6 @@ function pickerSelectFlavour(type, name) {
   const c = pickerCfg(type);
   const qty = c.qty();
   c.flavours[c.activeIdx()] = name;
-  // Auto-advance to next unfilled slot
   let next = -1;
   for (let i = c.activeIdx() + 1; i < qty; i++){
     if (!c.flavours[i]){ next = i; break; }
@@ -1020,7 +1012,7 @@ function openBuilder(editId = null){
   } else {
     builder.sizeKey = "single";
     builder.vessel  = "cone";
-    builder.scoops  = Array(sizes.find(s => s.key === "single").defaultScoops).fill(null);
+    builder.scoops  = [null];
     builder.activeScoopIdx = 0;
     document.getElementById("builder-title").textContent = "Add Gelato";
     document.getElementById("builder-add-btn").textContent = "Add to Order";
@@ -1048,9 +1040,9 @@ function renderBuilderSizes(){
     pill.className = "size-pill" + (builder.sizeKey === sz.key ? " selected" : "");
     pill.innerHTML = `${sz.label}<span class="pill-price">$${sz.price.toFixed(2)}</span>`;
     pill.addEventListener("click", () => {
-      builder.sizeKey        = sz.key;
-      builder.scoops         = Array(sz.defaultScoops).fill(null);
-      builder.activeScoopIdx = 0;
+      builder.sizeKey = sz.key;
+      // Keep existing scoops — don't reset them
+      if (builder.activeScoopIdx === null) builder.activeScoopIdx = 0;
       renderBuilderSizes();
       renderBuilderVessel();
       renderBuilderScoops();
@@ -1103,10 +1095,8 @@ function renderBuilderScoops(){
     });
     container.appendChild(slot);
   });
-  const addBtn  = document.getElementById("add-scoop-btn");
-  const sizeObj = sizes.find(s => s.key === builder.sizeKey);
-  const max     = sizeObj ? sizeObj.maxScoops : 4;
-  addBtn.style.display = builder.scoops.length < max ? "block" : "none";
+  // Always show the add scoop button — no limit
+  document.getElementById("add-scoop-btn").style.display = "block";
 }
 
 function commitBuilder(){
@@ -1145,13 +1135,23 @@ function renderQueue(){
         <div class="queue-card-sub">${item.scoops.join(", ")}</div>
       </div>
       <div class="queue-card-actions">
-        <button class="queue-btn queue-btn-edit"   data-id="${item.id}">Edit</button>
-        <button class="queue-btn queue-btn-delete" data-id="${item.id}">✕</button>
+        <button class="queue-btn queue-btn-edit"      data-id="${item.id}">Edit</button>
+        <button class="queue-btn queue-btn-duplicate" data-id="${item.id}">⧉ Dupe</button>
+        <button class="queue-btn queue-btn-delete"    data-id="${item.id}">✕</button>
       </div>`;
     list.appendChild(card);
   });
   list.querySelectorAll(".queue-btn-edit").forEach(btn =>
     btn.addEventListener("click", () => openBuilder(btn.dataset.id))
+  );
+  list.querySelectorAll(".queue-btn-duplicate").forEach(btn =>
+    btn.addEventListener("click", () => {
+      const original = state.gelatoQueue.find(g => g.id === btn.dataset.id);
+      if (original) {
+        state.gelatoQueue.push({ ...original, scoops: [...original.scoops], id: Date.now().toString() + Math.random() });
+        renderQueue(); updateTotal(); updateSummary(); updateAdjustmentPreview();
+      }
+    })
   );
   list.querySelectorAll(".queue-btn-delete").forEach(btn =>
     btn.addEventListener("click", () => {
@@ -1186,7 +1186,6 @@ function tallyQueue(){
       }
     });
   });
-  // Count affogato & brownie flavours toward the flavour tally
   [...state.affogatoFlavours, ...state.brownieFlavours].forEach(f => {
     if (!f) return;
     const isSpecial = activeSpecials.find(s => s.name === f);
@@ -1503,18 +1502,18 @@ function attachHandlers(){
   document.getElementById("vessel-cup").addEventListener("click",()=>{ builder.vessel="cup"; renderBuilderVessel(); });
   document.getElementById("vessel-cone").addEventListener("click",()=>{ builder.vessel="cone"; renderBuilderVessel(); });
   document.getElementById("add-scoop-btn").addEventListener("click",()=>{
-    const sizeObj=sizes.find(s=>s.key===builder.sizeKey);
-    if(builder.scoops.length<(sizeObj?sizeObj.maxScoops:4)){ const newIdx=builder.scoops.length; builder.scoops.push(null); builder.activeScoopIdx=newIdx; renderBuilderScoops(); renderFlavourPickGrid(); }
+    const newIdx=builder.scoops.length;
+    builder.scoops.push(null);
+    builder.activeScoopIdx=newIdx;
+    renderBuilderScoops();
+    renderFlavourPickGrid();
   });
   document.getElementById("builder-add-btn").addEventListener("click",commitBuilder);
   document.getElementById("builder-cancel-btn").addEventListener("click",closeBuilder);
   document.getElementById("builder-close-btn").addEventListener("click",closeBuilder);
 
-  // Affogato picker buttons
   document.getElementById("affogato-popup-close-btn").addEventListener("click", ()=>closeFlavourPicker("affogato"));
   document.getElementById("affogato-flavour-done-btn").addEventListener("click", ()=>closeFlavourPicker("affogato"));
-
-  // Brownie picker buttons
   document.getElementById("brownie-popup-close-btn").addEventListener("click", ()=>closeFlavourPicker("brownie"));
   document.getElementById("brownie-flavour-done-btn").addEventListener("click", ()=>closeFlavourPicker("brownie"));
 
