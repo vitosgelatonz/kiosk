@@ -667,6 +667,7 @@ const VANILLA_FLAVOUR = "Just Vanilla";
 const state = {
   customers:        { adult: 0, child: 0, online: 0 },
   argentinian:      false,
+  latin:            false,
   gelatoQueue:      [],
   extras:           { hotChocolate: 0, affogato: 0, brownie: 0, mClassic: 0, mRellen: 0 },
   affogatoFlavours: [],
@@ -1264,6 +1265,7 @@ function updateSummary(){
   if (cupCount>0)  accessParts.push(`Cups: ${cupCount}`);
   if (state.pupCup>0) accessParts.push(`Pup Cup: ${state.pupCup}`);
   if (state.argentinian) custParts.push("🇦🇷 Argentinian");
+  if (state.latin) custParts.push("🌎 Latin");
   if (custParts.length)   parts.push("Customers – "+custParts.join(", "));
   if (gelatoParts.length) parts.push("Gelatos – "+gelatoParts.join(" | "));
   if (extrasParts.length) parts.push("Extras – "+extrasParts.join(", "));
@@ -1290,8 +1292,11 @@ function closeSpecialOtherPopup(){ document.getElementById("special-other-popup"
 function resetAll(){
   customerTypes.forEach(ct=>{ state.customers[ct.key]=0; const el=document.getElementById(`customer-${ct.key}`); if(el) el.textContent="0"; });
   state.argentinian=false;
+  state.latin=false;
   const argBtn=document.getElementById("arg-toggle");
   if(argBtn){ argBtn.className="vessel-btn"; }
+  const latinBtn=document.getElementById("latin-toggle");
+  if(latinBtn){ latinBtn.className="vessel-btn"; }
   state.gelatoQueue=[]; renderQueue();
   extrasData.forEach(ex=>{ state.extras[ex.key]=0; const el=document.getElementById(`extra-${ex.key}`); if(el) el.textContent="0"; });
   state.affogatoFlavours=[]; affogatoGridBuilt=false; updateItemFlavourUI("affogato");
@@ -1328,6 +1333,7 @@ async function submitOrder(){
     timestamp: getLocalTimestamp(),
     customers: state.customers,
     argentinian: state.argentinian?"Yes":"No",
+    latin: state.latin?"Yes":"No",
     sizes: sizeCounts,
     extras: state.extras,
     affogatoFlavours: flavourSummaryStr(state.affogatoFlavours),
@@ -1378,8 +1384,11 @@ function loadOrderForEditing(order){
   resetAll();
   customerTypes.forEach(ct=>{ const v=(order.customers&&order.customers[ct.key])||0; state.customers[ct.key]=v; const el=document.getElementById(`customer-${ct.key}`); if(el) el.textContent=v; });
   state.argentinian=order.argentinian==="Yes";
+  state.latin=order.latin==="Yes";
   const argBtn=document.getElementById("arg-toggle");
   if(argBtn){ argBtn.className="vessel-btn"+(state.argentinian?" selected":""); }
+  const latinBtn=document.getElementById("latin-toggle");
+  if(latinBtn){ latinBtn.className="vessel-btn"+(state.latin?" selected":""); }
   if(order.gelatoQueue){ state.gelatoQueue=order.gelatoQueue.map(g=>({...g,id:Date.now().toString()+Math.random()})); renderQueue(); }
   extrasData.forEach(ex=>{ const v=(order.extras&&order.extras[ex.key])||0; state.extras[ex.key]=v; const el=document.getElementById(`extra-${ex.key}`); if(el) el.textContent=v; });
   if(order.affogatoFlavoursArr){ state.affogatoFlavours=[...order.affogatoFlavoursArr]; } else { state.affogatoFlavours=[]; }
@@ -1420,10 +1429,27 @@ function renderCustomerSection(){
     container.appendChild(row);
   });
   const argRow=document.createElement("div");
-  argRow.className="row"; argRow.style.marginTop="6px";
-  argRow.innerHTML=`<button id="arg-toggle" type="button" class="vessel-btn" style="width:100%;">🇦🇷 Argie</button>`;
+  argRow.className="row"; argRow.style.marginTop="6px"; argRow.style.gap="6px";
+  argRow.innerHTML=`
+    <button id="arg-toggle"   type="button" class="vessel-btn" style="flex:1;">🇦🇷 Argie</button>
+    <button id="latin-toggle" type="button" class="vessel-btn" style="flex:1;">🌎 Latin</button>`;
   container.appendChild(argRow);
-  document.getElementById("arg-toggle").addEventListener("click",()=>{ state.argentinian=!state.argentinian; const btn=document.getElementById("arg-toggle"); btn.className="vessel-btn"+(state.argentinian?" selected":""); updateSummary(); });
+  function refreshOriginButtons(){
+    document.getElementById("arg-toggle").className   = "vessel-btn"+(state.argentinian?" selected":"");
+    document.getElementById("latin-toggle").className = "vessel-btn"+(state.latin?" selected":"");
+  }
+  document.getElementById("arg-toggle").addEventListener("click",()=>{
+    state.argentinian=!state.argentinian;
+    if(state.argentinian) state.latin=false;
+    refreshOriginButtons();
+    updateSummary();
+  });
+  document.getElementById("latin-toggle").addEventListener("click",()=>{
+    state.latin=!state.latin;
+    if(state.latin) state.argentinian=false;
+    refreshOriginButtons();
+    updateSummary();
+  });
   const pupRow=document.createElement("div");
   pupRow.className="row"; pupRow.style.marginTop="4px";
   pupRow.innerHTML=`<div class="label">🐾 Pup Cup</div><div class="controls"><button class="btn btn-minus" data-type="pupCup" data-delta="-1">−</button><span class="count" id="pupCup-count">0</span><button class="btn btn-plus" data-type="pupCup" data-delta="1">+</button></div>`;
