@@ -80,6 +80,18 @@
       border: 2px solid #e0e0e0; box-shadow: 0 1px 4px rgba(0,0,0,0.07);
       min-width: 240px; flex: 1 1 240px; max-width: 360px;
     }
+    .queue-card.has-dip {
+      border-color: #4a2c1a;
+      background: linear-gradient(135deg, #fff 78%, #f3e4d8 100%);
+    }
+    .queue-card-dip-badge {
+      display: inline-flex; align-items: center; gap: 3px;
+      background: #4a2c1a; color: #fff;
+      font-size: 0.68rem; font-weight: 700;
+      padding: 2px 8px; border-radius: 999px;
+      margin-top: 4px;
+      white-space: nowrap;
+    }
     .queue-card-info { flex: 1; min-width: 0; }
     .queue-card-title { font-size: 0.85rem; font-weight: 700; white-space: normal; line-height: 1.25; }
     .queue-card-sub   { font-size: 1rem; color: var(--text-soft); white-space: normal; line-height: 1.35; margin-top: 4px; }
@@ -364,6 +376,25 @@
     .scoop-slot.active-pick { border-color: #f0a500; background: #fffbe6; }
     .scoop-slot.active-pick .scoop-slot-label { color: #b07800; }
 
+    /* CHOCOLATE DIP TOGGLE */
+    .choc-dip-toggle {
+      display: none;
+      align-items: center;
+      justify-content: space-between;
+      gap: 8px;
+      border: 2px solid #ddd;
+      background: #f9f9f9;
+      border-radius: 10px;
+      padding: 8px 12px;
+      cursor: pointer;
+      font-size: 0.85rem;
+      font-weight: 600;
+    }
+    .choc-dip-toggle.available { display: flex; }
+    .choc-dip-toggle.selected { border-color: var(--accent); background: #e6f3f6; color: var(--accent); }
+    .choc-dip-toggle .choc-dip-price { font-weight: 400; color: var(--text-soft); }
+    .choc-dip-toggle.selected .choc-dip-price { color: var(--accent); }
+
     /* BOTTOM BAR */
     .bottom-bar {
       position: sticky; bottom: 0;
@@ -493,6 +524,12 @@
           </div>
         </div>
         <div>
+          <button class="choc-dip-toggle" id="choc-dip-toggle" type="button">
+            <span>🍫 Chocolate Dip</span>
+            <span class="choc-dip-price" id="choc-dip-price">+$0.00</span>
+          </button>
+        </div>
+        <div>
           <div class="builder-step-label">Scoops</div>
           <div class="scoop-slots" id="scoop-slots"></div>
           <button class="add-scoop-btn" id="add-scoop-btn" type="button" style="margin-top:6px;">+ Add extra scoop</button>
@@ -620,6 +657,9 @@ const sizes = [
   { key: "tub",    label: "Takeaway", price: 19, defaultScoops: 2 },
 ];
 
+// Chocolate dip add-on for cones. Price depends on size. Not available for Takeaway (tub).
+const chocolateDipPrices = { kiddie: 1.50, single: 2.00, double: 2.50, triple: 3.00 };
+
 const extrasData = [
   { key: "hotChocolate", label: "Hot Choco",  price: 6    },
   { key: "affogato",     label: "Affogato",   price: 10   },
@@ -690,6 +730,7 @@ const builder = {
   vessel:         "cone",
   scoops:         [],
   activeScoopIdx: null,
+  chocolateDip:   false,
 };
 
 // Per-picker active index & grid-built flag
@@ -1016,6 +1057,26 @@ function updateFlavourGridSelection(){
     });
 }
 
+// Chocolate dip is only offered for cones on kiddie/single/double/triple (not takeaway tubs).
+function chocDipEligible(){
+  return builder.vessel === "cone" && builder.sizeKey && builder.sizeKey !== "tub";
+}
+
+function renderBuilderChocDip(){
+  const toggle = document.getElementById("choc-dip-toggle");
+  const priceEl = document.getElementById("choc-dip-price");
+  const eligible = chocDipEligible();
+  toggle.classList.toggle("available", eligible);
+  if (!eligible){
+    builder.chocolateDip = false;
+    toggle.classList.remove("selected");
+    return;
+  }
+  const price = chocolateDipPrices[builder.sizeKey] || 0;
+  priceEl.textContent = `+$${price.toFixed(2)}`;
+  toggle.classList.toggle("selected", builder.chocolateDip);
+}
+
 function openBuilder(editId = null){
   builder.editingId      = editId;
   builder.activeScoopIdx = null;
@@ -1025,6 +1086,7 @@ function openBuilder(editId = null){
     builder.sizeKey = item.sizeKey;
     builder.vessel  = item.vessel;
     builder.scoops  = [...item.scoops];
+    builder.chocolateDip = !!item.chocolateDip;
     const firstEmpty = builder.scoops.findIndex(s => !s);
     builder.activeScoopIdx = firstEmpty >= 0 ? firstEmpty : 0;
     document.getElementById("builder-title").textContent = "Edit Gelato";
@@ -1034,11 +1096,13 @@ function openBuilder(editId = null){
     builder.vessel  = "cone";
     builder.scoops  = [null];
     builder.activeScoopIdx = 0;
+    builder.chocolateDip = false;
     document.getElementById("builder-title").textContent = "Add Gelato";
     document.getElementById("builder-add-btn").textContent = "Add to Order";
   }
   renderBuilderSizes();
   renderBuilderVessel();
+  renderBuilderChocDip();
   renderBuilderScoops();
   renderFlavourPickGrid();
   document.getElementById("builder-popup").classList.add("show");
@@ -1065,6 +1129,7 @@ function renderBuilderSizes(){
       if (builder.activeScoopIdx === null) builder.activeScoopIdx = 0;
       renderBuilderSizes();
       renderBuilderVessel();
+      renderBuilderChocDip();
       renderBuilderScoops();
       renderFlavourPickGrid();
     });
@@ -1123,11 +1188,12 @@ function commitBuilder(){
   if (!builder.sizeKey){ alert("Please choose a size."); return; }
   const filledScoops = builder.scoops.filter(Boolean);
   if (!filledScoops.length){ alert("Please choose at least one flavour."); return; }
+  const dip = chocDipEligible() && builder.chocolateDip;
   if (builder.editingId !== null){
     const item = state.gelatoQueue.find(g => g.id === builder.editingId);
-    if (item){ item.sizeKey = builder.sizeKey; item.vessel = builder.vessel; item.scoops = filledScoops; }
+    if (item){ item.sizeKey = builder.sizeKey; item.vessel = builder.vessel; item.scoops = filledScoops; item.chocolateDip = dip; }
   } else {
-    state.gelatoQueue.push({ id: Date.now().toString(), sizeKey: builder.sizeKey, vessel: builder.vessel, scoops: filledScoops });
+    state.gelatoQueue.push({ id: Date.now().toString(), sizeKey: builder.sizeKey, vessel: builder.vessel, scoops: filledScoops, chocolateDip: dip });
   }
   closeBuilder();
   renderQueue();
@@ -1147,12 +1213,14 @@ function renderQueue(){
   state.gelatoQueue.forEach((item, idx) => {
     const sz    = sizes.find(s => s.key === item.sizeKey);
     const title = `#${idx+1} ${sz ? sz.label : item.sizeKey} · ${item.vessel === "cone" ? "🍦 Cone" : "🥤 Cup"}`;
+    const dipBadge = item.chocolateDip ? `<div class="queue-card-dip-badge">🍫 CHOC DIP</div>` : "";
     const card  = document.createElement("div");
-    card.className = "queue-card";
+    card.className = "queue-card" + (item.chocolateDip ? " has-dip" : "");
     card.innerHTML = `
       <div class="queue-card-info">
         <div class="queue-card-title">${title}</div>
         <div class="queue-card-sub">${item.scoops.join(", ")}</div>
+        ${dipBadge}
       </div>
       <div class="queue-card-actions">
         <button class="queue-btn queue-btn-edit"      data-id="${item.id}">Edit</button>
@@ -1189,13 +1257,14 @@ function countVessels(){
 
 function tallyQueue(){
   const sizeCounts = {}, flavourCounts = {};
-  let coneCount = 0, cupCount = 0;
+  let coneCount = 0, cupCount = 0, chocolateDipCount = 0;
   sizes.forEach(s => { sizeCounts[s.key] = 0; });
   flavourData.forEach(f => { flavourCounts[f.name] = 0; });
   flavourCounts["Special Other"] = 0;
   state.gelatoQueue.forEach(item => {
     sizeCounts[item.sizeKey] = (sizeCounts[item.sizeKey]||0)+1;
     if (item.vessel === "cone") coneCount++; else cupCount++;
+    if (item.chocolateDip) chocolateDipCount++;
     item.scoops.forEach(f => {
       const isSpecial = activeSpecials.find(s => s.name === f);
       if (f === "Special Other" || isSpecial){
@@ -1216,11 +1285,15 @@ function tallyQueue(){
       flavourCounts[f] = (flavourCounts[f]||0)+1;
     }
   });
-  return { sizeCounts, flavourCounts, coneCount, cupCount };
+  return { sizeCounts, flavourCounts, coneCount, cupCount, chocolateDipCount };
 }
 
 function calcBaseTotal(){
-  const gelatoTotal = state.gelatoQueue.reduce((sum, item) => { const sz = sizes.find(s => s.key === item.sizeKey); return sum+(sz?sz.price:0); }, 0);
+  const gelatoTotal = state.gelatoQueue.reduce((sum, item) => {
+    const sz = sizes.find(s => s.key === item.sizeKey);
+    const dipPrice = item.chocolateDip ? (chocolateDipPrices[item.sizeKey] || 0) : 0;
+    return sum + (sz ? sz.price : 0) + dipPrice;
+  }, 0);
   const extrasTotal = extrasData.reduce((sum, ex) => sum+state.extras[ex.key]*ex.price, 0);
   const othersTotal = otherItems.reduce((sum, o) => { const price = o.key==="customOther"?state.customOtherPrice:o.price; return sum+state.others[o.key]*price; }, 0);
   return gelatoTotal+extrasTotal+othersTotal;
@@ -1246,7 +1319,7 @@ function flavourSummaryStr(arr){
 function updateSummary(){
   const parts = [];
   const custParts   = customerTypes.filter(ct=>state.customers[ct.key]>0).map(ct=>`${ct.label}: ${state.customers[ct.key]}`);
-  const gelatoParts = state.gelatoQueue.map((g,i)=>{ const sz=sizes.find(s=>s.key===g.sizeKey); return `#${i+1} ${sz?sz.label:g.sizeKey} ${g.vessel} (${g.scoops.join(", ")})`; });
+  const gelatoParts = state.gelatoQueue.map((g,i)=>{ const sz=sizes.find(s=>s.key===g.sizeKey); return `#${i+1} ${sz?sz.label:g.sizeKey} ${g.vessel}${g.chocolateDip ? "+dip" : ""} (${g.scoops.join(", ")})`; });
   const extrasParts = extrasData.filter(ex=>state.extras[ex.key]>0).map(ex => {
     if (ex.key === "affogato"){
       const s = flavourSummaryStr(state.affogatoFlavours);
@@ -1325,7 +1398,7 @@ async function submitOrder(){
   if(!state.gelatoQueue.length && getFinalTotal()===0){ alert("No items in order."); return; }
   if(state.payment==="mixed" && state.cardAmount>getFinalTotal()){ alert("Card amount cannot exceed total."); return; }
   activeSpecials.forEach(s=>{ state.specialCounts[s.name]=0; });
-  const { sizeCounts, flavourCounts, coneCount, cupCount } = tallyQueue();
+  const { sizeCounts, flavourCounts, coneCount, cupCount, chocolateDipCount } = tallyQueue();
   const finalTotal=getFinalTotal();
   document.getElementById("saving-indicator").style.display="inline";
   const isEditing=editMode;
@@ -1344,6 +1417,7 @@ async function submitOrder(){
     pupCup: state.pupCup,
     cones: coneCount,
     cups: cupCount,
+    chocolateDip: chocolateDipCount,
     adjustment: state.tip-state.discount,
     payment: state.payment,
     cardAmount: state.cardAmount,
@@ -1352,7 +1426,7 @@ async function submitOrder(){
     discount: state.discount,
     total: finalTotal,
     customOtherPrice: state.customOtherPrice,
-    gelatoDetail: state.gelatoQueue.map(g=>{ const sz=sizes.find(s=>s.key===g.sizeKey); return `${sz?sz.label:g.sizeKey} ${g.vessel}: ${g.scoops.join("+")}`; }).join(" | ")
+    gelatoDetail: state.gelatoQueue.map(g=>{ const sz=sizes.find(s=>s.key===g.sizeKey); return `${sz?sz.label:g.sizeKey} ${g.vessel}${g.chocolateDip ? "+dip" : ""}: ${g.scoops.join("+")}`; }).join(" | ")
   };
   lastSavedOrder=JSON.parse(JSON.stringify({
     ...payload,
@@ -1570,8 +1644,13 @@ function attachHandlers(){
   });
 
   document.getElementById("add-gelato-btn").addEventListener("click",()=>openBuilder(null));
-  document.getElementById("vessel-cup").addEventListener("click",()=>{ builder.vessel="cup"; renderBuilderVessel(); });
-  document.getElementById("vessel-cone").addEventListener("click",()=>{ builder.vessel="cone"; renderBuilderVessel(); });
+  document.getElementById("vessel-cup").addEventListener("click",()=>{ builder.vessel="cup"; renderBuilderVessel(); renderBuilderChocDip(); });
+  document.getElementById("vessel-cone").addEventListener("click",()=>{ builder.vessel="cone"; renderBuilderVessel(); renderBuilderChocDip(); });
+  document.getElementById("choc-dip-toggle").addEventListener("click",()=>{
+    if (!chocDipEligible()) return;
+    builder.chocolateDip = !builder.chocolateDip;
+    renderBuilderChocDip();
+  });
   document.getElementById("add-scoop-btn").addEventListener("click",()=>{
     const newIdx=builder.scoops.length;
     builder.scoops.push(null);
