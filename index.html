@@ -1257,14 +1257,22 @@ function countVessels(){
 
 function tallyQueue(){
   const sizeCounts = {}, flavourCounts = {};
+  // Per-size dip counts (not just a combined total) so the dashboard can
+  // show $ sales and size ratios for the Chocolate Dip add-on. Only sizes
+  // present in chocolateDipPrices are eligible (Takeaway/tub is not).
   let coneCount = 0, cupCount = 0, chocolateDipCount = 0;
+  const chocolateDipBySize = {};
+  Object.keys(chocolateDipPrices).forEach(k => { chocolateDipBySize[k] = 0; });
   sizes.forEach(s => { sizeCounts[s.key] = 0; });
   flavourData.forEach(f => { flavourCounts[f.name] = 0; });
   flavourCounts["Special Other"] = 0;
   state.gelatoQueue.forEach(item => {
     sizeCounts[item.sizeKey] = (sizeCounts[item.sizeKey]||0)+1;
     if (item.vessel === "cone") coneCount++; else cupCount++;
-    if (item.chocolateDip) chocolateDipCount++;
+    if (item.chocolateDip) {
+      chocolateDipCount++;
+      if (chocolateDipBySize[item.sizeKey] !== undefined) chocolateDipBySize[item.sizeKey]++;
+    }
     item.scoops.forEach(f => {
       const isSpecial = activeSpecials.find(s => s.name === f);
       if (f === "Special Other" || isSpecial){
@@ -1285,7 +1293,7 @@ function tallyQueue(){
       flavourCounts[f] = (flavourCounts[f]||0)+1;
     }
   });
-  return { sizeCounts, flavourCounts, coneCount, cupCount, chocolateDipCount };
+  return { sizeCounts, flavourCounts, coneCount, cupCount, chocolateDipCount, chocolateDipBySize };
 }
 
 function calcBaseTotal(){
@@ -1398,7 +1406,7 @@ async function submitOrder(){
   if(!state.gelatoQueue.length && getFinalTotal()===0){ alert("No items in order."); return; }
   if(state.payment==="mixed" && state.cardAmount>getFinalTotal()){ alert("Card amount cannot exceed total."); return; }
   activeSpecials.forEach(s=>{ state.specialCounts[s.name]=0; });
-  const { sizeCounts, flavourCounts, coneCount, cupCount, chocolateDipCount } = tallyQueue();
+  const { sizeCounts, flavourCounts, coneCount, cupCount, chocolateDipCount, chocolateDipBySize } = tallyQueue();
   const finalTotal=getFinalTotal();
   document.getElementById("saving-indicator").style.display="inline";
   const isEditing=editMode;
@@ -1418,6 +1426,7 @@ async function submitOrder(){
     cones: coneCount,
     cups: cupCount,
     chocolateDip: chocolateDipCount,
+    chocolateDipBySize: chocolateDipBySize,
     adjustment: state.tip-state.discount,
     payment: state.payment,
     cardAmount: state.cardAmount,
