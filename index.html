@@ -660,6 +660,49 @@ const sizes = [
 // Chocolate dip add-on for cones. Price depends on size. Not available for Takeaway (tub).
 const chocolateDipPrices = { kiddie: 1.50, single: 2.00, double: 2.50, triple: 3.00 };
 
+// ── LIVE PRICING ────────────────────────────────────────────────────────
+// Maps each internal key to the exact "Item" name used in the Prices sheet
+// (must match the dashboard's SIZE_COLS / WINTER_TREAT_COLS / COMBO_COLS,
+// and Code.gs's PRICE_ITEM_LIST). The numbers hardcoded above/below stay as
+// an offline fallback — loadPrices() overwrites them with live values on
+// startup whenever the fetch succeeds.
+const SIZE_ITEM_NAMES  = { kiddie:"Kiddie", single:"Single", double:"Double", triple:"Triple", tub:"Takeaway" };
+const EXTRA_ITEM_NAMES = { hotChocolate:"Hot Chocolate", affogato:"Affogato", brownie:"Brownie", mClassic:"M Classic", mRellen:"M Rellen" };
+const OTHER_ITEM_NAMES = { comboClassic:"Combo Classic", comboRellen:"Combo Rellen", slices:"Slices" }; // customOther has no fixed price
+const DIP_ITEM_NAMES   = { kiddie:"Chocolate Dip Kiddie", single:"Chocolate Dip Single", double:"Chocolate Dip Double", triple:"Chocolate Dip Triple" };
+
+let livePrices = {}; // itemName -> current price, from the Prices sheet
+
+async function loadPrices(){
+  try {
+    const res = await fetch(GOOGLE_SCRIPT_URL + "?action=getPrices");
+    const data = await res.json();
+    livePrices = data.prices || {};
+  } catch {
+    livePrices = {}; // offline or fetch failed — keep the hardcoded defaults below
+  }
+  applyLivePrices();
+}
+
+function applyLivePrices(){
+  sizes.forEach(sz => {
+    const name = SIZE_ITEM_NAMES[sz.key];
+    if (name && livePrices[name] !== undefined) sz.price = livePrices[name];
+  });
+  extrasData.forEach(ex => {
+    const name = EXTRA_ITEM_NAMES[ex.key];
+    if (name && livePrices[name] !== undefined) ex.price = livePrices[name];
+  });
+  otherItems.forEach(o => {
+    const name = OTHER_ITEM_NAMES[o.key];
+    if (name && livePrices[name] !== undefined) o.price = livePrices[name];
+  });
+  Object.keys(DIP_ITEM_NAMES).forEach(sizeKey => {
+    const name = DIP_ITEM_NAMES[sizeKey];
+    if (livePrices[name] !== undefined) chocolateDipPrices[sizeKey] = livePrices[name];
+  });
+}
+
 const extrasData = [
   { key: "hotChocolate", label: "Hot Choco",  price: 6    },
   { key: "affogato",     label: "Affogato",   price: 10   },
@@ -1720,16 +1763,24 @@ function unlockSounds(){
   document.removeEventListener("click",unlockSounds);
 }
 
-document.addEventListener("click",unlockSounds);
-renderCustomerSection();
-renderExtrasSection();
-renderQueue();
-updateExtrasBorders();
-attachHandlers();
-updateTotal();
-updateSummary();
-updateAdjustmentPreview();
-loadSpecials();
+// ── STARTUP ────────────────────────────────────────────────────────────
+// Waits for live prices to load before building any price-showing UI, so
+// size pills, extras cards, and the dip toggle never briefly flash the
+// hardcoded fallback numbers before switching to the sheet's current price.
+async function init(){
+  await loadPrices();
+  document.addEventListener("click",unlockSounds);
+  renderCustomerSection();
+  renderExtrasSection();
+  renderQueue();
+  updateExtrasBorders();
+  attachHandlers();
+  updateTotal();
+  updateSummary();
+  updateAdjustmentPreview();
+  loadSpecials();
+}
+init();
 </script>
 </body>
 </html>
