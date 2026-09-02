@@ -673,13 +673,22 @@ const DIP_ITEM_NAMES   = { kiddie:"Chocolate Dip Kiddie", single:"Chocolate Dip 
 
 let livePrices = {}; // itemName -> current price, from the Prices sheet
 
+// itemName set — items marked inactive in the "Item Status" sheet. Checked
+// at render time only, so it never touches order totals, tallies, or the
+// spreadsheet columns — a hidden product's past data is untouched.
+let hiddenItems = new Set();
+
 async function loadPrices(){
   try {
     const res = await fetch(GOOGLE_SCRIPT_URL + "?action=getPrices");
     const data = await res.json();
     livePrices = data.prices || {};
+    hiddenItems = new Set(
+      Object.entries(data.active || {}).filter(([, active]) => !active).map(([name]) => name)
+    );
   } catch {
     livePrices = {}; // offline or fetch failed — keep the hardcoded defaults below
+    hiddenItems = new Set(); // and show everything, same as before this feature existed
   }
   applyLivePrices();
 }
@@ -1162,6 +1171,7 @@ function renderBuilderSizes(){
   const container = document.getElementById("builder-size-pills");
   container.innerHTML = "";
   sizes.forEach(sz => {
+    if (hiddenItems.has(SIZE_ITEM_NAMES[sz.key])) return; // hidden via Item Status sheet
     const pill = document.createElement("button");
     pill.type = "button";
     pill.className = "size-pill" + (builder.sizeKey === sz.key ? " selected" : "");
@@ -1593,6 +1603,8 @@ function renderExtrasSection(){
   const container=document.getElementById("extras-grid");
 
   extrasData.forEach(ex=>{
+    if (hiddenItems.has(EXTRA_ITEM_NAMES[ex.key])) return; // hidden via Item Status sheet
+
     const card=document.createElement("div");
     card.className="flavour-card";
 
@@ -1623,10 +1635,14 @@ function renderExtrasSection(){
     container.appendChild(card);
   });
 
-  document.getElementById("affogato-change-btn").addEventListener("click", () => openFlavourPicker("affogato"));
-  document.getElementById("brownie-change-btn").addEventListener("click",  () => openFlavourPicker("brownie"));
+  const affogatoChangeBtn = document.getElementById("affogato-change-btn");
+  if (affogatoChangeBtn) affogatoChangeBtn.addEventListener("click", () => openFlavourPicker("affogato"));
+  const brownieChangeBtn = document.getElementById("brownie-change-btn");
+  if (brownieChangeBtn) brownieChangeBtn.addEventListener("click", () => openFlavourPicker("brownie"));
 
   otherItems.forEach(o=>{
+    if (o.key !== "customOther" && hiddenItems.has(OTHER_ITEM_NAMES[o.key])) return; // hidden via Item Status sheet
+
     const card=document.createElement("div");
     card.className="flavour-card";
     card.id=`other-card-${o.key}`;
