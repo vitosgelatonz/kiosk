@@ -408,8 +408,8 @@
     .pending-orders {
       background: #fff3cd;
       border: 2px solid #f0a500;
-      border-radius: 10px 10px 0 0;
-      border-bottom: none;
+      border-radius: 0 0 10px 10px;
+      border-top: none;
       padding: 6px;
       display: none;
       max-height: 42vh;
@@ -612,13 +612,10 @@
       </div>
     </div>
 
-    <!-- STICKY BOTTOM ZONE: Ready-to-Serve queue + bottom bar, always visible -->
+    <!-- STICKY BOTTOM ZONE: bottom bar + Ready-to-Serve queue, always visible.
+         Bottom bar comes first so Done/Cancel are reachable without
+         scrolling past the queue, however long it gets. -->
     <div class="sticky-bottom-zone">
-      <div class="pending-orders" id="pending-orders-section">
-        <h2>🧾 Ready to Serve <span>Oldest first — serve top row next</span></h2>
-        <div class="pending-list" id="pending-list"></div>
-      </div>
-
       <div class="bottom-bar">
         <div class="total" id="total-box">Total: $0.00</div>
         <div style="flex:1; text-align:center;"><span id="saving-indicator">Saving…</span></div>
@@ -626,6 +623,11 @@
           <button class="action cancel" id="cancel-btn">Cancel</button>
           <button class="action done"   id="done-btn">Done</button>
         </div>
+      </div>
+
+      <div class="pending-orders" id="pending-orders-section">
+        <h2>🧾 Ready to Serve <span>Oldest first — serve top row next</span></h2>
+        <div class="pending-list" id="pending-list"></div>
       </div>
     </div>
   </div>
