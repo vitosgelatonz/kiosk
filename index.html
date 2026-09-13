@@ -431,12 +431,24 @@
     }
     .pending-orders h2 span { font-size: 0.7rem; opacity: 0.9; font-weight: 400; }
     .pending-list { display: flex; flex-direction: column; gap: 8px; }
+    .pending-row-wrapper { position: relative; border-radius: 10px; overflow: hidden; }
+    .pending-row-bg {
+      position: absolute; inset: 0;
+      background: var(--success); color: #fff;
+      display: flex; align-items: center; justify-content: flex-end;
+      padding-right: 22px; font-weight: 800; font-size: 0.95rem;
+      opacity: 0; border-radius: 10px; pointer-events: none;
+    }
     .pending-row {
+      position: relative;
       display: flex; flex-direction: column; gap: 8px;
       background: #fff; border-radius: 10px; padding: 10px 12px;
       box-shadow: 0 1px 4px rgba(0,0,0,0.08);
       border: 2px solid transparent;
+      touch-action: pan-y;
     }
+    .pending-row.snap-back { transition: transform 0.2s ease; }
+    .pending-row.swipe-away { transition: transform 0.2s ease, opacity 0.2s ease; }
     .pending-row.next-up {
       border-color: var(--success);
       box-shadow: 0 2px 10px rgba(46,125,50,0.25);
@@ -1613,6 +1625,7 @@ function renderPendingQueue(){
       </div>`).join("");
     const row = document.createElement("div");
     row.className = "pending-row" + (isNext ? " next-up" : "");
+    row.dataset.id = order.id;
     row.innerHTML = `
       <div class="pending-row-top">
         <div class="pending-reorder">
@@ -1630,7 +1643,11 @@ function renderPendingQueue(){
           <button class="pending-serve-btn" data-id="${order.id}" type="button">Served ✓</button>
         </div>
       </div>`;
-    list.appendChild(row);
+    const wrapper = document.createElement("div");
+    wrapper.className = "pending-row-wrapper";
+    wrapper.innerHTML = `<div class="pending-row-bg">Served ✓</div>`;
+    wrapper.appendChild(row);
+    list.appendChild(wrapper);
   });
   list.querySelectorAll(".pending-serve-btn").forEach(btn =>
     btn.addEventListener("click", () => serveOrder(btn.dataset.id))
@@ -1641,6 +1658,7 @@ function renderPendingQueue(){
   list.querySelectorAll(".pending-item-card").forEach(card =>
     card.addEventListener("click", () => toggleItemDone(card.dataset.orderId, parseInt(card.dataset.itemIdx, 10)))
   );
+  list.querySelectorAll(".pending-row").forEach(attachSwipeToServe);
   savePendingQueue();
 }
 
@@ -1690,6 +1708,63 @@ function loadPendingQueueFromStorage(){
   } catch {
     // Corrupt or missing data — just start with an empty queue.
   }
+}
+
+// Swipe-left-to-serve — an alternative to tapping the Served ✓ button.
+// Only counts as a swipe once horizontal movement clearly outpaces
+// vertical, so it doesn't fight with scrolling the queue or tapping the
+// item cards / reorder buttons / Served button (a plain tap has almost no
+// movement and is left alone to fire its normal click).
+const SWIPE_SERVE_THRESHOLD = 90; // px of leftward drag needed to trigger
+
+function attachSwipeToServe(row){
+  const id = row.dataset.id;
+  const bg = row.parentElement.querySelector(".pending-row-bg");
+  let startX = 0, startY = 0, dx = 0, dragging = false, decided = false, isHorizontal = false;
+
+  function onMove(e){
+    if (!dragging) return;
+    dx = e.clientX - startX;
+    const dy = e.clientY - startY;
+    if (!decided){
+      if (Math.abs(dx) < 8 && Math.abs(dy) < 8) return;
+      decided = true;
+      isHorizontal = Math.abs(dx) > Math.abs(dy);
+      if (isHorizontal) row.classList.remove("snap-back", "swipe-away");
+    }
+    if (!isHorizontal) return; // vertical drag — let normal scrolling happen
+    if (e.cancelable) e.preventDefault();
+    const clamped = Math.min(0, dx); // only allow swiping left
+    row.style.transform = `translateX(${clamped}px)`;
+    if (bg) bg.style.opacity = Math.min(1, Math.abs(clamped) / SWIPE_SERVE_THRESHOLD);
+  }
+
+  function onEnd(){
+    if (!dragging) return;
+    dragging = false;
+    document.removeEventListener("pointermove", onMove);
+    document.removeEventListener("pointerup", onEnd);
+    document.removeEventListener("pointercancel", onEnd);
+    if (isHorizontal && Math.abs(dx) > SWIPE_SERVE_THRESHOLD){
+      row.classList.add("swipe-away");
+      row.style.transform = "translateX(-100%)";
+      row.style.opacity = "0";
+      setTimeout(() => serveOrder(id), 180);
+    } else if (isHorizontal){
+      row.classList.add("snap-back");
+      row.style.transform = "";
+      if (bg) bg.style.opacity = 0;
+    }
+  }
+
+  row.addEventListener("pointerdown", e => {
+    if (e.pointerType === "mouse" && e.button !== 0) return;
+    startX = e.clientX; startY = e.clientY; dx = 0;
+    dragging = true; decided = false; isHorizontal = false;
+    document.addEventListener("pointermove", onMove, { passive: false });
+    document.addEventListener("pointerup", onEnd);
+    document.addEventListener("pointercancel", onEnd);
+  });
 }
 
 // Removing an order from the queue ("Served ✓") with a brief Undo window,
