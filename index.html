@@ -395,9 +395,112 @@
     .choc-dip-toggle .choc-dip-price { font-weight: 400; color: var(--text-soft); }
     .choc-dip-toggle.selected .choc-dip-price { color: var(--accent); }
 
+    /* STICKY BOTTOM ZONE — holds the Ready-to-Serve queue + bottom bar
+       together so both stay pinned to the viewport bottom, even when the
+       sections above (extras grid etc.) run tall on a smaller screen. */
+    .sticky-bottom-zone {
+      position: sticky;
+      bottom: 0;
+      z-index: 50;
+    }
+
+    /* PENDING / READY-TO-SERVE QUEUE */
+    .pending-orders {
+      background: #fff3cd;
+      border: 2px solid #f0a500;
+      border-radius: 10px 10px 0 0;
+      border-bottom: none;
+      padding: 6px;
+      display: none;
+      max-height: 42vh;
+      overflow-y: auto;
+    }
+    .pending-orders h2 {
+      background: #f0a500;
+      color: #fff;
+      padding: 6px 10px;
+      margin: -6px -6px 6px -6px;
+      border-radius: 8px 8px 0 0;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      font-size: 0.82rem;
+      font-weight: 700;
+      position: sticky;
+      top: -6px;
+    }
+    .pending-orders h2 span { font-size: 0.7rem; opacity: 0.9; font-weight: 400; }
+    .pending-list { display: flex; flex-direction: column; gap: 8px; }
+    .pending-row {
+      display: flex; flex-direction: column; gap: 8px;
+      background: #fff; border-radius: 10px; padding: 10px 12px;
+      box-shadow: 0 1px 4px rgba(0,0,0,0.08);
+      border: 2px solid transparent;
+    }
+    .pending-row.next-up {
+      border-color: var(--success);
+      box-shadow: 0 2px 10px rgba(46,125,50,0.25);
+    }
+    .pending-row-top { display: flex; align-items: flex-start; gap: 8px; }
+    .pending-reorder { display: flex; flex-direction: column; gap: 3px; flex-shrink: 0; margin-top: 1px; }
+    .pending-reorder-btn {
+      border: none; background: #eee; color: var(--text-main);
+      border-radius: 6px; width: 24px; height: 22px; font-size: 0.7rem;
+      cursor: pointer; display: flex; align-items: center; justify-content: center;
+      touch-action: manipulation;
+    }
+    .pending-reorder-btn:disabled { opacity: 0.3; cursor: default; }
+    .pending-reorder-btn:active:not(:disabled) { background: #ddd; }
+    .pending-row-num {
+      font-weight: 800; font-size: 0.95rem; color: #f0a500;
+      min-width: 24px; text-align: center; flex-shrink: 0;
+    }
+    .pending-row.next-up .pending-row-num { color: var(--success); }
+    .pending-next-badge {
+      display: inline-block; background: var(--success); color: #fff;
+      font-size: 0.62rem; font-weight: 800; text-transform: uppercase;
+      letter-spacing: 0.04em; padding: 2px 7px; border-radius: 999px;
+      margin-bottom: 4px;
+    }
+    .pending-row-info { flex: 1; min-width: 0; }
+    .pending-items { display: flex; flex-wrap: wrap; gap: 6px; }
+    .pending-item-card {
+      display: inline-flex; align-items: center; gap: 5px;
+      background: #f8f4ea; border: 1px solid #e8dfc8; border-radius: 8px;
+      padding: 5px 9px; font-size: 0.8rem; font-weight: 600; line-height: 1.3;
+      max-width: 100%; cursor: pointer; touch-action: manipulation;
+      transition: opacity 0.15s, background 0.15s;
+    }
+    .pending-item-card.has-dip {
+      border-color: #4a2c1a;
+      background: linear-gradient(135deg, #fff8f0 70%, #f3e4d8 100%);
+    }
+    .pending-item-card.done {
+      opacity: 0.5; background: #ececec; border-color: #ddd;
+    }
+    .pending-item-card.done .pending-item-text { text-decoration: line-through; }
+    .pending-item-icon { font-size: 0.9rem; flex-shrink: 0; }
+    .pending-item-text { min-width: 0; word-break: break-word; }
+    .pending-item-main { display: block; }
+    .pending-item-sub { display: block; font-size: 0.7rem; font-weight: 400; color: var(--text-soft); }
+    .dip-tag {
+      display: inline-block; background: #4a2c1a; color: #fff;
+      font-size: 0.66rem; font-weight: 800; text-transform: uppercase;
+      letter-spacing: 0.03em; padding: 1px 6px; border-radius: 999px;
+      margin-left: 4px; vertical-align: middle;
+    }
+    .pending-row-elapsed { font-size: 0.72rem; color: var(--text-soft); margin-top: 2px; }
+    .pending-row-right { display: flex; flex-direction: column; align-items: flex-end; gap: 6px; flex-shrink: 0; }
+    .pending-row-total { font-weight: 700; font-size: 0.9rem; white-space: nowrap; }
+    .pending-serve-btn {
+      border: none; border-radius: 999px; background: var(--success); color: #fff;
+      font-weight: 700; padding: 7px 14px; font-size: 0.8rem; cursor: pointer;
+      white-space: nowrap; touch-action: manipulation;
+    }
+    .pending-serve-btn:active { background: #245e27; }
+
     /* BOTTOM BAR */
     .bottom-bar {
-      position: sticky; bottom: 0;
       background: rgba(244,239,234,0.98); backdrop-filter: blur(6px);
       padding: 6px 4px; border-top: 1px solid rgba(0,0,0,0.05);
       display: flex; align-items: center;
@@ -422,6 +525,21 @@
       border: none; border-radius: 999px; padding: 6px 14px;
       font-size: 0.95rem; font-weight: 600; cursor: pointer;
       background: #fff; color: var(--accent);
+    }
+    #serve-undo-popup {
+      position: fixed; bottom: 90px; left: 50%;
+      transform: translateX(-50%) translateY(80px);
+      background: #333; color: white;
+      padding: 12px 22px; border-radius: 12px;
+      font-size: 1rem; opacity: 0;
+      transition: all 0.3s ease; z-index: 9999;
+      font-weight: 600; display: flex; align-items: center; gap: 14px;
+    }
+    #serve-undo-popup.show { opacity: 1; transform: translateX(-50%) translateY(0); }
+    #undo-serve-btn {
+      border: none; border-radius: 999px; padding: 6px 14px;
+      font-size: 0.9rem; font-weight: 700; cursor: pointer;
+      background: #fff; color: #333;
     }
     #saving-indicator { display: none; font-size: 1rem; color: #333; font-weight: 600; animation: pulse 0.6s infinite alternate; }
     @keyframes pulse { from { opacity: .4; } to { opacity: 1; } }
@@ -494,12 +612,20 @@
       </div>
     </div>
 
-    <div class="bottom-bar">
-      <div class="total" id="total-box">Total: $0.00</div>
-      <div style="flex:1; text-align:center;"><span id="saving-indicator">Saving…</span></div>
-      <div class="bottom-buttons">
-        <button class="action cancel" id="cancel-btn">Cancel</button>
-        <button class="action done"   id="done-btn">Done</button>
+    <!-- STICKY BOTTOM ZONE: Ready-to-Serve queue + bottom bar, always visible -->
+    <div class="sticky-bottom-zone">
+      <div class="pending-orders" id="pending-orders-section">
+        <h2>🧾 Ready to Serve <span>Oldest first — serve top row next</span></h2>
+        <div class="pending-list" id="pending-list"></div>
+      </div>
+
+      <div class="bottom-bar">
+        <div class="total" id="total-box">Total: $0.00</div>
+        <div style="flex:1; text-align:center;"><span id="saving-indicator">Saving…</span></div>
+        <div class="bottom-buttons">
+          <button class="action cancel" id="cancel-btn">Cancel</button>
+          <button class="action done"   id="done-btn">Done</button>
+        </div>
       </div>
     </div>
   </div>
@@ -635,6 +761,7 @@
   </div>
 
   <div id="success-popup"></div>
+  <div id="serve-undo-popup"></div>
   <audio id="tap-sound"><source src="https://actions.google.com/sounds/v1/cartoon/pop.ogg" type="audio/ogg"></audio>
   <audio id="cash-sound"><source src="https://actions.google.com/sounds/v1/cartoon/clang_and_wobble.ogg" type="audio/ogg"></audio>
 
@@ -774,6 +901,19 @@ const state = {
 
 let lastSavedOrder = null;
 let editMode       = false;
+
+// Tracks which "Ready to Serve" row (if any) belongs to the most recently
+// submitted order, so that editing it via "Edit Last Order" updates that
+// same row in place instead of leaving it stale or adding a duplicate.
+let lastSavedPendingId = null;
+
+// PENDING / READY-TO-SERVE QUEUE
+// Purely a front-end visual reminder for busy periods — orders are already
+// submitted to the spreadsheet by the time they land here. Oldest first
+// (FIFO): the top row is whoever has been waiting longest. Session-only,
+// intentionally not persisted — it exists to bridge the gap between taking
+// an order and physically handing it over.
+let pendingOrders = [];
 
 // BUILDER STATE
 const builder = {
@@ -1410,6 +1550,183 @@ function updateSummary(){
   document.getElementById("summary-box").textContent = parts.join(" | ");
 }
 
+// Compact, customer-facing breakdown for the "Ready to Serve" queue — leaves
+// out payment/customer-type noise so it reads at a glance while scooping.
+// Each item comes back as its own {icon, text} card rather than one joined
+// string, so a customer who ordered several things gets one card per thing
+// (e.g. a card for "Single cup, dipped (Strawberry Dream)" and a separate
+// card for "1× Combo Classic") instead of a wall of text.
+function buildCompactOrderItems(){
+  const EXTRA_ICONS = { hotChocolate: "☕", affogato: "☕", brownie: "🍫", mClassic: "🥐", mRellen: "🥐" };
+  const OTHER_ICONS = { comboClassic: "🥐", comboRellen: "🥐", slices: "🍰", customOther: "✨" };
+  const items = [];
+  state.gelatoQueue.forEach(g => {
+    const sz = sizes.find(s => s.key === g.sizeKey);
+    const label = sz ? sz.label : g.sizeKey;
+    // Takeaway (tub) has no cone/cup vessel choice in the builder — label it
+    // as a tub rather than showing a stale/irrelevant "cone" or "cup".
+    const vessel = g.sizeKey === "tub" ? "tub" : (g.vessel === "cone" ? "cone" : "cup");
+    items.push({ icon: "🍦", text: `${label} ${vessel} (${g.scoops.join(", ")})`, dip: !!g.chocolateDip, done: false });
+  });
+  extrasData.forEach(ex => {
+    if (state.extras[ex.key] > 0){
+      let s = `${state.extras[ex.key]}× ${ex.label}`;
+      if (ex.key === "affogato"){ const f = flavourSummaryStr(state.affogatoFlavours); if (f) s += ` [${f}]`; }
+      if (ex.key === "brownie"){  const f = flavourSummaryStr(state.brownieFlavours);  if (f) s += ` [${f}]`; }
+      items.push({ icon: EXTRA_ICONS[ex.key] || "➕", text: s, done: false });
+    }
+  });
+  otherItems.forEach(o => {
+    if (state.others[o.key] > 0) items.push({ icon: OTHER_ICONS[o.key] || "➕", text: `${state.others[o.key]}× ${o.label}`, done: false });
+  });
+  if (state.pupCup > 0) items.push({ icon: "🐾", text: `${state.pupCup}× Pup Cup`, done: false });
+  return items.length ? items : [{ icon: "🍨", text: "Order", done: false }];
+}
+
+// Human-readable "time since order was taken" for each queue row.
+function timeAgoStr(sinceMs){
+  const mins = Math.floor((Date.now() - sinceMs) / 60000);
+  if (mins < 1) return "just now";
+  if (mins === 1) return "1 min ago";
+  return `${mins} min ago`;
+}
+
+function renderPendingQueue(){
+  const section = document.getElementById("pending-orders-section");
+  const list    = document.getElementById("pending-list");
+  list.innerHTML = "";
+  if (!pendingOrders.length){
+    section.style.display = "none";
+    savePendingQueue();
+    return;
+  }
+  section.style.display = "block";
+  pendingOrders.forEach((order, idx) => {
+    const isNext = idx === 0;
+    const isLast = idx === pendingOrders.length - 1;
+    const cardsHtml = order.items.map((it, itemIdx) => `
+      <div class="pending-item-card${it.dip ? " has-dip" : ""}${it.done ? " done" : ""}" data-order-id="${order.id}" data-item-idx="${itemIdx}">
+        <span class="pending-item-icon">${it.icon}</span>
+        <span class="pending-item-text">${it.text}${it.dip ? '<span class="dip-tag">🍫 Dipped</span>' : ""}</span>
+      </div>`).join("");
+    const row = document.createElement("div");
+    row.className = "pending-row" + (isNext ? " next-up" : "");
+    row.innerHTML = `
+      <div class="pending-row-top">
+        <div class="pending-reorder">
+          <button class="pending-reorder-btn" data-id="${order.id}" data-dir="-1" type="button" ${isNext ? "disabled" : ""}>▲</button>
+          <button class="pending-reorder-btn" data-id="${order.id}" data-dir="1"  type="button" ${isLast ? "disabled" : ""}>▼</button>
+        </div>
+        <div class="pending-row-num">#${idx+1}</div>
+        <div class="pending-row-info">
+          ${isNext ? '<span class="pending-next-badge">Serve next</span>' : ""}
+          <div class="pending-items">${cardsHtml}</div>
+          <div class="pending-row-elapsed">${timeAgoStr(order.time)}</div>
+        </div>
+        <div class="pending-row-right">
+          <div class="pending-row-total">$${order.total.toFixed(2)}</div>
+          <button class="pending-serve-btn" data-id="${order.id}" type="button">Served ✓</button>
+        </div>
+      </div>`;
+    list.appendChild(row);
+  });
+  list.querySelectorAll(".pending-serve-btn").forEach(btn =>
+    btn.addEventListener("click", () => serveOrder(btn.dataset.id))
+  );
+  list.querySelectorAll(".pending-reorder-btn").forEach(btn =>
+    btn.addEventListener("click", () => moveOrder(btn.dataset.id, parseInt(btn.dataset.dir, 10)))
+  );
+  list.querySelectorAll(".pending-item-card").forEach(card =>
+    card.addEventListener("click", () => toggleItemDone(card.dataset.orderId, parseInt(card.dataset.itemIdx, 10)))
+  );
+  savePendingQueue();
+}
+
+// Tapping an individual item card (not the whole row) marks just that
+// item as done — handy when an order's items get finished and handed
+// over one at a time rather than all at once.
+function toggleItemDone(orderId, itemIdx){
+  const order = pendingOrders.find(o => o.id === orderId);
+  if (!order || !order.items[itemIdx]) return;
+  order.items[itemIdx].done = !order.items[itemIdx].done;
+  renderPendingQueue();
+}
+
+// Manual reorder — FIFO is the default, but sometimes a quick single needs
+// to be bumped ahead of a big order. Swaps the order with its neighbour;
+// disabled at the top/bottom edges (see the `disabled` attrs above).
+function moveOrder(id, direction){
+  const idx = pendingOrders.findIndex(o => o.id === id);
+  if (idx === -1) return;
+  const swapWith = idx + direction;
+  if (swapWith < 0 || swapWith >= pendingOrders.length) return;
+  [pendingOrders[idx], pendingOrders[swapWith]] = [pendingOrders[swapWith], pendingOrders[idx]];
+  renderPendingQueue();
+}
+
+// Persist the Ready-to-Serve queue across page reloads / wifi drops, so a
+// tablet refresh mid-rush doesn't wipe out track of who's still waiting.
+// The orders themselves are already safely in the spreadsheet by this
+// point — this is purely so the on-screen reminder survives too.
+const PENDING_QUEUE_STORAGE_KEY = "vitosPendingQueue";
+
+function savePendingQueue(){
+  try {
+    localStorage.setItem(PENDING_QUEUE_STORAGE_KEY, JSON.stringify(pendingOrders));
+  } catch {
+    // localStorage unavailable (e.g. private browsing) — queue just won't
+    // survive a refresh; everything else keeps working normally.
+  }
+}
+
+function loadPendingQueueFromStorage(){
+  try {
+    const raw = localStorage.getItem(PENDING_QUEUE_STORAGE_KEY);
+    if (!raw) return;
+    const parsed = JSON.parse(raw);
+    if (Array.isArray(parsed)) pendingOrders = parsed;
+  } catch {
+    // Corrupt or missing data — just start with an empty queue.
+  }
+}
+
+// Removing an order from the queue ("Served ✓") with a brief Undo window,
+// in case of a mis-tap with sticky hands mid-rush. Undo re-inserts the
+// order at its original position so the FIFO order is preserved.
+let lastRemovedPending = null;
+let undoTimeout        = null;
+
+function serveOrder(id){
+  const idx = pendingOrders.findIndex(o => o.id === id);
+  if (idx === -1) return;
+  lastRemovedPending = { order: pendingOrders[idx], index: idx };
+  pendingOrders.splice(idx, 1);
+  renderPendingQueue();
+  showServeUndo();
+}
+
+function showServeUndo(){
+  clearTimeout(undoTimeout);
+  const popup = document.getElementById("serve-undo-popup");
+  popup.innerHTML = `<span>Order cleared</span><button id="undo-serve-btn" type="button">Undo</button>`;
+  popup.classList.add("show");
+  document.getElementById("undo-serve-btn").addEventListener("click", undoServeOrder);
+  undoTimeout = setTimeout(() => {
+    popup.classList.remove("show");
+    lastRemovedPending = null;
+  }, 6000);
+}
+
+function undoServeOrder(){
+  if (!lastRemovedPending) return;
+  const { order, index } = lastRemovedPending;
+  pendingOrders.splice(Math.min(index, pendingOrders.length), 0, order);
+  lastRemovedPending = null;
+  clearTimeout(undoTimeout);
+  document.getElementById("serve-undo-popup").classList.remove("show");
+  renderPendingQueue();
+}
+
 function updateOtherCard(){
   otherItems.forEach(o => { const el=document.getElementById(`other-${o.key}`); if(el) el.textContent=state.others[o.key]; });
   const priceEl=document.getElementById("other-custom-price");
@@ -1461,6 +1778,7 @@ async function submitOrder(){
   activeSpecials.forEach(s=>{ state.specialCounts[s.name]=0; });
   const { sizeCounts, flavourCounts, coneCount, cupCount, chocolateDipCount, chocolateDipBySize } = tallyQueue();
   const finalTotal=getFinalTotal();
+  const compactItems = buildCompactOrderItems(); // captured before resetAll() wipes state
   document.getElementById("saving-indicator").style.display="inline";
   const isEditing=editMode;
   const payload={
@@ -1500,6 +1818,25 @@ async function submitOrder(){
     await fetch(GOOGLE_SCRIPT_URL,{ method:"POST", mode:"no-cors", headers:{"Content-Type":"application/json"}, body:JSON.stringify({row:payload, mode:isEditing?"overwrite":"append"}) });
     document.getElementById("saving-indicator").style.display="none";
     document.getElementById("cash-sound").play();
+    if (!isEditing){
+      // Brand-new order — add a new row and remember its id in case it
+      // gets edited later.
+      const newId = Date.now().toString()+Math.random();
+      pendingOrders.push({ id: newId, items: compactItems, total: finalTotal, time: Date.now() });
+      lastSavedPendingId = newId;
+      renderPendingQueue();
+    } else if (lastSavedPendingId){
+      // Editing the last-submitted order — update its existing row in
+      // place (same position and wait-time clock) rather than leaving it
+      // stale. If that row was already marked Served and removed, there's
+      // nothing to update, which is fine — it's done serving.
+      const row = pendingOrders.find(o => o.id === lastSavedPendingId);
+      if (row){
+        row.items  = compactItems;
+        row.total  = finalTotal;
+        renderPendingQueue();
+      }
+    }
     showPopup(); editMode=false; resetAll();
   } catch {
     document.getElementById("saving-indicator").style.display="none";
@@ -1786,6 +2123,7 @@ function unlockSounds(){
 async function init(){
   await loadPrices();
   document.addEventListener("click",unlockSounds);
+  loadPendingQueueFromStorage();
   renderCustomerSection();
   renderExtrasSection();
   renderQueue();
@@ -1794,6 +2132,10 @@ async function init(){
   updateTotal();
   updateSummary();
   updateAdjustmentPreview();
+  renderPendingQueue();
+  // Refresh elapsed-time labels on the Ready-to-Serve queue periodically —
+  // no need to re-fetch anything, just re-render the existing rows.
+  setInterval(() => { if (pendingOrders.length) renderPendingQueue(); }, 20000);
   loadSpecials();
 }
 init();
