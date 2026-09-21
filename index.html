@@ -430,6 +430,14 @@
       top: -6px;
     }
     .pending-orders h2 span { font-size: 0.7rem; opacity: 0.9; font-weight: 400; }
+    .pending-clear-all-btn {
+      border: none; border-radius: 999px;
+      background: rgba(255,255,255,0.3); color: #fff;
+      font-weight: 700; font-size: 0.72rem;
+      padding: 5px 12px; cursor: pointer;
+      touch-action: manipulation; white-space: nowrap;
+    }
+    .pending-clear-all-btn:active { background: rgba(255,255,255,0.5); }
     .pending-list { display: flex; flex-direction: column; gap: 8px; }
     .pending-row-wrapper { position: relative; border-radius: 10px; overflow: hidden; }
     .pending-row-bg {
@@ -638,7 +646,9 @@
       </div>
 
       <div class="pending-orders" id="pending-orders-section">
-        <h2>🧾 Ready to Serve <span>Oldest first — serve top row next</span></h2>
+        <h2>🧾 Ready to Serve <span>Oldest first — serve top row next</span>
+          <button id="clear-all-btn" class="pending-clear-all-btn" type="button">Clear all</button>
+        </h2>
         <div class="pending-list" id="pending-list"></div>
       </div>
     </div>
@@ -1770,35 +1780,56 @@ function attachSwipeToServe(row){
 // Removing an order from the queue ("Served ✓") with a brief Undo window,
 // in case of a mis-tap with sticky hands mid-rush. Undo re-inserts the
 // order at its original position so the FIFO order is preserved.
+// "Clear all" works the same way: the whole queue is stashed so a single
+// Undo tap restores every order in its original sequence.
 let lastRemovedPending = null;
+let lastClearedAll     = null;   // whole queue, for undoing "Clear all"
 let undoTimeout        = null;
 
 function serveOrder(id){
   const idx = pendingOrders.findIndex(o => o.id === id);
   if (idx === -1) return;
+  lastClearedAll = null;
   lastRemovedPending = { order: pendingOrders[idx], index: idx };
   pendingOrders.splice(idx, 1);
   renderPendingQueue();
-  showServeUndo();
+  showServeUndo("Order cleared");
 }
 
-function showServeUndo(){
+function clearAllPending(){
+  if (!pendingOrders.length) return;
+  const n = pendingOrders.length;
+  lastRemovedPending = null;
+  lastClearedAll = pendingOrders.slice();
+  pendingOrders = [];
+  renderPendingQueue();
+  showServeUndo(`${n} order${n === 1 ? "" : "s"} cleared`);
+}
+
+function showServeUndo(message){
   clearTimeout(undoTimeout);
   const popup = document.getElementById("serve-undo-popup");
-  popup.innerHTML = `<span>Order cleared</span><button id="undo-serve-btn" type="button">Undo</button>`;
+  popup.innerHTML = `<span>${message}</span><button id="undo-serve-btn" type="button">Undo</button>`;
   popup.classList.add("show");
   document.getElementById("undo-serve-btn").addEventListener("click", undoServeOrder);
   undoTimeout = setTimeout(() => {
     popup.classList.remove("show");
     lastRemovedPending = null;
+    lastClearedAll = null;
   }, 6000);
 }
 
 function undoServeOrder(){
-  if (!lastRemovedPending) return;
-  const { order, index } = lastRemovedPending;
-  pendingOrders.splice(Math.min(index, pendingOrders.length), 0, order);
-  lastRemovedPending = null;
+  if (lastClearedAll){
+    pendingOrders = lastClearedAll;
+    lastClearedAll = null;
+  } else if (lastRemovedPending){
+    const { order, index } = lastRemovedPending;
+    pendingOrders.splice(Math.min(index, pendingOrders.length), 0, order);
+    lastRemovedPending = null;
+  } else {
+    return;
+  }
   clearTimeout(undoTimeout);
   document.getElementById("serve-undo-popup").classList.remove("show");
   renderPendingQueue();
@@ -2181,6 +2212,7 @@ function attachHandlers(){
   });
 
   document.getElementById("cancel-btn").addEventListener("click",resetAll);
+  document.getElementById("clear-all-btn").addEventListener("click",clearAllPending);
   document.getElementById("done-btn").addEventListener("click",async()=>{
     const btn=document.getElementById("done-btn"); if(btn.disabled) return;
     document.getElementById("tap-sound").play(); btn.disabled=true;
