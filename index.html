@@ -808,7 +808,7 @@ const sizes = [
   { key: "tub",    label: "Takeaway", price: 19, defaultScoops: 2 },
 ];
 
-// Chocolate dip add-on for cones. Price depends on size. Not available for Takeaway (tub).
+// Chocolate dip add-on for cones and cups. Price depends on size. Not available for Takeaway (tub).
 const chocolateDipPrices = { kiddie: 1.50, single: 2.00, double: 2.50, triple: 3.00 };
 
 // ── LIVE PRICING ────────────────────────────────────────────────────────
@@ -1273,9 +1273,9 @@ function updateFlavourGridSelection(){
     });
 }
 
-// Chocolate dip is only offered for cones on kiddie/single/double/triple (not takeaway tubs).
+// Chocolate dip is offered for cones and cups on kiddie/single/double/triple (not takeaway tubs).
 function chocDipEligible(){
-  return builder.vessel === "cone" && builder.sizeKey && builder.sizeKey !== "tub";
+  return builder.sizeKey && builder.sizeKey !== "tub";
 }
 
 function renderBuilderChocDip(){
@@ -2242,7 +2242,7 @@ async function init(){
   updateSummary();
   updateAdjustmentPreview();
   renderPendingQueue();
-  // Refresh elapsed-time labels on the Ready-to-Serve queue periodically —
+  // Refresh elapsed-time labels on the Ready to Serve queue periodically —
   // no need to re-fetch anything, just re-render the existing rows.
   setInterval(() => { if (pendingOrders.length) renderPendingQueue(); }, 20000);
   loadSpecials();
