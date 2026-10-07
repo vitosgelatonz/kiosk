@@ -828,7 +828,8 @@ let livePrices = {}; // itemName -> current price, from the Prices sheet
 // at render time only, so it never touches order totals, tallies, or the
 // spreadsheet columns — a hidden product's past data is untouched.
 let hiddenItems = new Set();
-
+// Items hidden locally (by internal key). Remove a key from this list to bring it back.
+const LOCALLY_HIDDEN = new Set(["brownie", "mClassic", "mRellen", "comboClassic", "comboRellen", "slices"]);
 async function loadPrices(){
   try {
     const res = await fetch(GOOGLE_SCRIPT_URL + "?action=getPrices");
@@ -2048,8 +2049,7 @@ function renderExtrasSection(){
   const container=document.getElementById("extras-grid");
 
   extrasData.forEach(ex=>{
-    if (hiddenItems.has(EXTRA_ITEM_NAMES[ex.key])) return; // hidden via Item Status sheet
-
+if (hiddenItems.has(EXTRA_ITEM_NAMES[ex.key]) || LOCALLY_HIDDEN.has(ex.key)) return;
     const card=document.createElement("div");
     card.className="flavour-card";
 
@@ -2086,8 +2086,7 @@ function renderExtrasSection(){
   if (brownieChangeBtn) brownieChangeBtn.addEventListener("click", () => openFlavourPicker("brownie"));
 
   otherItems.forEach(o=>{
-    if (o.key !== "customOther" && hiddenItems.has(OTHER_ITEM_NAMES[o.key])) return; // hidden via Item Status sheet
-
+if (o.key !== "customOther" && (hiddenItems.has(OTHER_ITEM_NAMES[o.key]) || LOCALLY_HIDDEN.has(o.key))) return;
     const card=document.createElement("div");
     card.className="flavour-card";
     card.id=`other-card-${o.key}`;
