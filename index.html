@@ -518,6 +518,13 @@
       white-space: nowrap; touch-action: manipulation;
     }
     .pending-serve-btn:active { background: #245e27; }
+    .pending-edit-btn {
+      border: none; border-radius: 999px; background: var(--accent); color: #fff;
+      font-weight: 700; padding: 7px 14px; font-size: 0.8rem; cursor: pointer;
+      white-space: nowrap; touch-action: manipulation;
+    }
+    .pending-edit-btn:active { opacity: 0.8; }
+    .pending-row.editing { border-color: var(--accent); }
 
     /* BOTTOM BAR */
     .bottom-bar {
@@ -540,6 +547,7 @@
       transition: all 0.4s ease; z-index: 9999;
       font-weight: 600; display: flex; align-items: center; gap: 12px;
     }
+    #success-popup { pointer-events: none; }
     #success-popup.show { opacity: 1; transform: translateX(-50%) translateY(0); }
     #edit-last-btn {
       border: none; border-radius: 999px; padding: 6px 14px;
@@ -555,7 +563,8 @@
       transition: all 0.3s ease; z-index: 9999;
       font-weight: 600; display: flex; align-items: center; gap: 14px;
     }
-    #serve-undo-popup.show { opacity: 1; transform: translateX(-50%) translateY(0); }
+    #serve-undo-popup { pointer-events: none; }
+    #serve-undo-popup.show { opacity: 1; transform: translateX(-50%) translateY(0); pointer-events: auto; }
     #undo-serve-btn {
       border: none; border-radius: 999px; padding: 6px 14px;
       font-size: 0.9rem; font-weight: 700; cursor: pointer;
@@ -604,12 +613,12 @@
           </div>
           <div id="mixed-fields">
             <div>
-              <label style="font-size:0.78rem">Card Amount:</label>
-              <input type="number" id="card-input" min="0" step="0.10">
+              <label style="font-size:0.78rem">Cash Amount:</label>
+              <input type="number" id="cash-input" min="0" step="0.10" inputmode="decimal">
             </div>
             <div>
-              <label style="font-size:0.78rem">Cash Amount:</label>
-              <strong id="cash-output" style="font-size:0.9rem;">$0.00</strong>
+              <label style="font-size:0.78rem">Card Amount:</label>
+              <strong id="card-output" style="font-size:0.9rem;">$0.00</strong>
             </div>
           </div>
           <div class="summary" id="summary-box"></div>
@@ -828,8 +837,7 @@ let livePrices = {}; // itemName -> current price, from the Prices sheet
 // at render time only, so it never touches order totals, tallies, or the
 // spreadsheet columns — a hidden product's past data is untouched.
 let hiddenItems = new Set();
-// Items hidden locally (by internal key). Remove a key from this list to bring it back.
-const LOCALLY_HIDDEN = new Set(["brownie", "mClassic", "mRellen", "comboClassic", "comboRellen", "slices"]);
+
 async function loadPrices(){
   try {
     const res = await fetch(GOOGLE_SCRIPT_URL + "?action=getPrices");
@@ -920,7 +928,7 @@ const state = {
   others:           { comboClassic: 0, comboRellen: 0, slices: 0, customOther: 0 },
   customOtherPrice: 0,
   specialCounts:    {},
-  payment: "card",  cardAmount: 0,
+  payment: "card",  cardAmount: 0,  cashAmount: 0,
   notes: "", tip: 0, discount: 0
 };
 
@@ -931,6 +939,9 @@ let editMode       = false;
 // submitted order, so that editing it via "Edit Last Order" updates that
 // same row in place instead of leaving it stale or adding a duplicate.
 let lastSavedPendingId = null;
+
+// Which queue row (if any) is currently being edited via its Edit button.
+let editingPendingId = null;
 
 // PENDING / READY-TO-SERVE QUEUE
 // Purely a front-end visual reminder for busy periods — orders are already
@@ -1525,7 +1536,22 @@ function calcBaseTotal(){
   return gelatoTotal+extrasTotal+othersTotal;
 }
 function getFinalTotal(){ return Math.max(0, calcBaseTotal()+state.tip-state.discount); }
-function updateTotal(){ document.getElementById("total-box").textContent = `Total: $${getFinalTotal().toFixed(2)}`; }
+// Mixed payment: the cashier enters the CASH portion; card = total - cash.
+// Re-run whenever the total changes so the card portion stays correct.
+function syncMixedPayment(){
+  if (state.payment !== "mixed") return;
+  const total = getFinalTotal();
+  if (state.cashAmount > total) {
+    state.cashAmount = total;
+    const ci = document.getElementById("cash-input");
+    if (ci && document.activeElement !== ci) ci.value = total ? total.toFixed(2) : "";
+  }
+  state.cardAmount = Math.max(0, Math.round((total - state.cashAmount) * 100) / 100);
+  const out = document.getElementById("card-output");
+  if (out) out.textContent = `$${state.cardAmount.toFixed(2)}`;
+}
+
+function updateTotal(){ document.getElementById("total-box").textContent = `Total: $${getFinalTotal().toFixed(2)}`; syncMixedPayment(); }
 
 function updateAdjustmentPreview(){
   const base=calcBaseTotal(), adj=state.tip-state.discount, final=getFinalTotal();
@@ -1635,7 +1661,7 @@ function renderPendingQueue(){
         <span class="pending-item-text">${it.text}${it.dip ? '<span class="dip-tag">🍫 Dipped</span>' : ""}</span>
       </div>`).join("");
     const row = document.createElement("div");
-    row.className = "pending-row" + (isNext ? " next-up" : "");
+    row.className = "pending-row" + (isNext ? " next-up" : "") + (order.id === editingPendingId ? " editing" : "");
     row.dataset.id = order.id;
     row.innerHTML = `
       <div class="pending-row-top">
@@ -1651,6 +1677,7 @@ function renderPendingQueue(){
         </div>
         <div class="pending-row-right">
           <div class="pending-row-total">$${order.total.toFixed(2)}</div>
+          ${order.snapshot ? `<button class="pending-edit-btn" data-id="${order.id}" type="button">Edit</button>` : ""}
           <button class="pending-serve-btn" data-id="${order.id}" type="button">Served ✓</button>
         </div>
       </div>`;
@@ -1663,6 +1690,9 @@ function renderPendingQueue(){
   list.querySelectorAll(".pending-serve-btn").forEach(btn =>
     btn.addEventListener("click", () => serveOrder(btn.dataset.id))
   );
+  list.querySelectorAll(".pending-edit-btn").forEach(btn =>
+    btn.addEventListener("click", () => editPendingOrder(btn.dataset.id))
+  );
   list.querySelectorAll(".pending-reorder-btn").forEach(btn =>
     btn.addEventListener("click", () => moveOrder(btn.dataset.id, parseInt(btn.dataset.dir, 10)))
   );
@@ -1671,6 +1701,20 @@ function renderPendingQueue(){
   );
   list.querySelectorAll(".pending-row").forEach(attachSwipeToServe);
   savePendingQueue();
+}
+
+// Load a queued order back into the builder for editing. Replaces the old
+// "Edit Last Order" popup button — any order in the queue can be edited.
+function editPendingOrder(id){
+  const order = pendingOrders.find(o => o.id === id);
+  if (!order || !order.snapshot) return;
+  const hasWork = state.gelatoQueue.length || getFinalTotal() > 0;
+  if (hasWork && !editMode && !confirm("Replace the order you're currently building with this one?")) return;
+  loadOrderForEditing(order.snapshot);
+  editMode = true;
+  editingPendingId = id;
+  renderPendingQueue();
+  window.scrollTo({ top: 0, behavior: "smooth" });
 }
 
 // Tapping an individual item card (not the whole row) marks just that
@@ -1869,11 +1913,11 @@ function resetAll(){
   state.pupCup=0;
   const pcEl=document.getElementById("pupCup-count"); if(pcEl) pcEl.textContent="0";
   updateExtrasBorders();
-  state.payment="card"; state.cardAmount=0; state.tip=0; state.discount=0;
+  state.payment="card"; state.cardAmount=0; state.cashAmount=0; state.tip=0; state.discount=0;
   const cardRadio=document.querySelector('input[name="payment"][value="card"]'); if(cardRadio) cardRadio.checked=true;
   document.getElementById("mixed-fields").style.display="none";
-  document.getElementById("card-input").value="";
-  document.getElementById("cash-output").textContent="$0.00";
+  document.getElementById("cash-input").value="";
+  document.getElementById("card-output").textContent="$0.00";
   state.notes="";
   const ni=document.getElementById("notes-input"); if(ni) ni.value="";
   document.getElementById("tip-input").value="";
@@ -1883,15 +1927,19 @@ function resetAll(){
 
 async function submitOrder(){
   if(!state.gelatoQueue.length && getFinalTotal()===0){ alert("No items in order."); return; }
-  if(state.payment==="mixed" && state.cardAmount>getFinalTotal()){ alert("Card amount cannot exceed total."); return; }
+  if(state.payment==="mixed" && state.cashAmount>getFinalTotal()){ alert("Cash amount cannot exceed total."); return; }
+  if(state.payment==="mixed") syncMixedPayment();
   activeSpecials.forEach(s=>{ state.specialCounts[s.name]=0; });
   const { sizeCounts, flavourCounts, coneCount, cupCount, chocolateDipCount, chocolateDipBySize } = tallyQueue();
   const finalTotal=getFinalTotal();
   const compactItems = buildCompactOrderItems(); // captured before resetAll() wipes state
   document.getElementById("saving-indicator").style.display="inline";
   const isEditing=editMode;
+  const editingId=editingPendingId;
+  const editedRow=editingId ? pendingOrders.find(o=>o.id===editingId) : null;
   const payload={
-    timestamp: getLocalTimestamp(),
+    timestamp: isEditing && editedRow && editedRow.timestamp ? editedRow.timestamp : getLocalTimestamp(),
+    originalTimestamp: isEditing && editedRow ? (editedRow.timestamp || "") : "",
     customers: state.customers,
     argentinian: state.argentinian?"Yes":"No",
     latin: state.latin?"Yes":"No",
@@ -1931,34 +1979,35 @@ async function submitOrder(){
       // Brand-new order — add a new row and remember its id in case it
       // gets edited later.
       const newId = Date.now().toString()+Math.random();
-      pendingOrders.push({ id: newId, items: compactItems, total: finalTotal, time: Date.now() });
+      pendingOrders.push({ id: newId, items: compactItems, total: finalTotal, time: Date.now(), timestamp: payload.timestamp, snapshot: lastSavedOrder });
       lastSavedPendingId = newId;
       renderPendingQueue();
-    } else if (lastSavedPendingId){
+    } else if (editingId){
       // Editing the last-submitted order — update its existing row in
       // place (same position and wait-time clock) rather than leaving it
       // stale. If that row was already marked Served and removed, there's
       // nothing to update, which is fine — it's done serving.
-      const row = pendingOrders.find(o => o.id === lastSavedPendingId);
+      const row = pendingOrders.find(o => o.id === editingId);
       if (row){
-        row.items  = compactItems;
-        row.total  = finalTotal;
-        renderPendingQueue();
+        row.items    = compactItems;
+        row.total    = finalTotal;
+        row.snapshot = lastSavedOrder;
       }
     }
-    showPopup(); editMode=false; resetAll();
+    editMode=false; editingPendingId=null;
+    renderPendingQueue();
+    showPopup(); resetAll();
   } catch {
     document.getElementById("saving-indicator").style.display="none";
-    editMode=false;
+    editMode=false; editingPendingId=null; renderPendingQueue();
     alert("Error sending order.");
   }
 }
 
 function showPopup(){
   const popup=document.getElementById("success-popup");
-  popup.innerHTML=`<span>Order Saved!</span><button id="edit-last-btn" type="button">Edit Last Order</button>`;
+  popup.innerHTML=`<span>Order Saved!</span>`;
   popup.classList.add("show");
-  document.getElementById("edit-last-btn").addEventListener("click",()=>{ if(lastSavedOrder){loadOrderForEditing(lastSavedOrder);editMode=true;} popup.classList.remove("show"); });
   setTimeout(()=>popup.classList.remove("show"),9000);
 }
 
@@ -1987,11 +2036,12 @@ function loadOrderForEditing(order){
   const payRadio=document.querySelector(`input[name="payment"][value="${state.payment}"]`); if(payRadio) payRadio.checked=true;
   if(state.payment==="mixed"){
     state.cardAmount=order.cardAmount||0;
+    state.cashAmount=Math.max(0,Math.round(((order.total||getFinalTotal())-state.cardAmount)*100)/100);
     document.getElementById("mixed-fields").style.display="grid";
-    document.getElementById("card-input").value=state.cardAmount?state.cardAmount.toFixed(2):"";
-    document.getElementById("cash-output").textContent=`$${((order.total||getFinalTotal())-state.cardAmount).toFixed(2)}`;
+    document.getElementById("cash-input").value=state.cashAmount?state.cashAmount.toFixed(2):"";
+    document.getElementById("card-output").textContent=`$${state.cardAmount.toFixed(2)}`;
   } else {
-    state.cardAmount=0;
+    state.cardAmount=0; state.cashAmount=0;
     document.getElementById("mixed-fields").style.display="none";
   }
   state.notes=order.notes||"";
@@ -2049,7 +2099,8 @@ function renderExtrasSection(){
   const container=document.getElementById("extras-grid");
 
   extrasData.forEach(ex=>{
-if (hiddenItems.has(EXTRA_ITEM_NAMES[ex.key]) || LOCALLY_HIDDEN.has(ex.key)) return;
+    if (hiddenItems.has(EXTRA_ITEM_NAMES[ex.key])) return; // hidden via Item Status sheet
+
     const card=document.createElement("div");
     card.className="flavour-card";
 
@@ -2086,7 +2137,8 @@ if (hiddenItems.has(EXTRA_ITEM_NAMES[ex.key]) || LOCALLY_HIDDEN.has(ex.key)) ret
   if (brownieChangeBtn) brownieChangeBtn.addEventListener("click", () => openFlavourPicker("brownie"));
 
   otherItems.forEach(o=>{
-if (o.key !== "customOther" && (hiddenItems.has(OTHER_ITEM_NAMES[o.key]) || LOCALLY_HIDDEN.has(o.key))) return;
+    if (o.key !== "customOther" && hiddenItems.has(OTHER_ITEM_NAMES[o.key])) return; // hidden via Item Status sheet
+
     const card=document.createElement("div");
     card.className="flavour-card";
     card.id=`other-card-${o.key}`;
@@ -2182,14 +2234,16 @@ function attachHandlers(){
   document.querySelectorAll('input[name="payment"]').forEach(radio=>radio.addEventListener("change",()=>{
     state.payment=document.querySelector('input[name="payment"]:checked').value;
     document.getElementById("mixed-fields").style.display=state.payment==="mixed"?"grid":"none";
-    if(state.payment!=="mixed"){ document.getElementById("card-input").value=""; document.getElementById("cash-output").textContent="$0.00"; state.cardAmount=0; }
-    else { document.getElementById("card-input").value=""; document.getElementById("cash-output").textContent=`$${getFinalTotal().toFixed(2)}`; state.cardAmount=0; }
+    document.getElementById("cash-input").value=""; state.cashAmount=0; state.cardAmount=0;
+    if(state.payment!=="mixed"){ document.getElementById("card-output").textContent="$0.00"; }
+    else { syncMixedPayment(); }
     updateSummary();
   }));
-  document.getElementById("card-input").addEventListener("input",()=>{
-    const total=getFinalTotal(); let val=parseFloat(document.getElementById("card-input").value||"0");
-    if(val>total){ val=total; document.getElementById("card-input").value=total.toFixed(2); }
-    state.cardAmount=val; document.getElementById("cash-output").textContent=`$${(total-val).toFixed(2)}`;
+  document.getElementById("cash-input").addEventListener("input",()=>{
+    const total=getFinalTotal(); let val=parseFloat(document.getElementById("cash-input").value||"0");
+    if(isNaN(val)||val<0) val=0;
+    if(val>total){ val=total; document.getElementById("cash-input").value=total.toFixed(2); }
+    state.cashAmount=val; syncMixedPayment();
   });
   document.getElementById("notes-btn").addEventListener("click",()=>{ document.getElementById("notes-input").value=state.notes||""; document.getElementById("notes-popup").style.display="block"; document.getElementById("modal-overlay").classList.add("show"); document.getElementById("notes-input").focus(); });
   document.getElementById("finish-notes").addEventListener("click",()=>{ state.notes=document.getElementById("notes-input").value.trim(); document.getElementById("notes-popup").style.display="none"; document.getElementById("modal-overlay").classList.remove("show"); });
@@ -2210,7 +2264,7 @@ function attachHandlers(){
     document.getElementById("modal-overlay").classList.remove("show");
   });
 
-  document.getElementById("cancel-btn").addEventListener("click",resetAll);
+  document.getElementById("cancel-btn").addEventListener("click",()=>{ editMode=false; editingPendingId=null; resetAll(); renderPendingQueue(); });
   document.getElementById("clear-all-btn").addEventListener("click",clearAllPending);
   document.getElementById("done-btn").addEventListener("click",async()=>{
     const btn=document.getElementById("done-btn"); if(btn.disabled) return;
