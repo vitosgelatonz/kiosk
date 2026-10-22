@@ -1937,7 +1937,10 @@ async function submitOrder(){
   const isEditing=editMode;
   const editingId=editingPendingId;
   const editedRow=editingId ? pendingOrders.find(o=>o.id===editingId) : null;
+  // Stable per-order ID: reused on edit so the sheet row can be matched exactly.
+  const orderId = (isEditing && editedRow && editedRow.id) ? editedRow.id : ("o"+Date.now().toString(36)+Math.random().toString(36).slice(2,8));
   const payload={
+    orderId: orderId,
     timestamp: isEditing && editedRow && editedRow.timestamp ? editedRow.timestamp : getLocalTimestamp(),
     originalTimestamp: isEditing && editedRow ? (editedRow.timestamp || "") : "",
     customers: state.customers,
@@ -1978,7 +1981,7 @@ async function submitOrder(){
     if (!isEditing){
       // Brand-new order — add a new row and remember its id in case it
       // gets edited later.
-      const newId = Date.now().toString()+Math.random();
+      const newId = orderId;
       pendingOrders.push({ id: newId, items: compactItems, total: finalTotal, time: Date.now(), timestamp: payload.timestamp, snapshot: lastSavedOrder });
       lastSavedPendingId = newId;
       renderPendingQueue();
