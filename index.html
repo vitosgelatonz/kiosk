@@ -1754,12 +1754,22 @@ function savePendingQueue(){
   }
 }
 
+// Orders older than this drop out of Ready to Serve on their own, so a
+// forgotten order can't linger for days (and later get "edited" by mistake).
+const PENDING_MAX_AGE_MS = 12 * 60 * 60 * 1000;
+function prunePendingQueue(){
+  const cutoff = Date.now() - PENDING_MAX_AGE_MS;
+  const before = pendingOrders.length;
+  pendingOrders = pendingOrders.filter(o => typeof o.time === "number" && o.time >= cutoff);
+  return pendingOrders.length !== before;
+}
+
 function loadPendingQueueFromStorage(){
   try {
     const raw = localStorage.getItem(PENDING_QUEUE_STORAGE_KEY);
     if (!raw) return;
     const parsed = JSON.parse(raw);
-    if (Array.isArray(parsed)) pendingOrders = parsed;
+    if (Array.isArray(parsed)) { pendingOrders = parsed; prunePendingQueue(); }
   } catch {
     // Corrupt or missing data — just start with an empty queue.
   }
@@ -1913,6 +1923,7 @@ function resetAll(){
   state.pupCup=0;
   const pcEl=document.getElementById("pupCup-count"); if(pcEl) pcEl.textContent="0";
   updateExtrasBorders();
+  currentOrderId=null;
   state.payment="card"; state.cardAmount=0; state.cashAmount=0; state.tip=0; state.discount=0;
   const cardRadio=document.querySelector('input[name="payment"][value="card"]'); if(cardRadio) cardRadio.checked=true;
   document.getElementById("mixed-fields").style.display="none";
@@ -1925,10 +1936,50 @@ function resetAll(){
   updateTotal(); updateSummary(); updateAdjustmentPreview();
 }
 
+let currentOrderId = null; // ID for the order being built; cleared once saved or cancelled
+
+// Sends the order and CHECKS the reply. Returns "confirmed" (server said OK)
+// or "unconfirmed" (sent, but this browser isn't allowed to read the reply).
+// Throws if the order definitely wasn't saved (offline, or server error).
+// Safe to retry: the backend de-duplicates on orderId.
+async function postOrder(body){
+  try {
+    const res  = await fetch(GOOGLE_SCRIPT_URL, { method:"POST", headers:{"Content-Type":"text/plain;charset=utf-8"}, body });
+    const text = (await res.text()).trim();
+    if(!res.ok || text !== "OK") throw new Error(text || ("HTTP " + res.status));
+    return "confirmed";
+  } catch (err) {
+    // A TypeError means the reply couldn't be read (CORS) or the network
+    // failed. Re-send in fire-and-forget mode: if the network is down this
+    // throws and the caller reports failure; if only the reply was
+    // unreadable, it goes through exactly as it did before this check existed.
+    if(!(err instanceof TypeError)) throw err;
+    await fetch(GOOGLE_SCRIPT_URL, { method:"POST", mode:"no-cors", headers:{"Content-Type":"text/plain;charset=utf-8"}, body });
+    return "unconfirmed";
+  }
+}
+
 async function submitOrder(){
   if(!state.gelatoQueue.length && getFinalTotal()===0){ alert("No items in order."); return; }
   if(state.payment==="mixed" && state.cardAmount>getFinalTotal()){ alert("Card amount cannot exceed total."); return; }
   if(state.payment==="mixed") syncMixedPayment();
+  if(state.payment==="mixed" && getFinalTotal()>0){
+    // Mixed with everything on one method is almost always a mis-tap.
+    const total = getFinalTotal();
+    const allCard = state.cardAmount >= total;
+    const allCash = state.cardAmount <= 0;
+    if(allCard || allCash){
+      const method = allCard ? "card" : "cash";
+      if(!confirm(`Mixed payment, but all of $${total.toFixed(2)} is on ${method}.\n\nOK = save as ${method.toUpperCase()}\nCancel = go back and fix the amounts`)) return;
+      state.payment = method;
+      const r=document.querySelector(`input[name="payment"][value="${method}"]`); if(r) r.checked=true;
+      document.getElementById("mixed-fields").style.display="none";
+      document.getElementById("card-input").value="";
+      document.getElementById("cash-output").textContent="$0.00";
+      state.cardAmount=0; state.cashAmount=0;
+      updateSummary();
+    }
+  }
   activeSpecials.forEach(s=>{ state.specialCounts[s.name]=0; });
   const { sizeCounts, flavourCounts, coneCount, cupCount, chocolateDipCount, chocolateDipBySize } = tallyQueue();
   const finalTotal=getFinalTotal();
@@ -1938,7 +1989,10 @@ async function submitOrder(){
   const editingId=editingPendingId;
   const editedRow=editingId ? pendingOrders.find(o=>o.id===editingId) : null;
   // Stable per-order ID: reused on edit so the sheet row can be matched exactly.
-  const orderId = (isEditing && editedRow && editedRow.id) ? editedRow.id : ("o"+Date.now().toString(36)+Math.random().toString(36).slice(2,8));
+  // Stable per-order ID. Reused on edit, and kept across retries of a failed
+  // save so the backend can recognise a re-sent order and not double-save it.
+  if(!currentOrderId) currentOrderId = "o"+Date.now().toString(36)+Math.random().toString(36).slice(2,8);
+  const orderId = (isEditing && editedRow && editedRow.id) ? editedRow.id : currentOrderId;
   const payload={
     orderId: orderId,
     timestamp: isEditing && editedRow && editedRow.timestamp ? editedRow.timestamp : getLocalTimestamp(),
@@ -1975,7 +2029,8 @@ async function submitOrder(){
     brownieFlavoursArr:   state.brownieFlavours,
   }));
   try {
-    await fetch(GOOGLE_SCRIPT_URL,{ method:"POST", mode:"no-cors", headers:{"Content-Type":"application/json"}, body:JSON.stringify({row:payload, mode:isEditing?"overwrite":"append"}) });
+    await postOrder(JSON.stringify({row:payload, mode:isEditing?"overwrite":"append"}));
+    currentOrderId=null;
     document.getElementById("saving-indicator").style.display="none";
     document.getElementById("cash-sound").play();
     if (!isEditing){
@@ -2000,10 +2055,11 @@ async function submitOrder(){
     editMode=false; editingPendingId=null;
     renderPendingQueue();
     showPopup(); resetAll();
-  } catch {
+  } catch (err) {
+    // Not saved. Leave the order on screen exactly as it was (including edit
+    // mode) so tapping Done again retries it — it can't be double-saved.
     document.getElementById("saving-indicator").style.display="none";
-    editMode=false; editingPendingId=null; renderPendingQueue();
-    alert("Error sending order.");
+    alert("ORDER NOT SAVED.\n\nCheck the wifi, then tap Done again. The order is still here and won't be saved twice." + (err && err.message ? "\n\n(" + err.message + ")" : ""));
   }
 }
 
@@ -2300,7 +2356,7 @@ async function init(){
   renderPendingQueue();
   // Refresh elapsed-time labels on the Ready to Serve queue periodically —
   // no need to re-fetch anything, just re-render the existing rows.
-  setInterval(() => { if (pendingOrders.length) renderPendingQueue(); }, 20000);
+  setInterval(() => { prunePendingQueue(); renderPendingQueue(); }, 20000);
   loadSpecials();
 }
 init();
