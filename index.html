@@ -613,12 +613,12 @@
           </div>
           <div id="mixed-fields">
             <div>
-              <label style="font-size:0.78rem">Cash Amount:</label>
-              <input type="number" id="cash-input" min="0" step="0.10" inputmode="decimal">
+              <label style="font-size:0.78rem">Card Amount:</label>
+              <input type="number" id="card-input" min="0" step="0.10" inputmode="decimal">
             </div>
             <div>
-              <label style="font-size:0.78rem">Card Amount:</label>
-              <strong id="card-output" style="font-size:0.9rem;">$0.00</strong>
+              <label style="font-size:0.78rem">Cash Amount:</label>
+              <strong id="cash-output" style="font-size:0.9rem;">$0.00</strong>
             </div>
           </div>
           <div class="summary" id="summary-box"></div>
@@ -1536,19 +1536,19 @@ function calcBaseTotal(){
   return gelatoTotal+extrasTotal+othersTotal;
 }
 function getFinalTotal(){ return Math.max(0, calcBaseTotal()+state.tip-state.discount); }
-// Mixed payment: the cashier enters the CASH portion; card = total - cash.
-// Re-run whenever the total changes so the card portion stays correct.
+// Mixed payment: the cashier enters the CARD portion; cash = total - card.
+// Re-run whenever the total changes so the cash portion stays correct.
 function syncMixedPayment(){
   if (state.payment !== "mixed") return;
   const total = getFinalTotal();
-  if (state.cashAmount > total) {
-    state.cashAmount = total;
-    const ci = document.getElementById("cash-input");
+  if (state.cardAmount > total) {
+    state.cardAmount = total;
+    const ci = document.getElementById("card-input");
     if (ci && document.activeElement !== ci) ci.value = total ? total.toFixed(2) : "";
   }
-  state.cardAmount = Math.max(0, Math.round((total - state.cashAmount) * 100) / 100);
-  const out = document.getElementById("card-output");
-  if (out) out.textContent = `$${state.cardAmount.toFixed(2)}`;
+  state.cashAmount = Math.max(0, Math.round((total - state.cardAmount) * 100) / 100);
+  const out = document.getElementById("cash-output");
+  if (out) out.textContent = `$${state.cashAmount.toFixed(2)}`;
 }
 
 function updateTotal(){ document.getElementById("total-box").textContent = `Total: $${getFinalTotal().toFixed(2)}`; syncMixedPayment(); }
@@ -1916,8 +1916,8 @@ function resetAll(){
   state.payment="card"; state.cardAmount=0; state.cashAmount=0; state.tip=0; state.discount=0;
   const cardRadio=document.querySelector('input[name="payment"][value="card"]'); if(cardRadio) cardRadio.checked=true;
   document.getElementById("mixed-fields").style.display="none";
-  document.getElementById("cash-input").value="";
-  document.getElementById("card-output").textContent="$0.00";
+  document.getElementById("card-input").value="";
+  document.getElementById("cash-output").textContent="$0.00";
   state.notes="";
   const ni=document.getElementById("notes-input"); if(ni) ni.value="";
   document.getElementById("tip-input").value="";
@@ -1927,7 +1927,7 @@ function resetAll(){
 
 async function submitOrder(){
   if(!state.gelatoQueue.length && getFinalTotal()===0){ alert("No items in order."); return; }
-  if(state.payment==="mixed" && state.cashAmount>getFinalTotal()){ alert("Cash amount cannot exceed total."); return; }
+  if(state.payment==="mixed" && state.cardAmount>getFinalTotal()){ alert("Card amount cannot exceed total."); return; }
   if(state.payment==="mixed") syncMixedPayment();
   activeSpecials.forEach(s=>{ state.specialCounts[s.name]=0; });
   const { sizeCounts, flavourCounts, coneCount, cupCount, chocolateDipCount, chocolateDipBySize } = tallyQueue();
@@ -2041,8 +2041,8 @@ function loadOrderForEditing(order){
     state.cardAmount=order.cardAmount||0;
     state.cashAmount=Math.max(0,Math.round(((order.total||getFinalTotal())-state.cardAmount)*100)/100);
     document.getElementById("mixed-fields").style.display="grid";
-    document.getElementById("cash-input").value=state.cashAmount?state.cashAmount.toFixed(2):"";
-    document.getElementById("card-output").textContent=`$${state.cardAmount.toFixed(2)}`;
+    document.getElementById("card-input").value=state.cardAmount?state.cardAmount.toFixed(2):"";
+    document.getElementById("cash-output").textContent=`$${state.cashAmount.toFixed(2)}`;
   } else {
     state.cardAmount=0; state.cashAmount=0;
     document.getElementById("mixed-fields").style.display="none";
@@ -2237,16 +2237,16 @@ function attachHandlers(){
   document.querySelectorAll('input[name="payment"]').forEach(radio=>radio.addEventListener("change",()=>{
     state.payment=document.querySelector('input[name="payment"]:checked').value;
     document.getElementById("mixed-fields").style.display=state.payment==="mixed"?"grid":"none";
-    document.getElementById("cash-input").value=""; state.cashAmount=0; state.cardAmount=0;
-    if(state.payment!=="mixed"){ document.getElementById("card-output").textContent="$0.00"; }
+    document.getElementById("card-input").value=""; state.cashAmount=0; state.cardAmount=0;
+    if(state.payment!=="mixed"){ document.getElementById("cash-output").textContent="$0.00"; }
     else { syncMixedPayment(); }
     updateSummary();
   }));
-  document.getElementById("cash-input").addEventListener("input",()=>{
-    const total=getFinalTotal(); let val=parseFloat(document.getElementById("cash-input").value||"0");
+  document.getElementById("card-input").addEventListener("input",()=>{
+    const total=getFinalTotal(); let val=parseFloat(document.getElementById("card-input").value||"0");
     if(isNaN(val)||val<0) val=0;
-    if(val>total){ val=total; document.getElementById("cash-input").value=total.toFixed(2); }
-    state.cashAmount=val; syncMixedPayment();
+    if(val>total){ val=total; document.getElementById("card-input").value=total.toFixed(2); }
+    state.cardAmount=val; syncMixedPayment();
   });
   document.getElementById("notes-btn").addEventListener("click",()=>{ document.getElementById("notes-input").value=state.notes||""; document.getElementById("notes-popup").style.display="block"; document.getElementById("modal-overlay").classList.add("show"); document.getElementById("notes-input").focus(); });
   document.getElementById("finish-notes").addEventListener("click",()=>{ state.notes=document.getElementById("notes-input").value.trim(); document.getElementById("notes-popup").style.display="none"; document.getElementById("modal-overlay").classList.remove("show"); });
